@@ -1,4 +1,5 @@
-from discord.ext import commands
+import asyncio
+from discord.ext import commands, tasks
 import random
 import os
 from dotenv import load_dotenv
@@ -6,6 +7,7 @@ import re
 from datetime import date, datetime
 from babel.dates import format_date
 import json
+import time
 from time import sleep
 import discord
 from keep_alive import keep_alive
@@ -13,11 +15,12 @@ from random import choice
 from discord.utils import get
 from discord.ext.tasks import loop
 
+
 load_dotenv()
 bot = commands.Bot(command_prefix='!')
 
 playingStatus = ['Bloons TD 6', 'Celeste', 'Cuphead', "Five nights at Freddy's", 'Just shapes and beats', 'Minecraft', 'Krunker', 'osu!', 'Rocket Leauge', 'Fortnite']
-watchingStatus = ['Youtube', 'Twitch', 'the stock market', 'birds']
+watchingStatus = ['Youtube', 'Twitch', 'the stock market', 'birds', 'Anime']
 
 @bot.event
 async def on_ready():
@@ -25,14 +28,15 @@ async def on_ready():
     while True:
         statusType = random.randint(0, 1)
         if statusType == 0:
-            statusNum = random.randint(0, 10)
+            statusNum = random.randint(0, 9)
             await bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.playing, name=playingStatus[statusNum]))
-            print(f'Status changed to {playingStatus[statusNum]}')
+            print(f'{bot.user} is now playing {playingStatus[statusNum]}')
         else:
             statusNum = random.randint(0, 4)
             await bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.watching, name=watchingStatus[statusNum]))
-            print(f'Status changed to {watchingStatus[statusNum]}')
-        sleep(600)
+            print(f'{bot.user} is now watching {watchingStatus[statusNum]}')
+        await asyncio.sleep(600)
+    
 
 def tictactoe():
     player1 = ""
@@ -237,7 +241,7 @@ async def on_message(message):
         await message.add_reaction(emoji3)
         await message.add_reaction(emoji4)
         await message.add_reaction(emoji5)
-        
+
 keep_alive()
 secret_TOKEN = os.environ['CUSTOMCONNSTR_DISCORD_TOKEN']
 bot.run(secret_TOKEN)   
