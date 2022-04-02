@@ -16,34 +16,23 @@ from discord.ext.tasks import loop
 load_dotenv()
 bot = commands.Bot(command_prefix='!')
 
+playingStatus = ['Bloons TD 6', 'Celeste', 'Cuphead', "Five nights at Freddy's", 'Just shapes and beats', 'Minecraft', 'Krunker', 'osu!', 'Rocket Leauge', 'Fortnite']
+watchingStatus = ['Youtube', 'Twitch', 'the stock market', 'birds']
 
 @bot.event
 async def on_ready():
     print(f"{bot.user} has connected to Discord!")
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="the chat"))
-
-colours = [discord.Colour(0xe91e63), discord.Colour(0x0000FF0), discord.Colour(0x00FF00), discord.Colour(0xFF0000)]
-guild_id = 12345
-role_name = "Bot"
-role_to_change = None
-@loop(seconds=1)
-async def colour_change():
-    await role_to_change.edit(colour=choice(colours))
-    print("Task")
-
-@colour_change.before_loop
-async def colour_change_before():
-    global role_to_change
-    await bot.wait_until_ready()
-    guild = bot.get_guild(guild_id)
-    role_to_change = get(guild.roles, name=role_name)
-
-colour_change.start()
-
-@bot.command(name='spam', help='Spams the input message for x number of times')
-async def spam(ctx, amount:int, *, message):
-    for i in range(amount): # Do the next thing amount times
-        await ctx.send(message) # Sends message where command was called
+    while True:
+        statusType = random.randint(0, 1)
+        if statusType == 0:
+            statusNum = random.randint(0, 10)
+            await bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.playing, name=playingStatus[statusNum]))
+            print(f'Status changed to {playingStatus[statusNum]}')
+        else:
+            statusNum = random.randint(0, 4)
+            await bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.watching, name=watchingStatus[statusNum]))
+            print(f'Status changed to {watchingStatus[statusNum]}')
+        sleep(600)
 
 def tictactoe():
     player1 = ""
