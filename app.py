@@ -1,17 +1,19 @@
 from discord.ext import commands
 import random
 import os
+from dotenv import load_dotenv
 import re
 from datetime import date, datetime
 from babel.dates import format_date
 import json
 from time import sleep
 import discord
-#from keep_alive import keep_alive
+from keep_alive import keep_alive
 from random import choice
 from discord.utils import get
 from discord.ext.tasks import loop
 
+load_dotenv()
 bot = commands.Bot(command_prefix='!')
 
 @bot.event
@@ -167,10 +169,10 @@ async def place_error(ctx, error):
     elif isinstance(error, commands.BadArgument):
         await ctx.send("Please make sure to enter an integer.")
 
-with open("data/namedays.json") as f:
+with open("data/namedays.json", encoding="utf-8") as f:
     namedays = json.load(f)
 
-with open("data/namedays-extended.json") as f:
+with open("data/namedays.json", encoding="utf-8") as f:
     namedays_ext = json.load(f)  
       
   
@@ -240,6 +242,6 @@ async def on_message(message):
         await message.add_reaction(emoji4)
         await message.add_reaction(emoji5)
         
-#keep_alive()
+keep_alive()
 secret_TOKEN = os.environ['CUSTOMCONNSTR_DISCORD_TOKEN']
 bot.run(secret_TOKEN)   
