@@ -19,7 +19,7 @@ from discord.ext.tasks import loop
 load_dotenv()
 bot = commands.Bot(command_prefix='!')
 
-playingStatus = ['Bloons TD 6', 'Celeste', 'Cuphead', "Five nights at Freddy's", 'Just shapes and beats', 'Minecraft', 'Krunker', 'osu!', 'Rocket Leauge', 'Fortnite']
+playingStatus = ['Bloons TD 6', 'Celeste', 'Cuphead', "Five nights at Freddy's", 'Just shapes and beats', 'Minecraft', 'Krunker', 'osu!', 'Rocket Leauge', 'Fortnite','Chess']
 watchingStatus = ['Youtube', 'Twitch', 'the stock market', 'birds', 'Anime']
 listeningStatus = ['https://open.spotify.com/track/0gYqQKXYJ2LDyx07ie3V5j?si=7102696b6eba4135','https://open.spotify.com/track/1sdxkS2JHc7XSEWui1JqFB?si=76e1c6f4462f42d9','https://open.spotify.com/track/2WYs5LxOZfEyURXu7V0O1a?si=1f04ae799cf445b0','https://open.spotify.com/track/0rNIEBlBuo5108lnHyGbqJ?si=9cb9271884754842','https://open.spotify.com/track/7KVBqGLGhrEejVokzYd8vF?si=5bb5bf01669841c8']
 
@@ -29,7 +29,7 @@ async def on_ready():
     while True:
         statusType = random.randint(0, 2)
         if statusType == 0:
-            statusNum = random.randint(0, 9)
+            statusNum = random.randint(0, 10)
             await bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.playing, name=playingStatus[statusNum]))
             print(f'{bot.user} is now playing {playingStatus[statusNum]}')
             await asyncio.sleep(600)
