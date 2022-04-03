@@ -10,7 +10,7 @@ import json
 import time
 from time import sleep
 import discord
-from keep_alive import keep_alive
+#from keep_alive import keep_alive
 from random import choice
 from discord.utils import get
 from discord.ext.tasks import loop
@@ -41,7 +41,7 @@ async def on_ready():
         else:
             statusNum = random.randint(0, 4)
             await bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name=listeningStatus[statusNum]))
-            print(f'{bot.user} is now listening to {watchingStatus[statusNum]}')
+            print(f'{bot.user} is now listening to {listeningStatus[statusNum]}')
             await asyncio.sleep(240)
         
     
@@ -250,6 +250,6 @@ async def on_message(message):
         await message.add_reaction(emoji4)
         await message.add_reaction(emoji5)
 
-keep_alive()
+#keep_alive()
 secret_TOKEN = os.environ['CUSTOMCONNSTR_DISCORD_TOKEN']
 bot.run(secret_TOKEN)   
