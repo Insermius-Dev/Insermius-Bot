@@ -26,19 +26,25 @@ playingStatus = ['Bloons TD 6', 'Celeste', 'Cuphead', "Five nights at Freddy's",
 watchingStatus = ['Youtube', 'Twitch', 'the stock market', 'birds', 'Anime']
 
 main_channel = None
+mod_channel = None
 
 @bot.event
 async def on_ready():
     print(f"{bot.user} has connected to Discord!")
     global main_channel
-    global main_channel_ezic
+    global mod_channel
     chans = bot.get_all_channels()
     
     for c in chans:
-        if c.name == "general":
+        if c.name == "_general_":
             main_channel = c
             print(f"main channel is {main_channel.name}, id={main_channel.id}")
             break
+    for m in chans:
+        if m.name == "for-moderators":
+            mod_channel = m
+            print(f"mod_channel is {mod_channel.name}, id={mod_channel.id}")
+            break    
     while True:
         statusType = random.randint(0, 1)
         if statusType == 0:
@@ -61,13 +67,29 @@ with open("data/namedays.json", encoding="utf-8") as f:
 @bot.event
 async def on_member_join(member):
     print("Recognised that a member called " + member.name + " joined")
-    await main_channel.send(f'''
-Hey {member}! Im glad you're here!
-Welcome to the gaming server!
-To access chatting wait 10min so we can verify you.
-Have fun chatting and being a part of this community!        
-    ''')
+    embed=discord.Embed(title=f"Welcome {member.name}", description=f"Thanks for joining {member.guild.name}!",
+    color=discord.Color.blue()
+    ) # F-Strings!
+    embed.set_thumbnail(url=member.avatar_url) # Set the embed's thumbnail to the member's avatar image!
+    
+
+    await main_channel.send(embed=embed)
+    embed=discord.Embed(
+    title="User "+ member.name +" joined.",
+    color=discord.Color.green()
+    )
+    await mod_channel.send(embed=embed)
     print("Sent message to " + member.name)
+
+@bot.event
+async def on_member_remove(member):
+    print("Recognised that a member called " + member.name + " left")
+    embed=discord.Embed(
+        title=member.name+" left.",
+        color=discord.Color.value() # There are lots of colors, you can check them here: https://discordpy.readthedocs.io/en/latest/api.html?highlight=discord%20color#discord.Colour
+    )
+    await mod_channel.send(embed=embed)
+    print("Message sent")
 
 @bot.event
 async def on_message(message):
