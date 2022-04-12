@@ -86,7 +86,7 @@ async def on_member_remove(member):
     print("Recognised that a member called " + member.name + " left")
     embed=discord.Embed(
         title=member.name+" left.",
-        color=discord.Color.value() # There are lots of colors, you can check them here: https://discordpy.readthedocs.io/en/latest/api.html?highlight=discord%20color#discord.Colour
+        color=discord.Color.from_rgb(255, 13, 13)
     )
     await mod_channel.send(embed=embed)
     print("Message sent")
