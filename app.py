@@ -25,7 +25,6 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 playingStatus = ['Bloons TD 6', 'Celeste', 'Cuphead', "Five nights at Freddy's", 'Just shapes and beats', 'Minecraft', 'Krunker', 'osu!', 'Rocket Leauge', 'Fortnite','Chess']
 watchingStatus = ['Youtube', 'Twitch', 'the stock market', 'birds', 'Anime']
 
-nobit = "<:nobitemoji:965118495702540319>"
 unedited_ndaytext = None
 main_channel = None
 mod_channel = None
@@ -33,12 +32,22 @@ mod_channel = None
 @bot.event
 async def on_ready():
     print(f"{bot.user} has connected to Discord!")
-    global main_channel
-    global mod_channel
-    main_channel = bot.get_channel(829026542495203390)
-    mod_channel = bot.get_channel(911718281235279932)
-    print(f"\nmain channel is {main_channel.name}, id={main_channel.id}")
-    print(f"mod_channel is {mod_channel.name}, id={mod_channel.id}\n")
+    global Gmain_channel
+    global Gmod_channel
+    global Emain_channel
+    global Emod_channel
+    global gaming_server
+    global ezic_server
+    Gmain_channel = bot.get_channel(829026542495203390)
+    Gmod_channel = bot.get_channel(911718281235279932)
+    Emain_channel = bot.get_channel(954823151601221712)
+    Emod_channel = bot.get_channel(962591528369418240)
+    gaming_server = bot.get_guild(829026541950206049)
+    ezic_server = bot.get_guild(954823151139827774)
+    print(f"\n Gmain channel is {Gmain_channel.name}, id={Gmain_channel.id}")
+    print(f" Gmod_channel is {Gmod_channel.name}, id={Gmod_channel.id}\n")
+    print(f"\n Emain channel is {Emain_channel.name}, id={Emain_channel.id}")
+    print(f" Emod_channel is {Emod_channel.name}, id={Emod_channel.id}\n")    
     chans = bot.get_all_channels()
     while True:
         statusType = random.randint(0, 1)
@@ -53,7 +62,7 @@ async def on_ready():
             print(f'{bot.user} is now watching {watchingStatus[statusNum]}')
             await asyncio.sleep(600)
 
-with open("data/namedays.json", encoding="utf-8") as f:
+with open("data/namedays.json", encoding="utf-8") as f: 
     namedays = json.load(f)
 
 with open("data/namedays-extended.json", encoding="utf-8") as f:
@@ -66,24 +75,43 @@ async def on_member_join(member):
     color=discord.Color.blue()
     ) # F-Strings!
     embed.set_thumbnail(url=member.avatar_url) # Set the embed's thumbnail to the member's avatar image!
-    await main_channel.send(embed=embed)
+    if member.guild == gaming_server:
+        await Gmain_channel.send(embed=embed)
 
-    embed=discord.Embed(
-    title="User "+ member.name +" joined.",
-    color=discord.Color.green()
-    )
-    await mod_channel.send(embed=embed)
-    print("Sent message to " + member.name + "\n")
+        embed=discord.Embed(
+        title="User "+ member.name +" joined.",
+        color=discord.Color.green()
+        )
+        await Gmod_channel.send(embed=embed)
+        print("Sent message to " + member.name + "\n")
+    elif member.guild == ezic_server:
+        await Emain_channel.send(embed=embed)
+
+        embed=discord.Embed(
+        title="User "+ member.name +" joined.",
+        color=discord.Color.green()
+        )
+        await Emod_channel.send(embed=embed)
+        print("Sent message to " + member.name + "\n")
 
 @bot.event
 async def on_member_remove(member):
-    print("Recognised that a member called " + member.name + " left")
-    embed=discord.Embed(
-        title=member.name+" left.",
-        color=discord.Color.from_rgb(255, 13, 13)
-    )
-    await mod_channel.send(embed=embed)
-    print("Message sent")
+    if member.guild == gaming_server:
+        print("Recognised that a member called " + member.name + " left")
+        embed=discord.Embed(
+            title=member.name+" left.",
+            color=discord.Color.from_rgb(255, 13, 13)
+        )
+        await Gmod_channel.send(embed=embed)
+        print("Message sent")
+    elif member.guild == ezic_server:
+        print("Recognised that a member called " + member.name + " left")
+        embed=discord.Embed(
+            title=member.name+" left.",
+            color=discord.Color.from_rgb(255, 13, 13)
+        )
+        await Emod_channel.send(embed=embed)
+        print("Message sent")
 
 @bot.event
 async def on_message(message):
@@ -129,7 +157,8 @@ async def on_message(message):
                 break
         if nday is None:
             embed=discord.Embed(
-            title=f"Kalendārā neatradu '{find_name}'",
+            title="Error_",
+            description=f"Kalendārā neatradu '{find_name}'",
             color=discord.Color.from_rgb(255, 13, 13)
             )
             embed.set_thumbnail(url='https://hotemoji.com/images/emoji/g/14kioe01bpckzg.png')
@@ -169,12 +198,9 @@ async def on_message(message):
             await message.add_reaction(emoji5)
         else:
             await message.reply('The vote option count must be < 2≤X≤5 > !')
-    
-    if message.author.id(637978980657659924):
-        await message.add_reaction(nobit)
-    elif message.author.id(919830575706157076):
-        await message.add_reaction(nobit)
 
+    if message.author.bot and (message.author != bot.user):
+        await message.add_reaction("👍")
 
 intents = discord.Intents.default()
 intents.members = True
