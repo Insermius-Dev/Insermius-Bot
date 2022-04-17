@@ -25,6 +25,7 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 playingStatus = ['Bloons TD 6', 'Celeste', 'Cuphead', "Five nights at Freddy's", 'Just shapes and beats', 'Minecraft', 'Krunker', 'osu!', 'Rocket Leauge', 'Fortnite','Chess']
 watchingStatus = ['Youtube', 'Twitch', 'the stock market', 'birds', 'Anime']
 
+nobit = "<:nobitemoji:965118495702540319>"
 unedited_ndaytext = None
 main_channel = None
 mod_channel = None
@@ -168,6 +169,11 @@ async def on_message(message):
             await message.add_reaction(emoji5)
         else:
             await message.reply('The vote option count must be < 2≤X≤5 > !')
+    
+    if message.author.id(637978980657659924):
+        await message.add_reaction(nobit)
+    elif message.author.id(919830575706157076):
+        await message.add_reaction(nobit)
 
 
 intents = discord.Intents.default()
