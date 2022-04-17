@@ -25,6 +25,7 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 playingStatus = ['Bloons TD 6', 'Celeste', 'Cuphead', "Five nights at Freddy's", 'Just shapes and beats', 'Minecraft', 'Krunker', 'osu!', 'Rocket Leauge', 'Fortnite','Chess']
 watchingStatus = ['Youtube', 'Twitch', 'the stock market', 'birds', 'Anime']
 
+unedited_ndaytext = None
 main_channel = None
 mod_channel = None
 
@@ -33,18 +34,11 @@ async def on_ready():
     print(f"{bot.user} has connected to Discord!")
     global main_channel
     global mod_channel
+    main_channel = bot.get_channel(829026542495203390)
+    mod_channel = bot.get_channel(911718281235279932)
+    print(f"\nmain channel is {main_channel.name}, id={main_channel.id}")
+    print(f"mod_channel is {mod_channel.name}, id={mod_channel.id}\n")
     chans = bot.get_all_channels()
-    
-    for c in chans:
-        if c.name == "_general_":
-            main_channel = c
-            print(f"main channel is {main_channel.name}, id={main_channel.id}")
-            break
-    for m in chans:
-        if m.name == "for-moderators":
-            mod_channel = m
-            print(f"mod_channel is {mod_channel.name}, id={mod_channel.id}")
-            break    
     while True:
         statusType = random.randint(0, 1)
         if statusType == 0:
@@ -61,25 +55,24 @@ async def on_ready():
 with open("data/namedays.json", encoding="utf-8") as f:
     namedays = json.load(f)
 
-with open("data/namedays.json", encoding="utf-8") as f:
+with open("data/namedays-extended.json", encoding="utf-8") as f:
     namedays_ext = json.load(f)  
 
 @bot.event
 async def on_member_join(member):
-    print("Recognised that a member called " + member.name + " joined")
+    print("\nRecognised that a member called " + member.name + " joined")
     embed=discord.Embed(title=f"Welcome {member.name}", description=f"Thanks for joining {member.guild.name}!",
     color=discord.Color.blue()
     ) # F-Strings!
     embed.set_thumbnail(url=member.avatar_url) # Set the embed's thumbnail to the member's avatar image!
-    
-
     await main_channel.send(embed=embed)
+
     embed=discord.Embed(
     title="User "+ member.name +" joined.",
     color=discord.Color.green()
     )
     await mod_channel.send(embed=embed)
-    print("Sent message to " + member.name)
+    print("Sent message to " + member.name + "\n")
 
 @bot.event
 async def on_member_remove(member):
@@ -98,7 +91,13 @@ async def on_message(message):
         today = date.today().strftime("%m-%d")
         channel = message.channel
         sleep(0.5)
-        await channel.send("Šodien vārda dienu svin " + ", ".join(namedays[today]))
+        embed=discord.Embed(
+        title="Šodien vārda dienu svin:",
+        description=", ".join(namedays[today]),
+        color=discord.Color.from_rgb(255, 13, 13)
+        )
+        embed.set_thumbnail(url='https://freeiconshop.com/wp-content/uploads/edd/calendar-flat.png')
+        await channel.send(embed=embed)
 
     elif message.content.startswith("!vd "):
         matches = re.search(r"\!vd (\w+)", message.content)
@@ -115,17 +114,28 @@ async def on_message(message):
                 nday = datetime.strptime("2000-" + k, "%Y-%m-%d").date()
                 nday_text = format_date(date=nday, format="d. MMMM", locale="lv")
                 if nday_text.endswith("is"):
+                    unedited_ndaytext = nday_text
                     nday_text = nday_text[:-2] + "ī"
                 else:
+                    unedited_ndaytext = nday_text
                     nday_text = nday_text[:-1] + "ā"
-                msg = f"{find_name} vārda dienu svin {nday_text}"
+                embed=discord.Embed(
+                title=f"{unedited_ndaytext}",
+                description=f"{find_name} vārda dienu svin {nday_text}",
+                color=discord.Color.from_rgb(255, 13, 13)
+                )
+                embed.set_thumbnail(url='https://freeiconshop.com/wp-content/uploads/edd/calendar-flat.png')
                 break
         if nday is None:
-            msg = f"Kalendārā neatradu vārdu {find_name}"
+            embed=discord.Embed(
+            title=f"Kalendārā neatradu '{find_name}'",
+            color=discord.Color.from_rgb(255, 13, 13)
+            )
+            embed.set_thumbnail(url='https://hotemoji.com/images/emoji/g/14kioe01bpckzg.png')
 
         channel = message.channel
         sleep(0.5)
-        await channel.send(msg)
+        await channel.send(embed=embed)
 
     elif message.content.startswith('$'):
         emojiup = '✅'
