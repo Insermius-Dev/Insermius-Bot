@@ -1,6 +1,7 @@
 import asyncio
 from unicodedata import name
 from discord.ext import commands, tasks
+# from dis_snek import Snake, Button, ButtonStyles, CommandTypes, context_menu, message_command, listen
 import random
 from discord import utils
 import os
@@ -12,6 +13,7 @@ import json
 import time
 from time import sleep
 import discord
+
 #from keep_alive import keep_alive
 from random import choice
 from discord.utils import get
@@ -74,7 +76,7 @@ async def on_member_join(member):
     embed=discord.Embed(title=f"Welcome {member.name}", description=f"Thanks for joining {member.guild.name}!",
     color=discord.Color.blue()
     ) # F-Strings!
-    embed.set_thumbnail(url=member.avatar_url) # Set the embed's thumbnail to the member's avatar image!
+    embed.set_thumbnail(url=member.avatar) # Set the embed's thumbnail to the member's avatar image!
     if member.guild == gaming_server:
         await Gmain_channel.send(embed=embed)
 
