@@ -17,11 +17,14 @@ import discord
 from random import choice
 from discord.utils import get
 from discord.ext.tasks import loop
+from PIL import Image
 
 load_dotenv()
 intents = discord.Intents.default()
 intents.members = True
 bot = commands.Bot(command_prefix="!", intents=intents)
+
+sus_img = Image.open("Larss_Bot/AMONGUS.png")
 
 playingStatus = [
     "Bloons TD 6",
@@ -138,6 +141,7 @@ async def on_member_remove(member):
 async def on_message(message):
     if message.author.bot and (message.author != bot.user):
         await message.add_reaction("👍")
+
     if message.content == "!vd":
         today = date.today().strftime("%m-%d")
         channel = message.channel
@@ -191,7 +195,7 @@ async def on_message(message):
         sleep(0.5)
         await channel.send(embed=embed)
 
-    if message.content.startswith("$"):
+    elif message.content.startswith("$"):
         emojiup = "✅"
         emojidown = "❌"
         emoji1 = "1️⃣"
@@ -222,6 +226,10 @@ async def on_message(message):
             await message.add_reaction(emoji5)
         else:
             await message.reply("The vote option count must be < 2≤X≤5 > !")
+
+    elif message.content == "SUS":
+        await channel.send("Amogus ඞඞඞඞඞ")
+        await channel.send(sus_img)
 
 
 intents = discord.Intents.default()
