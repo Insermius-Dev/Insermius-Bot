@@ -227,7 +227,7 @@ async def on_message(message):
         else:
             await message.reply("The vote option count must be < 2≤X≤5 > !")
 
-    elif message.content == "SUS":
+    elif "sus" or "SUS" or "Sus" or "Sussy" in message.content:
         await channel.send("Amogus ඞඞඞඞඞ")
         await channel.send(sus_img)
 
