@@ -1,24 +1,27 @@
 import asyncio
-from time import sleep
-from discord.ext import commands
-
-# from dis_snek import Snake, Button, ButtonStyles, CommandTypes, context_menu, message_command, listen
+from unicodedata import name
+from discord.ext import commands, tasks
 import random
+from discord import utils
 import os
+
 from dotenv import load_dotenv
 import re
 from datetime import date, datetime
 from babel.dates import format_date
 import json
-
+from time import sleep
 import discord
 
 # from keep_alive import keep_alive
+from random import choice
+from discord.utils import get
+from discord.ext.tasks import loop
 
 load_dotenv()
 intents = discord.Intents.default()
 intents.members = True
-bot = commands.Bot(command_prefix="?", intents=intents)
+bot = commands.Bot(command_prefix="!", intents=intents)
 
 playingStatus = [
     "Bloons TD 6",
@@ -36,8 +39,6 @@ playingStatus = [
 watchingStatus = ["Youtube", "Twitch", "the stock market", "birds", "Anime"]
 
 unedited_ndaytext = None
-main_channel = None
-mod_channel = None
 
 
 @bot.event
@@ -137,7 +138,6 @@ async def on_member_remove(member):
 async def on_message(message):
     if message.author.bot and (message.author != bot.user):
         await message.add_reaction("👍")
-
     if message.content == "!vd":
         today = date.today().strftime("%m-%d")
         channel = message.channel
@@ -191,7 +191,7 @@ async def on_message(message):
         sleep(0.5)
         await channel.send(embed=embed)
 
-    if message.content.startswith("vote"):
+    if message.content.startswith("$"):
         emojiup = "✅"
         emojidown = "❌"
         emoji1 = "1️⃣"
@@ -199,7 +199,7 @@ async def on_message(message):
         emoji3 = "3️⃣"
         emoji4 = "4️⃣"
         emoji5 = "5️⃣"
-        if message.content.startswith("vote0 "):
+        if message.content.startswith("$ "):
             await message.add_reaction(emojiup)
             await message.add_reaction(emojidown)
         elif message.content.startswith("$2 "):
