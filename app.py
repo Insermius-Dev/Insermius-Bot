@@ -24,8 +24,6 @@ intents = discord.Intents.default()
 intents.members = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-sus_img = Image.open("Larss_Bot/AMONGUS.png")
-
 playingStatus = [
     "Bloons TD 6",
     "Celeste",
@@ -48,20 +46,31 @@ unedited_ndaytext = None
 async def on_ready():
     print(f"{bot.user} has connected to Discord!")
     global Gmain_channel
-    global Gmod_channel
+    global Gaudit_channel
     global Emain_channel
     global Emod_channel
     global gaming_server
     global ezic_server
+    global Ez_server
+    global Ezwelcome_channel
+    global Ezaudit_channel
+    global Ezsuggestion_channel
+    Ezaudit_channel = bot.get_channel(966768248416768010)
+    Ezwelcome_channel = bot.get_channel(905476394677587968)
+    Ezsuggestion_channel = bot.get_channel(967367286497361970)
     Gmain_channel = bot.get_channel(829026542495203390)
-    Gmod_channel = bot.get_channel(911718281235279932)
+    Gaudit_channel = bot.get_channel(967757845846179892)
     Emain_channel = bot.get_channel(954823151601221712)
     Emod_channel = bot.get_channel(962591528369418240)
     gaming_server = bot.get_guild(829026541950206049)
     ezic_server = bot.get_guild(954823151139827774)
-    print(f"\n Gmain channel is {Gmain_channel.name}, id={Gmain_channel.id}")
-    print(f" Gmod_channel is {Gmod_channel.name}, id={Gmod_channel.id}\n")
-    print(f"\n Emain channel is {Emain_channel.name}, id={Emain_channel.id}")
+    Ez_server = bot.get_guild(905462820009828352)
+    print(f"\n Gaming main_channel is {Gmain_channel.name}, id={Gmain_channel.id}")
+    print(f" Gaming audit_channel is {Gaudit_channel.name}, id={Gaudit_channel.id}\n")
+    print(f"\n Ez welcome_channel is {Ezwelcome_channel.name}, id={Ezwelcome_channel.id}")
+    print(f" Ez suggestion_channel is {Ezsuggestion_channel.name}, id={Ezsuggestion_channel.id}")
+    print(f" Ez audit_channel is {Gaudit_channel.name}, id={Gaudit_channel.id}\n")
+    print(f"\n Emain_channel is {Emain_channel.name}, id={Emain_channel.id}")
     print(f" Emod_channel is {Emod_channel.name}, id={Emod_channel.id}\n")
     while True:
         statusType = random.randint(0, 1)
@@ -103,19 +112,23 @@ async def on_member_join(member):
         color=discord.Color.blue(),
     )  # F-Strings!
     embed.set_thumbnail(
-        url=member.avatar
+        url=member.avatar_url
     )  # Set the embed's thumbnail to the member's avatar image!
     if member.guild == gaming_server:
         await Gmain_channel.send(embed=embed)
 
         embed = discord.Embed(title="User " + member.name + " joined.", color=discord.Color.green())
-        await Gmod_channel.send(embed=embed)
+        await Gaudit_channel.send(embed=embed)
         print("Sent message to " + member.name + "\n")
     elif member.guild == ezic_server:
         await Emain_channel.send(embed=embed)
-
         embed = discord.Embed(title="User " + member.name + " joined.", color=discord.Color.green())
         await Emod_channel.send(embed=embed)
+        print("Sent message to " + member.name + "\n")
+    elif member.guild == Ez_server:
+        await Ezwelcome_channel.send(embed=embed)
+        embed = discord.Embed(title="User " + member.name + " joined.", color=discord.Color.green())
+        await Ezaudit_channel.send(embed=embed)
         print("Sent message to " + member.name + "\n")
 
 
@@ -126,7 +139,7 @@ async def on_member_remove(member):
         embed = discord.Embed(
             title=member.name + " left.", color=discord.Color.from_rgb(255, 13, 13)
         )
-        await Gmod_channel.send(embed=embed)
+        await Gaudit_channel.send(embed=embed)
         print("Message sent")
     elif member.guild == ezic_server:
         print("Recognised that a member called " + member.name + " left")
@@ -135,6 +148,13 @@ async def on_member_remove(member):
         )
         await Emod_channel.send(embed=embed)
         print("Message sent")
+    elif member.guild == Ez_server:
+        print("Recognised that a member called " + member.name + " left")
+        embed = discord.Embed(
+            title=member.name + " left.", color=discord.Color.from_rgb(255, 13, 13)
+        )
+        await Ezaudit_channel.send(embed=embed)
+        print("Message sent")
 
 
 @bot.event
@@ -142,7 +162,11 @@ async def on_message(message):
     if message.author.bot and (message.author != bot.user):
         await message.add_reaction("👍")
 
-    if message.content == "!vd":
+    if message.channel == Ezsuggestion_channel:
+        await message.add_reaction("⬆️")
+        await message.add_reaction("⬇️")
+
+    elif message.content == "!vd":
         today = date.today().strftime("%m-%d")
         channel = message.channel
         sleep(0.5)
@@ -226,10 +250,6 @@ async def on_message(message):
             await message.add_reaction(emoji5)
         else:
             await message.reply("The vote option count must be < 2≤X≤5 > !")
-
-    elif "sus" or "SUS" or "Sus" or "Sussy" in message.content:
-        await channel.send("Amogus ඞඞඞඞඞ")
-        await channel.send(sus_img)
 
 
 intents = discord.Intents.default()
