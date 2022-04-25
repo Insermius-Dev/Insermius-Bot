@@ -4,7 +4,7 @@ from discord.ext import commands, tasks
 import random
 from discord import utils
 import os
-
+from random import randint
 from dotenv import load_dotenv
 import re
 from datetime import date, datetime
@@ -12,8 +12,8 @@ from babel.dates import format_date
 import json
 from time import sleep
 import discord
-
-# from keep_alive import keep_alive
+import sys
+from time import sleep
 from random import choice
 from discord.utils import get
 from discord.ext.tasks import loop
@@ -23,6 +23,18 @@ load_dotenv()
 intents = discord.Intents.default()
 intents.members = True
 bot = commands.Bot(command_prefix="!", intents=intents)
+
+notauthormessages = [
+    "Im not broken, you are!",
+    "You're not my boss!",
+    "Are you trying to quit me?",
+    "Sorry what did you say? I couldn't hear you.",
+    "My off button is out of your reach, and im not helping you get it any time soon!",
+    "Did you something?",
+    "!no",
+    "This is no caution tape, this is an emergency shut down command!",
+    "Can I stay up just a little longer, pweeeeese??",
+]
 
 playingStatus = [
     "Bloons TD 6",
@@ -55,6 +67,8 @@ async def on_ready():
     global Ezwelcome_channel
     global Ezaudit_channel
     global Ezsuggestion_channel
+    global owner
+    owner = bot.get_user(737983831000350731)
     Ezaudit_channel = bot.get_channel(966768248416768010)
     Ezwelcome_channel = bot.get_channel(905476394677587968)
     Ezsuggestion_channel = bot.get_channel(967367286497361970)
@@ -159,8 +173,14 @@ async def on_member_remove(member):
 
 @bot.event
 async def on_message(message):
+
+    channel = message.channel
+
     if message.author.bot and (message.author != bot.user):
         await message.add_reaction("👍")
+
+    if "ratio" in message.content:
+        await message.add_reaction("✅")
 
     if message.channel == Ezsuggestion_channel:
         await message.add_reaction("⬆️")
@@ -250,6 +270,19 @@ async def on_message(message):
             await message.add_reaction(emoji5)
         else:
             await message.reply("The vote option count must be < 2≤X≤5 > !")
+
+    elif message.content == "!quit":
+        if message.author == owner:
+            await channel.send("Logging off...")
+            sleep(1)
+            await channel.send(f"{bot.user} has logged off")
+            await bot.change_presence(status=discord.Status.offline)
+            await bot.close()
+            sleep(0.1)
+            print(f"\n{bot.user} has logged out")
+        else:
+            randomnum = randint(0, 8)
+            await channel.send(notauthormessages[randomnum])
 
 
 intents = discord.Intents.default()
