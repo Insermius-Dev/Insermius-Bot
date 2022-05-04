@@ -18,9 +18,11 @@ from random import choice
 from discord.utils import get
 from discord.ext.tasks import loop
 from PIL import Image
+from discord.utils import get
 
 load_dotenv()
 intents = discord.Intents.default()
+intents.presences = True
 intents.members = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 
@@ -59,6 +61,7 @@ async def on_ready():
     print(f"{bot.user} has connected to Discord!")
     global Gmain_channel
     global Gaudit_channel
+    global Gsuggestion_channel
     global Emain_channel
     global Emod_channel
     global gaming_server
@@ -74,12 +77,14 @@ async def on_ready():
     Ezsuggestion_channel = bot.get_channel(967367286497361970)
     Gmain_channel = bot.get_channel(829026542495203390)
     Gaudit_channel = bot.get_channel(967757845846179892)
+    Gsuggestion_channel = bot.get_channel(968944421481623642)
     Emain_channel = bot.get_channel(954823151601221712)
     Emod_channel = bot.get_channel(962591528369418240)
     gaming_server = bot.get_guild(829026541950206049)
     ezic_server = bot.get_guild(954823151139827774)
     Ez_server = bot.get_guild(905462820009828352)
     print(f"\n Gaming main_channel is {Gmain_channel.name}, id={Gmain_channel.id}")
+    print(f" Gaming suggestion_channel is {Gsuggestion_channel.name}, id={Gsuggestion_channel.id}")
     print(f" Gaming audit_channel is {Gaudit_channel.name}, id={Gaudit_channel.id}\n")
     print(f"\n Ez welcome_channel is {Ezwelcome_channel.name}, id={Ezwelcome_channel.id}")
     print(f" Ez suggestion_channel is {Ezsuggestion_channel.name}, id={Ezsuggestion_channel.id}")
@@ -147,6 +152,45 @@ async def on_member_join(member):
 
 
 @bot.event
+async def on_member_update(prev, cur):
+
+    try:
+        useractivity = cur.activity.name.lower()
+    except:
+        useractivity = None
+
+    Gamer_role = gaming_server.get_role(969266703039070278)
+
+    games = [
+        "valorant",
+        "minecraft",
+        "osu!",
+        "krunker",
+        "jsb",
+        "fortnite",
+        "bloons battles",
+        "aim lab",
+    ]
+
+    def showuseractiv():
+        try:
+            print(f"{cur.name} is playing {useractivity}")
+            asyncio.sleep(3)
+        except:
+            return
+
+    showuseractiv
+
+    if cur.activity and useractivity in games:
+        try:
+            await cur.add_roles(Gamer_role)
+            print(f"Gave role to {cur.name}")
+            useractivity = None
+        except:
+            return
+
+
+@bot.event
 async def on_member_remove(member):
     if member.guild == gaming_server:
         print("Recognised that a member called " + member.name + " left")
@@ -173,8 +217,42 @@ async def on_member_remove(member):
 
 @bot.event
 async def on_message(message):
-
     channel = message.channel
+
+    if message.content == "!cf":
+        randomnumber = randint(1, 2)
+        if randomnumber == 1:
+            embed = discord.Embed(
+                title="Heads!",
+                description=message.author.name + " flipped heads.",
+                color=discord.Color.gold(),
+            )
+            embed.set_thumbnail(url="https://c.tenor.com/pPYpISB14vwAAAAM/coin.gif")
+            await channel.send(embed=embed)
+        elif randomnumber == 2:
+            embed = discord.Embed(
+                title="Tails!",
+                description=message.author.name + " flipped tails.",
+                color=discord.Color.gold(),
+            )
+            embed.set_thumbnail(url="https://c.tenor.com/pPYpISB14vwAAAAM/coin.gif")
+            await channel.send(embed=embed)
+
+    if message.content == "!help":
+        embed = discord.Embed(
+            title="Commands",
+            description="""
+            `!cf` - Coin flip
+            `!vd` - Todays namedays
+            `!vd <name>` - Name holders nameday
+            `<message> $` - voting system
+            `<message> $<2 - 5>` - voting system with options
+            `!quit` - disables bot (emergency use only)
+            """,
+            color=discord.Color.blue(),
+        )
+
+        await channel.send(embed=embed)
 
     if message.author.bot and (message.author != bot.user):
         await message.add_reaction("👍")
@@ -183,6 +261,10 @@ async def on_message(message):
         await message.add_reaction("✅")
 
     if message.channel == Ezsuggestion_channel:
+        await message.add_reaction("⬆️")
+        await message.add_reaction("⬇️")
+
+    if message.channel == Gsuggestion_channel:
         await message.add_reaction("⬆️")
         await message.add_reaction("⬇️")
 
@@ -239,44 +321,43 @@ async def on_message(message):
         sleep(0.5)
         await channel.send(embed=embed)
 
-    elif message.content.startswith("$"):
-        emojiup = "✅"
-        emojidown = "❌"
-        emoji1 = "1️⃣"
-        emoji2 = "2️⃣"
-        emoji3 = "3️⃣"
-        emoji4 = "4️⃣"
-        emoji5 = "5️⃣"
-        if message.content.startswith("$ "):
-            await message.add_reaction(emojiup)
-            await message.add_reaction(emojidown)
-        elif message.content.startswith("$2 "):
-            await message.add_reaction(emoji1)
-            await message.add_reaction(emoji2)
-        elif message.content.startswith("$3 "):
-            await message.add_reaction(emoji1)
-            await message.add_reaction(emoji2)
-            await message.add_reaction(emoji3)
-        elif message.content.startswith("$4 "):
-            await message.add_reaction(emoji1)
-            await message.add_reaction(emoji2)
-            await message.add_reaction(emoji3)
-            await message.add_reaction(emoji4)
-        elif message.content.startswith("$5 "):
-            await message.add_reaction(emoji1)
-            await message.add_reaction(emoji2)
-            await message.add_reaction(emoji3)
-            await message.add_reaction(emoji4)
-            await message.add_reaction(emoji5)
-        else:
-            await message.reply("The vote option count must be < 2≤X≤5 > !")
+    emojiup = "✅"
+    emojidown = "❌"
+    emoji1 = "1️⃣"
+    emoji2 = "2️⃣"
+    emoji3 = "3️⃣"
+    emoji4 = "4️⃣"
+    emoji5 = "5️⃣"
+    if message.content.endswith("$"):
+        await message.add_reaction(emojiup)
+        await message.add_reaction(emojidown)
+    elif message.content.endswith("$2"):
+        await message.add_reaction(emoji1)
+        await message.add_reaction(emoji2)
+    elif message.content.endswith("$3"):
+        await message.add_reaction(emoji1)
+        await message.add_reaction(emoji2)
+        await message.add_reaction(emoji3)
+    elif message.content.endswith("$4"):
+        await message.add_reaction(emoji1)
+        await message.add_reaction(emoji2)
+        await message.add_reaction(emoji3)
+        await message.add_reaction(emoji4)
+    elif message.content.endswith("$5"):
+        await message.add_reaction(emoji1)
+        await message.add_reaction(emoji2)
+        await message.add_reaction(emoji3)
+        await message.add_reaction(emoji4)
+        await message.add_reaction(emoji5)
 
     elif message.content == "!quit":
         if message.author == owner:
             await channel.send("Logging off...")
             sleep(1)
-            await channel.send(f"{bot.user} has logged off")
+            await bot.change_presence(status=discord.Status.idle)
+            sleep(1)
             await bot.change_presence(status=discord.Status.offline)
+            await channel.send(f"{bot.user} has logged off")
             await bot.close()
             sleep(0.1)
             print(f"\n{bot.user} has logged out")
