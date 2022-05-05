@@ -54,11 +54,13 @@ playingStatus = [
 watchingStatus = ["Youtube", "Twitch", "the stock market", "birds", "Anime"]
 
 unedited_ndaytext = None
+defenitionmade = False
 
 
 @bot.event
 async def on_ready():
     print(f"{bot.user} has connected to Discord!")
+    # channel and user globals
     global Gmain_channel
     global Gaudit_channel
     global Gsuggestion_channel
@@ -71,6 +73,14 @@ async def on_ready():
     global Ezaudit_channel
     global Ezsuggestion_channel
     global owner
+    # gaming globals
+    global defenitionmade
+    global gamer_role
+    global minecraft_role
+    global valorant_role
+    global krunker_role
+    global osu_role
+    # channels and users
     owner = bot.get_user(737983831000350731)
     Ezaudit_channel = bot.get_channel(966768248416768010)
     Ezwelcome_channel = bot.get_channel(905476394677587968)
@@ -83,6 +93,19 @@ async def on_ready():
     gaming_server = bot.get_guild(829026541950206049)
     ezic_server = bot.get_guild(954823151139827774)
     Ez_server = bot.get_guild(905462820009828352)
+    # gaming roles
+    gamer_role = gaming_server.get_role(969266703039070278)
+    minecraft_role = gaming_server.get_role(969300067590762566)
+    valorant_role = gaming_server.get_role(967313889131900959)
+    krunker_role = gaming_server.get_role(969299665671577611)
+    osu_role = gaming_server.get_role(969300757302108160)
+    # print all roles and ids
+    print(f"\n gamer role is {gamer_role.name}, id={gamer_role.id}")
+    print(f" minecraft role is {minecraft_role.name}, id={minecraft_role.id}")
+    print(f" valorant role is {valorant_role.name}, id={valorant_role.id}")
+    print(f" krunker role is {krunker_role.name}, id={krunker_role.id}")
+    print(f" osu role is {osu_role.name}, id={osu_role.id}")
+    # print all channels and ids
     print(f"\n Gaming main_channel is {Gmain_channel.name}, id={Gmain_channel.id}")
     print(f" Gaming suggestion_channel is {Gsuggestion_channel.name}, id={Gsuggestion_channel.id}")
     print(f" Gaming audit_channel is {Gaudit_channel.name}, id={Gaudit_channel.id}\n")
@@ -154,40 +177,58 @@ async def on_member_join(member):
 @bot.event
 async def on_member_update(prev, cur):
 
-    try:
-        useractivity = cur.activity.name.lower()
-    except:
-        useractivity = None
-
-    Gamer_role = gaming_server.get_role(969266703039070278)
-
-    games = [
-        "valorant",
-        "minecraft",
-        "osu!",
-        "krunker",
-        "jsb",
-        "fortnite",
-        "bloons battles",
-        "aim lab",
-    ]
-
-    def showuseractiv():
-        try:
-            print(f"{cur.name} is playing {useractivity}")
-            asyncio.sleep(3)
-        except:
+    if cur.guild == gaming_server:
+        if cur == bot.user:
             return
+        else:
+            if cur.activity is None:
+                return
+            else:
+                useractivity = cur.activity.name.lower()
 
-    showuseractiv
+        games = [
+            "valorant",
+            "minecraft",
+            "osu!",
+            "krunker",
+            "jsb",
+            "fortnite",
+            "bloons battles",
+            "aim lab",
+        ]
 
-    if cur.activity and useractivity in games:
-        try:
-            await cur.add_roles(Gamer_role)
-            print(f"Gave role to {cur.name}")
-            useractivity = None
-        except:
-            return
+        if useractivity is not None:
+            if prev.activity == None:
+                print(f"{cur.name} started playing {useractivity}")
+
+        async def give_role(role, member):
+            if role in member.roles:
+                return
+            else:
+                await member.add_roles(role)
+                print(f"Gave {role.name} role to {member.name}")
+                useractivity = None
+
+        if cur.activity and useractivity == games[0]:
+            await give_role(valorant_role, cur)
+
+        if cur.activity and useractivity == games[1]:
+            await give_role(minecraft_role, cur)
+
+        if cur.activity and useractivity == games[2]:
+            await give_role(osu_role, cur)
+
+        if cur.activity and useractivity == games[3]:
+            await give_role(krunker_role, cur)
+
+        if cur.activity and useractivity in games:
+            if gamer_role in cur.roles:
+                useractivity = None
+            else:
+                await cur.add_roles(gamer_role)
+                print(f"Gave gamer role to {cur.name}")
+                useractivity = None
+                await asyncio.sleep(5)
 
 
 @bot.event
@@ -224,7 +265,7 @@ async def on_message(message):
         if randomnumber == 1:
             embed = discord.Embed(
                 title="Heads!",
-                description=message.author.name + " flipped heads.",
+                description=message.author.mention + " flipped heads.",
                 color=discord.Color.gold(),
             )
             embed.set_thumbnail(url="https://c.tenor.com/pPYpISB14vwAAAAM/coin.gif")
@@ -232,7 +273,7 @@ async def on_message(message):
         elif randomnumber == 2:
             embed = discord.Embed(
                 title="Tails!",
-                description=message.author.name + " flipped tails.",
+                description=message.author.mention + " flipped tails.",
                 color=discord.Color.gold(),
             )
             embed.set_thumbnail(url="https://c.tenor.com/pPYpISB14vwAAAAM/coin.gif")
