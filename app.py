@@ -80,6 +80,11 @@ winningConditions = [
 async def on_ready():
     print(f"{bot.user} has connected to Discord!")
     # channel and user globals
+    global test_server
+    global testsuggestion_channel
+    global testmember_role
+    global test_audit
+    global testmain_channel
     global Gmain_channel
     global Gaudit_channel
     global Gsuggestion_channel
@@ -94,12 +99,21 @@ async def on_ready():
     global owner
     # gaming globals
     global defenitionmade
-    global gamer_role
-    global minecraft_role
-    global valorant_role
-    global krunker_role
-    global osu_role
+    global Ggamer_role
+    global Gminecraft_role
+    global Gvalorant_role
+    global Gkrunker_role
+    global Gosu_role
+    global Groblox_role
+    global Ezvalorant_role
+    global Ezgaming_role
+    global Ezminecraft_role
+    global Ezosu_role
     # channels and users
+    test_server = bot.get_guild(974354202430169139)
+    testsuggestion_channel = bot.get_channel(974360212033110106)
+    test_audit = bot.get_channel(974361855952834621)
+    testmain_channel = bot.get_channel(974354203583606836)
     owner = bot.get_user(737983831000350731)
     gaming_server = bot.get_guild(829026541950206049)
     Ezaudit_channel = bot.get_channel(966768248416768010)
@@ -112,18 +126,19 @@ async def on_ready():
     Emod_channel = bot.get_channel(962591528369418240)
     ezic_server = bot.get_guild(954823151139827774)
     Ez_server = bot.get_guild(905462820009828352)
-    # gaming roles
-    gamer_role = gaming_server.get_role(969266703039070278)
-    minecraft_role = gaming_server.get_role(969300067590762566)
-    valorant_role = gaming_server.get_role(967313889131900959)
-    krunker_role = gaming_server.get_role(969299665671577611)
-    osu_role = gaming_server.get_role(969300757302108160)
-    # print all roles and ids
-    print(f"\n gamer role is {gamer_role.name}, id={gamer_role.id}")
-    print(f" minecraft role is {minecraft_role.name}, id={minecraft_role.id}")
-    print(f" valorant role is {valorant_role.name}, id={valorant_role.id}")
-    print(f" krunker role is {krunker_role.name}, id={krunker_role.id}")
-    print(f" osu role is {osu_role.name}, id={osu_role.id}")
+    # gaming server gaming roles
+    testmember_role = test_server.get_role(974360634663768085)
+    Ggamer_role = gaming_server.get_role(969266703039070278)
+    Gminecraft_role = gaming_server.get_role(969300067590762566)
+    Gvalorant_role = gaming_server.get_role(967313889131900959)
+    Gkrunker_role = gaming_server.get_role(969299665671577611)
+    Gosu_role = gaming_server.get_role(969300757302108160)
+    Groblox_role = gaming_server.get_role(973917832930811914)
+    # ez server gaming roles
+    Ezvalorant_role = Ez_server.get_role(973944584914731030)
+    Ezgaming_role = Ez_server.get_role(973945427760132186)
+    Ezminecraft_role = Ez_server.get_role(973982347928145940)
+    Ezosu_role = Ez_server.get_role(973993664953081856)
     # print all channels and ids
     print(f"\n Gaming main_channel is {Gmain_channel.name}, id={Gmain_channel.id}")
     print(f" Gaming suggestion_channel is {Gsuggestion_channel.name}, id={Gsuggestion_channel.id}")
@@ -189,34 +204,42 @@ async def on_member_join(member):
         embed = discord.Embed(title="User " + member.name + " joined.", color=discord.Color.green())
         await Ezaudit_channel.send(embed=embed)
         print("Sent message to " + member.name + "\n")
+    elif member.guild == test_server:
+        await testmain_channel.send(embed=embed)
+        embed = discord.Embed(title="User " + member.name + " joined.", color=discord.Color.green())
+        await test_audit.send(embed=embed)
+        await member.add_roles(testmember_role)
+        print("Sent message to " + member.name + "\n")
 
 
 @bot.event
 async def on_member_update(prev, cur):
 
-    if cur.guild == gaming_server:
-        if cur == bot.user:
+    if cur == bot.user:
+        return
+    else:
+        if cur.activity is None:
             return
         else:
-            if cur.activity is None:
-                return
-            else:
-                useractivity = cur.activity.name.lower()
+            useractivity = cur.activity.name.lower()
 
-        games = [
-            "valorant",
-            "minecraft",
-            "osu!",
-            "krunker",
-            "jsb",
-            "fortnite",
-            "bloons battles",
-            "aim lab",
-        ]
+    if useractivity is not None:
+        if prev.activity is None:
+            print(f"{cur.name} started playing {useractivity}")
 
-        if useractivity is not None:
-            if prev.activity is None:
-                print(f"{cur.name} started playing {useractivity}")
+    games = [
+        "valorant",
+        "minecraft",
+        "osu!",
+        "krunker",
+        "roblox",
+        "just shapes and beats",
+        "fortnite",
+        "bloons battles",
+        "aim lab",
+    ]
+
+    if cur.guild == Ez_server:
 
         async def give_role(role, member):
             if role in member.roles:
@@ -227,22 +250,53 @@ async def on_member_update(prev, cur):
                 useractivity = None
 
         if cur.activity and useractivity == games[0]:
-            await give_role(valorant_role, cur)
+            await give_role(Ezvalorant_role, cur)
 
         if cur.activity and useractivity == games[1]:
-            await give_role(minecraft_role, cur)
+            await give_role(Ezminecraft_role, cur)
 
         if cur.activity and useractivity == games[2]:
-            await give_role(osu_role, cur)
-
-        if cur.activity and useractivity == games[3]:
-            await give_role(krunker_role, cur)
+            await give_role(Ezosu_role, cur)
 
         if cur.activity and useractivity in games:
-            if gamer_role in cur.roles:
+            if Ezgaming_role in cur.roles:
                 useractivity = None
             else:
-                await cur.add_roles(gamer_role)
+                await cur.add_roles(Ezgaming_role)
+                print(f"Gave gamer role to {cur.name}")
+                useractivity = None
+                await asyncio.sleep(5)
+
+    if cur.guild == gaming_server:
+
+        async def give_role(role, member):
+            if role in member.roles:
+                return
+            else:
+                await member.add_roles(role)
+                print(f"Gave {role.name} role to {member.name}")
+                useractivity = None
+
+        if cur.activity and useractivity == games[0]:
+            await give_role(Gvalorant_role, cur)
+
+        if cur.activity and useractivity == games[1]:
+            await give_role(Gminecraft_role, cur)
+
+        if cur.activity and useractivity == games[2]:
+            await give_role(Gosu_role, cur)
+
+        if cur.activity and useractivity == games[3]:
+            await give_role(Gkrunker_role, cur)
+
+        if cur.activity and useractivity == games[4]:
+            await give_role(Groblox_role, cur)
+
+        if cur.activity and useractivity in games:
+            if Ggamer_role in cur.roles:
+                useractivity = None
+            else:
+                await cur.add_roles(Ggamer_role)
                 print(f"Gave gamer role to {cur.name}")
                 useractivity = None
                 await asyncio.sleep(5)
@@ -290,32 +344,10 @@ async def calculate(ctx, operation):
 async def on_message(message):
     channel = message.channel
 
-    if message.content == "!cf":
-        randomnumber = randint(1, 2)
-        if randomnumber == 1:
-            embed = discord.Embed(
-                title="Heads!",
-                description=message.author.mention + " flipped heads.",
-                color=discord.Color.gold(),
-            )
-            embed.set_thumbnail(url="https://c.tenor.com/pPYpISB14vwAAAAM/coin.gif")
-            await channel.send(embed=embed)
-        elif randomnumber == 2:
-            embed = discord.Embed(
-                title="Tails!",
-                description=message.author.mention + " flipped tails.",
-                color=discord.Color.gold(),
-            )
-            embed.set_thumbnail(url="https://c.tenor.com/pPYpISB14vwAAAAM/coin.gif")
-            await channel.send(embed=embed)
-
     if message.content == "!help":
         embed = discord.Embed(
             title="Commands",
             description="""
-`!cf` - Coin flip
-`!vd` - Todays namedays
-`!vd <name>` - Name holders nameday
 `<message> $` - voting system
 `<message> $<2 - 5>` - voting system with options
 `!quit` - disables bot (emergency use only)
@@ -335,62 +367,13 @@ async def on_message(message):
         await message.add_reaction("⬆️")
         await message.add_reaction("⬇️")
 
-    if message.channel == Gsuggestion_channel:
+    if message.channel == testsuggestion_channel:
         await message.add_reaction("⬆️")
         await message.add_reaction("⬇️")
 
-    elif message.content == "!vd":
-        today = date.today().strftime("%m-%d")
-        channel = message.channel
-        sleep(0.5)
-        embed = discord.Embed(
-            title="Šodien vārda dienu svin:",
-            description=", ".join(namedays[today]),
-            color=discord.Color.from_rgb(255, 13, 13),
-        )
-        embed.set_thumbnail(url="https://freeiconshop.com/wp-content/uploads/edd/calendar-flat.png")
-        await channel.send(embed=embed)
-
-    elif message.content.startswith("!vd "):
-        matches = re.search(r"\!vd (\w+)", message.content)
-        if matches:
-            find_name = matches.group(1)
-            find_name = find_name[0].upper() + find_name[1:]
-        else:
-            return
-
-        nday = None
-        for k in namedays.keys():
-            v = namedays[k] + namedays_ext[k]
-            if find_name in v:
-                nday = datetime.strptime("2000-" + k, "%Y-%m-%d").date()
-                nday_text = format_date(date=nday, format="d. MMMM", locale="lv")
-                if nday_text.endswith("is"):
-                    unedited_ndaytext = nday_text
-                    nday_text = nday_text[:-2] + "ī"
-                else:
-                    unedited_ndaytext = nday_text
-                    nday_text = nday_text[:-1] + "ā"
-                embed = discord.Embed(
-                    title=f"{unedited_ndaytext}",
-                    description=f"{find_name} vārda dienu svin {nday_text}",
-                    color=discord.Color.from_rgb(255, 13, 13),
-                )
-                embed.set_thumbnail(
-                    url="https://freeiconshop.com/wp-content/uploads/edd/calendar-flat.png"
-                )
-                break
-        if nday is None:
-            embed = discord.Embed(
-                title="Error_",
-                description=f"Kalendārā neatradu '{find_name}'",
-                color=discord.Color.from_rgb(255, 13, 13),
-            )
-            embed.set_thumbnail(url="https://hotemoji.com/images/emoji/g/14kioe01bpckzg.png")
-
-        channel = message.channel
-        sleep(0.5)
-        await channel.send(embed=embed)
+    if message.channel == Gsuggestion_channel:
+        await message.add_reaction("⬆️")
+        await message.add_reaction("⬇️")
 
     emojiup = "✅"
     emojidown = "❌"
@@ -442,7 +425,6 @@ async def on_message(message):
 @bot.command(name="vd")
 async def nameday(ctx):
     today = date.today().strftime("%m-%d")
-    sleep(0.5)
     embed = discord.Embed(
         title="Šodien vārda dienu svin:",
         description=", ".join(namedays[today]),
@@ -450,6 +432,63 @@ async def nameday(ctx):
     )
     embed.set_thumbnail(url="https://freeiconshop.com/wp-content/uploads/edd/calendar-flat.png")
     await ctx.send(embed=embed)
+
+
+@bot.command(name="cf")
+async def coinflip(ctx):
+    randomnumber = randint(1, 2)
+    if randomnumber == 1:
+        embed = discord.Embed(
+            title="Heads!",
+            description=ctx.author.mention + " flipped heads.",
+            color=discord.Color.gold(),
+        )
+        embed.set_thumbnail(url="https://c.tenor.com/pPYpISB14vwAAAAM/coin.gif")
+        await ctx.send(embed=embed)
+    elif randomnumber == 2:
+        embed = discord.Embed(
+            title="Tails!",
+            description=ctx.author.mention + " flipped tails.",
+            color=discord.Color.gold(),
+        )
+        embed.set_thumbnail(url="https://c.tenor.com/pPYpISB14vwAAAAM/coin.gif")
+        await ctx.send(embed=embed)
+
+
+@bot.command(name="getvd")
+async def getnameday(ctx, name):
+    nday = None
+    for k in namedays.keys():
+        v = namedays[k] + namedays_ext[k]
+        if name in v:
+            nday = datetime.strptime("2000-" + k, "%Y-%m-%d").date()
+            nday_text = format_date(date=nday, format="d. MMMM", locale="lv")
+            if nday_text.endswith("is"):
+                unedited_ndaytext = nday_text
+                nday_text = nday_text[:-2] + "ī"
+            else:
+                unedited_ndaytext = nday_text
+                nday_text = nday_text[:-1] + "ā"
+
+            embed = discord.Embed(
+                title=f"{unedited_ndaytext}",
+                description=f"{name} vārda dienu svin {nday_text}",
+                color=discord.Color.from_rgb(255, 13, 13),
+            )
+            embed.set_thumbnail(
+                url="https://freeiconshop.com/wp-content/uploads/edd/calendar-flat.png"
+            )
+            await ctx.send(embed=embed)
+            break
+
+    if nday is None:
+        embed = discord.Embed(
+            title="Error_",
+            description=f"Kalendārā neatradu '{name}'",
+            color=discord.Color.from_rgb(255, 13, 13),
+        )
+        embed.set_thumbnail(url="https://hotemoji.com/images/emoji/g/14kioe01bpckzg.png")
+        await ctx.send(embed=embed)
 
 
 @bot.command()
@@ -533,7 +572,6 @@ async def place(ctx, pos: int):
                         line += " " + board[x]
 
                 checkWinner(winningConditions, mark)
-                print(count)
                 if gameOver == True:
                     await ctx.send(mark + " wins!")
                 elif count >= 9:
