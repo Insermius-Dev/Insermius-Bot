@@ -11,6 +11,7 @@ import re
 from datetime import date, datetime
 from babel.dates import format_date
 import json
+import json as jason
 from time import sleep
 import discord
 import sys
@@ -85,12 +86,8 @@ async def on_ready():
     global testmember_role
     global test_audit
     global testmain_channel
-    global Gmain_channel
-    global Gaudit_channel
-    global Gsuggestion_channel
     global Emain_channel
     global Emod_channel
-    global gaming_server
     global ezic_server
     global Ez_server
     global Ezwelcome_channel
@@ -98,13 +95,18 @@ async def on_ready():
     global Ezsuggestion_channel
     global owner
     # gaming globals
+    global gaming_server
+    global Gmain_channel
+    global Gaudit_channel
+    global Gsuggestion_channel
+    # role globals
     global defenitionmade
     global Ggamer_role
     global Gminecraft_role
     global Gvalorant_role
     global Gkrunker_role
     global Gosu_role
-    global Groblox_role
+    global defenitionmade
     global Ezvalorant_role
     global Ezgaming_role
     global Ezminecraft_role
@@ -119,6 +121,7 @@ async def on_ready():
     Ezaudit_channel = bot.get_channel(966768248416768010)
     Ezwelcome_channel = bot.get_channel(905476394677587968)
     Ezsuggestion_channel = bot.get_channel(967367286497361970)
+    Gsuggestion_channel = bot.get_channel(968944421481623642)
     Gmain_channel = bot.get_channel(829026542495203390)
     Gaudit_channel = bot.get_channel(967757845846179892)
     Gsuggestion_channel = bot.get_channel(968944421481623642)
@@ -126,26 +129,27 @@ async def on_ready():
     Emod_channel = bot.get_channel(962591528369418240)
     ezic_server = bot.get_guild(954823151139827774)
     Ez_server = bot.get_guild(905462820009828352)
-    # gaming server gaming roles
+    # roles
     testmember_role = test_server.get_role(974360634663768085)
+    # gaming server gaming roles
     Ggamer_role = gaming_server.get_role(969266703039070278)
     Gminecraft_role = gaming_server.get_role(969300067590762566)
     Gvalorant_role = gaming_server.get_role(967313889131900959)
     Gkrunker_role = gaming_server.get_role(969299665671577611)
     Gosu_role = gaming_server.get_role(969300757302108160)
-    Groblox_role = gaming_server.get_role(973917832930811914)
     # ez server gaming roles
     Ezvalorant_role = Ez_server.get_role(973944584914731030)
     Ezgaming_role = Ez_server.get_role(973945427760132186)
     Ezminecraft_role = Ez_server.get_role(973982347928145940)
     Ezosu_role = Ez_server.get_role(973993664953081856)
     # print all channels and ids
-    print(f"\n Gaming main_channel is {Gmain_channel.name}, id={Gmain_channel.id}")
-    print(f" Gaming suggestion_channel is {Gsuggestion_channel.name}, id={Gsuggestion_channel.id}")
-    print(f" Gaming audit_channel is {Gaudit_channel.name}, id={Gaudit_channel.id}\n")
+    print(f"\n gamer role is {Ggamer_role.name}, id={Ggamer_role.id}")
+    print(f" minecraft role is {Gminecraft_role.name}, id={Gminecraft_role.id}")
+    print(f" valorant role is {Gvalorant_role.name}, id={Gvalorant_role.id}")
+    print(f" krunker role is {Gkrunker_role.name}, id={Gkrunker_role.id}")
+    print(f" osu role is {Gosu_role.name}, id={Gosu_role.id}")
     print(f"\n Ez welcome_channel is {Ezwelcome_channel.name}, id={Ezwelcome_channel.id}")
     print(f" Ez suggestion_channel is {Ezsuggestion_channel.name}, id={Ezsuggestion_channel.id}")
-    print(f" Ez audit_channel is {Gaudit_channel.name}, id={Gaudit_channel.id}\n")
     print(f"\n Emain_channel is {Emain_channel.name}, id={Emain_channel.id}")
     print(f" Emod_channel is {Emod_channel.name}, id={Emod_channel.id}\n")
     while True:
@@ -190,11 +194,10 @@ async def on_member_join(member):
     )  # Set the embed's thumbnail to the member's avatar image!
     if member.guild == gaming_server:
         await Gmain_channel.send(embed=embed)
-
         embed = discord.Embed(title="User " + member.name + " joined.", color=discord.Color.green())
         await Gaudit_channel.send(embed=embed)
         print("Sent message to " + member.name + "\n")
-    elif member.guild == ezic_server:
+    if member.guild == ezic_server:
         await Emain_channel.send(embed=embed)
         embed = discord.Embed(title="User " + member.name + " joined.", color=discord.Color.green())
         await Emod_channel.send(embed=embed)
@@ -210,6 +213,39 @@ async def on_member_join(member):
         await test_audit.send(embed=embed)
         await member.add_roles(testmember_role)
         print("Sent message to " + member.name + "\n")
+
+
+@bot.event
+async def on_member_remove(member):
+
+    if member.guild == gaming_server:
+        print("Recognised that a member called " + member.name + " left")
+        embed = discord.Embed(
+            title=member.name + " left.", color=discord.Color.from_rgb(255, 13, 13)
+        )
+        await Gaudit_channel.send(embed=embed)
+        print("Message sent")
+    if member.guild == ezic_server:
+        print("Recognised that a member called " + member.name + " left")
+        embed = discord.Embed(
+            title=member.name + " left.", color=discord.Color.from_rgb(255, 13, 13)
+        )
+        await Emod_channel.send(embed=embed)
+        print("Message sent")
+    elif member.guild == Ez_server:
+        print("Recognised that a member called " + member.name + " left")
+        embed = discord.Embed(
+            title=member.name + " left.", color=discord.Color.from_rgb(255, 13, 13)
+        )
+        await Ezaudit_channel.send(embed=embed)
+        print("Message sent")
+    elif member.guild == test_server:
+        print("Recognised that a member called " + member.name + " left")
+        embed = discord.Embed(
+            title=member.name + " left.", color=discord.Color.from_rgb(255, 13, 13)
+        )
+        await test_audit.send(embed=embed)
+        print("Message sent")
 
 
 @bot.event
@@ -239,6 +275,33 @@ async def on_member_update(prev, cur):
         "aim lab",
     ]
 
+    if cur.guild == gaming_server:
+
+        async def give_role(role, member):
+            if role in member.roles:
+                return
+            else:
+                await member.add_roles(role)
+                print(f"Gave {role.name} role to {member.name}")
+                useractivity = None
+
+        if cur.activity and useractivity == games[0]:
+            await give_role(Gvalorant_role, cur)
+        if cur.activity and useractivity == games[1]:
+            await give_role(Gminecraft_role, cur)
+        if cur.activity and useractivity == games[2]:
+            await give_role(Gosu_role, cur)
+        if cur.activity and useractivity == games[3]:
+            await give_role(Gkrunker_role, cur)
+        if cur.activity and useractivity in games:
+            if Ggamer_role in cur.roles:
+                useractivity = None
+            else:
+                await cur.add_roles(Ggamer_role)
+                print(f"Gave gamer role to {cur.name}")
+                useractivity = None
+                await asyncio.sleep(5)
+
     if cur.guild == Ez_server:
 
         async def give_role(role, member):
@@ -266,65 +329,6 @@ async def on_member_update(prev, cur):
                 print(f"Gave gamer role to {cur.name}")
                 useractivity = None
                 await asyncio.sleep(5)
-
-    if cur.guild == gaming_server:
-
-        async def give_role(role, member):
-            if role in member.roles:
-                return
-            else:
-                await member.add_roles(role)
-                print(f"Gave {role.name} role to {member.name}")
-                useractivity = None
-
-        if cur.activity and useractivity == games[0]:
-            await give_role(Gvalorant_role, cur)
-
-        if cur.activity and useractivity == games[1]:
-            await give_role(Gminecraft_role, cur)
-
-        if cur.activity and useractivity == games[2]:
-            await give_role(Gosu_role, cur)
-
-        if cur.activity and useractivity == games[3]:
-            await give_role(Gkrunker_role, cur)
-
-        if cur.activity and useractivity == games[4]:
-            await give_role(Groblox_role, cur)
-
-        if cur.activity and useractivity in games:
-            if Ggamer_role in cur.roles:
-                useractivity = None
-            else:
-                await cur.add_roles(Ggamer_role)
-                print(f"Gave gamer role to {cur.name}")
-                useractivity = None
-                await asyncio.sleep(5)
-
-
-@bot.event
-async def on_member_remove(member):
-    if member.guild == gaming_server:
-        print("Recognised that a member called " + member.name + " left")
-        embed = discord.Embed(
-            title=member.name + " left.", color=discord.Color.from_rgb(255, 13, 13)
-        )
-        await Gaudit_channel.send(embed=embed)
-        print("Message sent")
-    elif member.guild == ezic_server:
-        print("Recognised that a member called " + member.name + " left")
-        embed = discord.Embed(
-            title=member.name + " left.", color=discord.Color.from_rgb(255, 13, 13)
-        )
-        await Emod_channel.send(embed=embed)
-        print("Message sent")
-    elif member.guild == Ez_server:
-        print("Recognised that a member called " + member.name + " left")
-        embed = discord.Embed(
-            title=member.name + " left.", color=discord.Color.from_rgb(255, 13, 13)
-        )
-        await Ezaudit_channel.send(embed=embed)
-        print("Message sent")
 
 
 @bot.command(name="rand")
@@ -368,10 +372,6 @@ async def on_message(message):
         await message.add_reaction("⬇️")
 
     if message.channel == testsuggestion_channel:
-        await message.add_reaction("⬆️")
-        await message.add_reaction("⬇️")
-
-    if message.channel == Gsuggestion_channel:
         await message.add_reaction("⬆️")
         await message.add_reaction("⬇️")
 
@@ -619,6 +619,114 @@ async def place_error(ctx, error):
         await ctx.send("Please enter a position you would like to mark.")
     elif isinstance(error, commands.BadArgument):
         await ctx.send("Please make sure to enter an integer.")
+
+
+@bot.command()
+async def setbirthday(ctx, msg):
+    """Set a birthday."""
+    member = ctx.message.author.id
+    await ctx.send("What is your birthday? Please use MM/DD format.")
+
+    def check(user):
+        return user == ctx.message.author and user == ctx.message.channel
+
+    #   msg = await bot.wait_for("message", check=check)
+    try:
+        list = msg.split("/")
+        print(list)
+        list[0] = int(list[0])
+        list[1] = int(list[1])
+        print(list)
+        if list[0] > 13 or list[0] < 1:
+            await ctx.send("Invalid date.")
+            await ctx.send("Aborting...")
+            return
+        else:
+            pass
+
+        if list[0] in (1, 3, 5, 7, 8, 10, 12):
+            if list[1] > 31 or list[1] < 1:
+                await ctx.send("Invalid date.")
+                await ctx.send("Aborting...")
+                return
+            else:
+                pass
+        elif list[0] in (4, 6, 9, 11):
+            if list[1] > 30 or list[1] < 1:
+                await ctx.send("Invalid date.")
+                await ctx.send("Aborting...")
+                return
+            else:
+                pass
+        elif list[0] == 2:
+            if list[1] > 29 or list[1] < 1:
+                await ctx.send("Invalid date.")
+                await ctx.send("Aborting...")
+                return
+            else:
+                pass
+        else:
+            await ctx.send("Invalid date.")
+            await ctx.send("Aborting...")
+            return
+    except:
+        print("faill")
+        await ctx.send("Invalid date.")
+        await ctx.send("Aborting...")
+        return
+
+    list = msg.split("/")
+    month = list[0]
+    day = list[1]
+
+    with open("C:/Users/LarssJ/Desktop/Larss_Python_projects/Larss_Bot/birthdays.json", "r+") as f:
+        var = jason.load(f)
+        var[member] = {"month": month, "day": day}
+        jason.dump(var, f, indent=4)
+
+
+async def check_for_birthday(self):
+    await self.wait_until_ready()
+    now = datetime.datetime.now()
+    curmonth = now.month
+    curday = now.day
+
+    while not self.is_closed():
+        with open("birthdays.json", "r") as f:
+            var = jason.load(f)
+            for member in var:
+                if member["month"] == curmonth:
+                    if member["day"] == curday:
+                        try:
+                            await bot.get_user(member).send("Happy birthday!")
+                        except:
+                            pass
+                        success = False
+                        index = 0
+                        while not success:
+                            try:
+                                await test_server.channels[index].send(
+                                    f"Happy birthday to <@{member}>!"
+                                )
+                            except discord.Forbidden:
+                                index += 1
+                            except AttributeError:
+                                index += 1
+                            except IndexError:
+                                # if the server has no channels, doesn't let the bot talk, or all vc/categories
+                                pass
+                            else:
+                                success = True
+        await asyncio.sleep(86400)  # task runs every day
+
+
+@bot.command()
+@commands.has_permissions(manage_messages=True)
+async def clear(ctx, count):
+    try:
+        await ctx.channel.purge(limit=int(count) + 1)
+    except:
+        await ctx.send("Please input a string!")
 
 
 intents = discord.Intents.default()
