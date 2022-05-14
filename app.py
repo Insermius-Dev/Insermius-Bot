@@ -346,17 +346,15 @@ async def calculate(ctx, operation):
 
 
 @bot.command()
-async def spotify(ctx, user: discord.Member = None):
-    if user is None:
-        user = ctx.author
-        pass
+async def spotify(ctx):
+    user = ctx.author
     if user.activities:
         for activity in user.activities:
             if isinstance(activity, Spotify):
                 embed = discord.Embed(
                     title=f"{user.name}'s Spotify",
                     description="Listening to {}".format(activity.title),
-                    color=0xC902FF,
+                    color=0x36B357,
                 )
                 embed.set_thumbnail(url=activity.album_cover_url)
                 embed.add_field(name="Artist", value=activity.artist)
@@ -366,7 +364,7 @@ async def spotify(ctx, user: discord.Member = None):
         embed = discord.Embed(
             title=f"{user.name}'s Spotify",
             description="Currently not listening anything",
-            color=0xC902FF,
+            color=0x36B357,
         )
         await ctx.send(embed=embed)
 
