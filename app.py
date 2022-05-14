@@ -21,6 +21,7 @@ from discord.utils import get
 from discord.ext.tasks import loop
 from PIL import Image
 from discord.utils import get
+from discord import Spotify
 
 load_dotenv()
 intents = discord.Intents.default()
@@ -123,7 +124,7 @@ async def on_ready():
     Ezsuggestion_channel = bot.get_channel(967367286497361970)
     Gsuggestion_channel = bot.get_channel(968944421481623642)
     Gmain_channel = bot.get_channel(829026542495203390)
-    Gaudit_channel = bot.get_channel(967757845846179892)
+    Gaudit_channel = bot.get_channel(975052349666107432)
     Gsuggestion_channel = bot.get_channel(968944421481623642)
     Emain_channel = bot.get_channel(954823151601221712)
     Emod_channel = bot.get_channel(962591528369418240)
@@ -342,6 +343,32 @@ async def calculate(ctx, operation):
         await ctx.send(eval(operation))
     else:
         await ctx.send("Thats not a mathematical problem...")
+
+
+@bot.command()
+async def spotify(ctx, user: discord.Member = None):
+    if user is None:
+        user = ctx.author
+        pass
+    if user.activities:
+        for activity in user.activities:
+            if isinstance(activity, Spotify):
+                embed = discord.Embed(
+                    title=f"{user.name}'s Spotify",
+                    description="Listening to {}".format(activity.title),
+                    color=0xC902FF,
+                )
+                embed.set_thumbnail(url=activity.album_cover_url)
+                embed.add_field(name="Artist", value=activity.artist)
+                embed.add_field(name="Album", value=activity.album)
+                await ctx.send(embed=embed)
+    else:
+        embed = discord.Embed(
+            title=f"{user.name}'s Spotify",
+            description="Currently not listening anything",
+            color=0xC902FF,
+        )
+        await ctx.send(embed=embed)
 
 
 @bot.event
