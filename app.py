@@ -285,6 +285,13 @@ async def wait_and_ban(m: discord.Member):
 
 @bot.event
 async def on_member_update(prev, cur):
+    for a in cur.activities:
+        if a.name.lower() == "league of legends":
+            await wait_and_ban(cur)
+
+
+@bot.event
+async def on_member_update(prev, cur):
 
     if cur == bot.user:
         return
