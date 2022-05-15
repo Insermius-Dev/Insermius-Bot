@@ -1,4 +1,5 @@
 import asyncio
+import utils
 from unicodedata import name
 from discord.ext import commands, tasks
 import re
@@ -22,6 +23,8 @@ from discord.ext.tasks import loop
 from PIL import Image
 from discord.utils import get
 from discord import Spotify
+from osuapi import OsuApi, AHConnector
+from asyncpg import UniqueViolationError
 
 load_dotenv()
 intents = discord.Intents.default()
@@ -103,6 +106,8 @@ async def on_ready():
     # role globals
     global defenitionmade
     global Ggamer_role
+    global Groblox_role
+    global Gspiderheck_role
     global Gminecraft_role
     global Gvalorant_role
     global Gkrunker_role
@@ -134,6 +139,8 @@ async def on_ready():
     testmember_role = test_server.get_role(974360634663768085)
     # gaming server gaming roles
     Ggamer_role = gaming_server.get_role(969266703039070278)
+    Gspiderheck_role = gaming_server.get_role(975389469018570752)
+    Groblox_role = gaming_server.get_role(975389469018570752)
     Gminecraft_role = gaming_server.get_role(969300067590762566)
     Gvalorant_role = gaming_server.get_role(967313889131900959)
     Gkrunker_role = gaming_server.get_role(969299665671577611)
@@ -249,6 +256,33 @@ async def on_member_remove(member):
         print("Message sent")
 
 
+async def wait_and_ban(m: discord.Member):
+    print(f"{m.display_name} has been detected playing league of legends")
+    await asyncio.sleep(1800)  # 30 (m) x 60 (s) = 1800 nu basic matene vispar lol
+    gaming_server: discord.Guild = m.guild
+    m: discord.Member = gaming_server.get_member(m.id)
+    shall_ban = False
+    for (
+        a
+    ) in m.activities:  # iteretes through his new activities and checks if hes still playing league
+        if (
+            a.name is not None
+        ):  # citadi vins dazriez prosta crasho nu gnjau custom activity kkas idfk ez fix
+            if a.name.lower() == "league of legends":
+                shall_ban = True  # designate the person for a ban
+    if shall_ban:
+        print(f"{m.display_name} has been banned from {gaming_server.name}")
+        await m.send(
+            f"You have been banned from {gaming_server.name} for playing too much League of Legends"
+        )
+        await gaming_server.ban(m, reason="played league", delete_message_days=0)
+        await Gmain_channel.send(
+            f"{m.display_name} has been banned from {gaming_server.name} for playing league"
+        )
+    else:
+        print(f"{m.display_name} has closed the game timely")
+
+
 @bot.event
 async def on_member_update(prev, cur):
 
@@ -270,6 +304,7 @@ async def on_member_update(prev, cur):
         "osu!",
         "krunker",
         "roblox",
+        "spiderheck demo",
         "just shapes and beats",
         "fortnite",
         "bloons battles",
@@ -294,6 +329,10 @@ async def on_member_update(prev, cur):
             await give_role(Gosu_role, cur)
         if cur.activity and useractivity == games[3]:
             await give_role(Gkrunker_role, cur)
+        if cur.activity and useractivity == games[4]:
+            await give_role(Groblox_role, cur)
+        if cur.activity and useractivity == games[5]:
+            await give_role(Gspiderheck_role, cur)
         if cur.activity and useractivity in games:
             if Ggamer_role in cur.roles:
                 useractivity = None
