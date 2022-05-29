@@ -1,7 +1,8 @@
 import asyncio
-import utils
+import discord
 from unicodedata import name
 from discord.ext import commands, tasks
+from keep_alive import keep_alive
 import re
 import random
 from discord import utils
@@ -14,7 +15,6 @@ from babel.dates import format_date
 import json
 import json as jason
 from time import sleep
-import discord
 import sys
 from time import sleep
 from random import choice
@@ -26,11 +26,12 @@ from discord import Spotify
 from osuapi import OsuApi, AHConnector
 from asyncpg import UniqueViolationError
 
+
 load_dotenv()
 intents = discord.Intents.default()
 intents.presences = True
 intents.members = True
-bot = commands.Bot(command_prefix="!", intents=intents)
+bot = commands.Bot(command_prefix="!", intents=discord.Intents.all())
 
 notauthormessages = [
     "Im not broken, you are!",
@@ -86,8 +87,10 @@ async def on_ready():
     print(f"{bot.user} has connected to Discord!")
     # channel and user globals
     global test_server
+    global testannounce_role
     global testsuggestion_channel
     global testmember_role
+    global test_announce
     global test_audit
     global testmain_channel
     global Emain_channel
@@ -121,7 +124,9 @@ async def on_ready():
     test_server = bot.get_guild(974354202430169139)
     testsuggestion_channel = bot.get_channel(974360212033110106)
     test_audit = bot.get_channel(974361855952834621)
+    test_announce = bot.get_channel(979306543487025184)
     testmain_channel = bot.get_channel(974354203583606836)
+    testannounce_role = test_server.get_role(979447462379003964)
     owner = bot.get_user(737983831000350731)
     gaming_server = bot.get_guild(829026541950206049)
     Ezaudit_channel = bot.get_channel(966768248416768010)
@@ -150,36 +155,24 @@ async def on_ready():
     Ezgaming_role = Ez_server.get_role(973945427760132186)
     Ezminecraft_role = Ez_server.get_role(973982347928145940)
     Ezosu_role = Ez_server.get_role(973993664953081856)
-    # print all channels and ids
-    print(f"\n gamer role is {Ggamer_role.name}, id={Ggamer_role.id}")
-    print(f" minecraft role is {Gminecraft_role.name}, id={Gminecraft_role.id}")
-    print(f" valorant role is {Gvalorant_role.name}, id={Gvalorant_role.id}")
-    print(f" krunker role is {Gkrunker_role.name}, id={Gkrunker_role.id}")
-    print(f" osu role is {Gosu_role.name}, id={Gosu_role.id}")
-    print(f"\n Ez welcome_channel is {Ezwelcome_channel.name}, id={Ezwelcome_channel.id}")
-    print(f" Ez suggestion_channel is {Ezsuggestion_channel.name}, id={Ezsuggestion_channel.id}")
-    print(f"\n Emain_channel is {Emain_channel.name}, id={Emain_channel.id}")
-    print(f" Emod_channel is {Emod_channel.name}, id={Emod_channel.id}\n")
     while True:
         statusType = random.randint(0, 1)
         if statusType == 0:
             statusNum = random.randint(0, 10)
             await bot.change_presence(
-                status=discord.Status.online,
                 activity=discord.Activity(
                     type=discord.ActivityType.playing, name=playingStatus[statusNum]
                 ),
             )
-            await asyncio.sleep(600)
+            await asyncio.sleep(10)
         elif statusType == 1:
             statusNum = random.randint(0, 4)
             await bot.change_presence(
-                status=discord.Status.online,
                 activity=discord.Activity(
                     type=discord.ActivityType.watching, name=watchingStatus[statusNum]
                 ),
             )
-            await asyncio.sleep(600)
+            await asyncio.sleep(10)
 
 
 with open("data/namedays.json", encoding="utf-8") as f:
@@ -286,7 +279,9 @@ async def wait_and_ban(m: discord.Member):
 @bot.event
 async def on_member_update(prev, cur):
     for a in cur.activities:
-        if a.name.lower() == "league of legends":
+        if cur == owner:
+            return
+        elif a.name.lower() == "league of legends":
             await wait_and_ban(cur)
 
 
@@ -391,6 +386,38 @@ async def calculate(ctx, operation):
         await ctx.send("Thats not a mathematical problem...")
 
 
+@bot.command(name="ping", description="True/False do you want to be pinged for announcments")
+async def pinguser(ctx, channel, yn):
+    async def takeping():
+        if channel == test_announce:
+            if testannounce_role not in author.roles:
+                await ctx.send("You already dont have this role")
+            else:
+                await author.remove_roles(testannounce_role)
+                await ctx.send("Succesfully removed role")
+
+    async def giveping():
+        if channel == test_announce:
+            if testannounce_role in author.roles:
+                await ctx.send("You already have this role")
+            else:
+                await author.add_roles(testannounce_role)
+                await ctx.send("Role added succesfully")
+
+    if ctx.guild == test_server:
+        global author
+        author = ctx.author
+        if channel == "server-announcments" or "server":
+            channel = test_announce
+        else:
+            await ctx.send("please write a correct channel name!")
+            return
+        if yn == "False" or yn == "no":
+            await takeping()
+        elif yn == "True" or yn == "yes":
+            await giveping()
+
+
 @bot.command()
 async def spotify(ctx):
     user = ctx.author
@@ -493,6 +520,28 @@ async def on_message(message):
     await bot.process_commands(message)
 
 
+@bot.command(name="role")
+async def getroleowners(ctx, rolename):
+    memberlist = None
+    server = ctx.guild
+    rolelist = [
+        "gamer",
+        "valorant",
+        "roblox",
+        "minecraft",
+        "osu",
+        "krunker",
+        "spiderheck",
+    ]
+    if server is gaming_server:
+        if rolename in rolelist:
+            if rolename == rolelist[0]:
+                for member in server:
+                    if Ggamer_role in member.roles:
+                        memberlist = len(member.name)
+        ctx.send(memberlist)
+
+
 @bot.command(name="vd")
 async def nameday(ctx):
     today = date.today().strftime("%m-%d")
@@ -507,18 +556,26 @@ async def nameday(ctx):
 
 @bot.command(name="cf")
 async def coinflip(ctx):
-    randomnumber = randint(1, 2)
+    randomnumber = randint(1, 1000)
     if randomnumber == 1:
         embed = discord.Embed(
-            title="Heads!",
+            title="Tie!",
             description=ctx.author.mention + " flipped heads.",
             color=discord.Color.gold(),
         )
         embed.set_thumbnail(url="https://c.tenor.com/pPYpISB14vwAAAAM/coin.gif")
         await ctx.send(embed=embed)
-    elif randomnumber == 2:
+    elif randomnumber >= 500:
         embed = discord.Embed(
             title="Tails!",
+            description=ctx.author.mention + " flipped tails.",
+            color=discord.Color.gold(),
+        )
+        embed.set_thumbnail(url="https://c.tenor.com/pPYpISB14vwAAAAM/coin.gif")
+        await ctx.send(embed=embed)
+    elif randomnumber <= 501:
+        embed = discord.Embed(
+            title="Heads!",
             description=ctx.author.mention + " flipped tails.",
             color=discord.Color.gold(),
         )
@@ -746,11 +803,10 @@ async def setbirthday(ctx, msg):
         await ctx.send("Aborting...")
         return
 
-    list = msg.split("/")
     month = list[0]
     day = list[1]
 
-    with open("C:/Users/LarssJ/Desktop/Larss_Python_projects/Larss_Bot/birthdays.json", "r+") as f:
+    with open("birthdays.json", "r+") as f:
         var = jason.load(f)
         var[member] = {"month": month, "day": day}
         jason.dump(var, f, indent=4)
@@ -802,6 +858,6 @@ async def clear(ctx, count):
 
 intents = discord.Intents.default()
 intents.members = True
-# keep_alive()
+keep_alive()
 secret_TOKEN = os.environ["TOKEN"]
 bot.run(secret_TOKEN)
