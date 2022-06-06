@@ -85,6 +85,9 @@ winningConditions = [
 @bot.event
 async def on_ready():
     print(f"{bot.user} has connected to Discord!")
+    # load all extensions
+    bot.load_extension("")
+    bot.load_extension("foo")
     # channel and user globals
     global test_server
     global testannounce_role
@@ -96,10 +99,6 @@ async def on_ready():
     global Emain_channel
     global Emod_channel
     global ezic_server
-    global Ez_server
-    global Ezwelcome_channel
-    global Ezaudit_channel
-    global Ezsuggestion_channel
     global owner
     # gaming globals
     global gaming_server
@@ -116,10 +115,6 @@ async def on_ready():
     global Gkrunker_role
     global Gosu_role
     global defenitionmade
-    global Ezvalorant_role
-    global Ezgaming_role
-    global Ezminecraft_role
-    global Ezosu_role
     # channels and users
     test_server = bot.get_guild(974354202430169139)
     testsuggestion_channel = bot.get_channel(974360212033110106)
@@ -129,9 +124,6 @@ async def on_ready():
     testannounce_role = test_server.get_role(979447462379003964)
     owner = bot.get_user(737983831000350731)
     gaming_server = bot.get_guild(829026541950206049)
-    Ezaudit_channel = bot.get_channel(966768248416768010)
-    Ezwelcome_channel = bot.get_channel(905476394677587968)
-    Ezsuggestion_channel = bot.get_channel(967367286497361970)
     Gsuggestion_channel = bot.get_channel(968944421481623642)
     Gmain_channel = bot.get_channel(829026542495203390)
     Gaudit_channel = bot.get_channel(975052349666107432)
@@ -139,7 +131,6 @@ async def on_ready():
     Emain_channel = bot.get_channel(954823151601221712)
     Emod_channel = bot.get_channel(962591528369418240)
     ezic_server = bot.get_guild(954823151139827774)
-    Ez_server = bot.get_guild(905462820009828352)
     # roles
     testmember_role = test_server.get_role(974360634663768085)
     # gaming server gaming roles
@@ -150,11 +141,7 @@ async def on_ready():
     Gvalorant_role = gaming_server.get_role(967313889131900959)
     Gkrunker_role = gaming_server.get_role(969299665671577611)
     Gosu_role = gaming_server.get_role(969300757302108160)
-    # ez server gaming roles
-    Ezvalorant_role = Ez_server.get_role(973944584914731030)
-    Ezgaming_role = Ez_server.get_role(973945427760132186)
-    Ezminecraft_role = Ez_server.get_role(973982347928145940)
-    Ezosu_role = Ez_server.get_role(973993664953081856)
+
     while True:
         statusType = random.randint(0, 1)
         if statusType == 0:
@@ -173,6 +160,44 @@ async def on_ready():
                 ),
             )
             await asyncio.sleep(10)
+
+
+@bot.command()
+@commands.is_owner()
+async def reload(ctx):
+    try:
+        bot.reload_extension("foo")
+        bot.reload_extension("funnicommands")
+        embed = discord.Embed(
+            title="Reload",
+            description=f"extension successfully reloaded!",
+            color=discord.Colour.light_grey(),
+        )
+    except:
+        embed = discord.Embed(
+            title="Err_",
+            description=f"Looks like something went wrong!",
+            color=discord.Colour.dark_red(),
+        )
+    await ctx.send(embed=embed)
+
+
+@bot.command(name="vbux", description="get free vbux")
+async def getfreevbux(ctx, ammount):
+    try:
+        stringedammount = int(ammount)
+        if stringedammount <= 0:
+            desc = f"{ammount} vbux has been taken from {ctx.author.mention} account!"
+        else:
+            desc = f"{ammount} vbux has been added to {ctx.author.mention} account!"
+    except:
+        await ctx.send("Invalid ammount")
+        return
+    embed = discord.Embed(title="Vbux granted", description=desc, color=discord.Color.blue())
+    embed.set_thumbnail(
+        url="https://static.wikia.nocookie.net/fortnite/images/e/eb/V-Bucks_-_Icon_-_Fortnite.png/revision/latest?cb=20170806013747"
+    )
+    await ctx.send(embed=embed)
 
 
 with open("data/namedays.json", encoding="utf-8") as f:
@@ -203,17 +228,17 @@ async def on_member_join(member):
         embed = discord.Embed(title="User " + member.name + " joined.", color=discord.Color.green())
         await Emod_channel.send(embed=embed)
         print("Sent message to " + member.name + "\n")
-    elif member.guild == Ez_server:
-        await Ezwelcome_channel.send(embed=embed)
-        embed = discord.Embed(title="User " + member.name + " joined.", color=discord.Color.green())
-        await Ezaudit_channel.send(embed=embed)
-        print("Sent message to " + member.name + "\n")
     elif member.guild == test_server:
         await testmain_channel.send(embed=embed)
         embed = discord.Embed(title="User " + member.name + " joined.", color=discord.Color.green())
         await test_audit.send(embed=embed)
         await member.add_roles(testmember_role)
         print("Sent message to " + member.name + "\n")
+
+
+@bot.command()
+async def marco(ctx):
+    await ctx.send("polo!")
 
 
 @bot.event
@@ -232,13 +257,6 @@ async def on_member_remove(member):
             title=member.name + " left.", color=discord.Color.from_rgb(255, 13, 13)
         )
         await Emod_channel.send(embed=embed)
-        print("Message sent")
-    elif member.guild == Ez_server:
-        print("Recognised that a member called " + member.name + " left")
-        embed = discord.Embed(
-            title=member.name + " left.", color=discord.Color.from_rgb(255, 13, 13)
-        )
-        await Ezaudit_channel.send(embed=embed)
         print("Message sent")
     elif member.guild == test_server:
         print("Recognised that a member called " + member.name + " left")
@@ -344,34 +362,6 @@ async def on_member_update(prev, cur):
                 useractivity = None
                 await asyncio.sleep(5)
 
-    if cur.guild == Ez_server:
-
-        async def give_role(role, member):
-            if role in member.roles:
-                return
-            else:
-                await member.add_roles(role)
-                print(f"Gave {role.name} role to {member.name}")
-                useractivity = None
-
-        if cur.activity and useractivity == games[0]:
-            await give_role(Ezvalorant_role, cur)
-
-        if cur.activity and useractivity == games[1]:
-            await give_role(Ezminecraft_role, cur)
-
-        if cur.activity and useractivity == games[2]:
-            await give_role(Ezosu_role, cur)
-
-        if cur.activity and useractivity in games:
-            if Ezgaming_role in cur.roles:
-                useractivity = None
-            else:
-                await cur.add_roles(Ezgaming_role)
-                print(f"Gave gamer role to {cur.name}")
-                useractivity = None
-                await asyncio.sleep(5)
-
 
 @bot.command(name="rand")
 async def randomise(ctx, num1, num2):
@@ -446,6 +436,10 @@ async def spotify(ctx):
 async def on_message(message):
     channel = message.channel
 
+    if message.content == "YES":
+        if message.author == owner:
+            channel.send("Yes indeed")
+
     if message.content == "!help":
         embed = discord.Embed(
             title="Commands",
@@ -464,10 +458,6 @@ async def on_message(message):
 
     if "ratio" in message.content:
         await message.add_reaction("✅")
-
-    if message.channel == Ezsuggestion_channel:
-        await message.add_reaction("⬆️")
-        await message.add_reaction("⬇️")
 
     if message.channel == testsuggestion_channel:
         await message.add_reaction("⬆️")
@@ -502,7 +492,7 @@ async def on_message(message):
         await message.add_reaction(emoji4)
         await message.add_reaction(emoji5)
 
-    elif message.content == "!quit":
+    elif message.content == "!quit REPL":
         if message.author == owner:
             await channel.send("Logging off...")
             sleep(1)
@@ -518,28 +508,6 @@ async def on_message(message):
             await channel.send(notauthormessages[randomnum])
 
     await bot.process_commands(message)
-
-
-@bot.command(name="role")
-async def getroleowners(ctx, rolename):
-    memberlist = None
-    server = ctx.guild
-    rolelist = [
-        "gamer",
-        "valorant",
-        "roblox",
-        "minecraft",
-        "osu",
-        "krunker",
-        "spiderheck",
-    ]
-    if server is gaming_server:
-        if rolename in rolelist:
-            if rolename == rolelist[0]:
-                for member in server:
-                    if Ggamer_role in member.roles:
-                        memberlist = len(member.name)
-        ctx.send(memberlist)
 
 
 @bot.command(name="vd")
@@ -747,69 +715,6 @@ async def place_error(ctx, error):
         await ctx.send("Please enter a position you would like to mark.")
     elif isinstance(error, commands.BadArgument):
         await ctx.send("Please make sure to enter an integer.")
-
-
-@bot.command()
-async def setbirthday(ctx, msg):
-    """Set a birthday."""
-    member = ctx.message.author.id
-    await ctx.send("What is your birthday? Please use MM/DD format.")
-
-    def check(user):
-        return user == ctx.message.author and user == ctx.message.channel
-
-    #   msg = await bot.wait_for("message", check=check)
-    try:
-        list = msg.split("/")
-        print(list)
-        list[0] = int(list[0])
-        list[1] = int(list[1])
-        print(list)
-        if list[0] > 13 or list[0] < 1:
-            await ctx.send("Invalid date.")
-            await ctx.send("Aborting...")
-            return
-        else:
-            pass
-
-        if list[0] in (1, 3, 5, 7, 8, 10, 12):
-            if list[1] > 31 or list[1] < 1:
-                await ctx.send("Invalid date.")
-                await ctx.send("Aborting...")
-                return
-            else:
-                pass
-        elif list[0] in (4, 6, 9, 11):
-            if list[1] > 30 or list[1] < 1:
-                await ctx.send("Invalid date.")
-                await ctx.send("Aborting...")
-                return
-            else:
-                pass
-        elif list[0] == 2:
-            if list[1] > 29 or list[1] < 1:
-                await ctx.send("Invalid date.")
-                await ctx.send("Aborting...")
-                return
-            else:
-                pass
-        else:
-            await ctx.send("Invalid date.")
-            await ctx.send("Aborting...")
-            return
-    except:
-        print("faill")
-        await ctx.send("Invalid date.")
-        await ctx.send("Aborting...")
-        return
-
-    month = list[0]
-    day = list[1]
-
-    with open("birthdays.json", "r+") as f:
-        var = jason.load(f)
-        var[member] = {"month": month, "day": day}
-        jason.dump(var, f, indent=4)
 
 
 async def check_for_birthday(self):
