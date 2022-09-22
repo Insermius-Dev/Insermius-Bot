@@ -122,7 +122,7 @@ async def on_startup():
                 type=naff.ActivityType.PLAYING,
             )
         )
-        asyncio.sleep(60)
+        await asyncio.sleep(60)
     # load all extensions
     # bot.load_extension("funnycommands")
     # bot.load_extension("foo")
