@@ -115,6 +115,14 @@ winningConditions = [
 @listen()
 async def on_startup():
     print(f"{bot.user} has connected to Discord!")
+    while True:
+        await bot.change_presence(
+            activity=naff.Activity(
+                name=random.choice(playingStatus),
+                type=naff.ActivityType.PLAYING,
+            )
+        )
+        asyncio.sleep(60)
     # load all extensions
     # bot.load_extension("funnycommands")
     # bot.load_extension("foo")
@@ -326,52 +334,39 @@ async def calculate(ctx, equasion):
         await ctx.send("Thats not a math equasion...")
 
 
-#     async def giveping():
-#         if channel == test_announce:
-#             if testannounce_role in author.roles:
-#                 await ctx.send("You already have this role")
-#             else:
-#                 await author.add_roles(testannounce_role)
-#                 await ctx.send("Role added succesfully")
+@slash_command("spotify", description="Share what you're listening to!")
+@slash_option(
+    name="user",
+    description="Check what other people are listening to",
+    opt_type=OptionTypes.USER,
+    required=False,
+)
+async def spotify(self, ctx: InteractionContext, user: Member.user = None):
+    listener = user or ctx.author
 
-#     if ctx.guild == test_server:
-#         global author
-#         author = ctx.author
-#         if channel == "server-announcments" or "server":
-#             channel = test_announce
-#         else:
-#             await ctx.send("please write a correct channel name!")
-#             return
-#         if yn == "False" or yn == "no":
-#             await takeping()
-#         elif yn == "True" or yn == "yes":
-#             await giveping()
+    # Get the first activity that contains "Spotify". Return None, if none present.
+    spotify_activity = next((x for x in listener.activities if x.name == "Spotify"), None)
 
+    if spotify_activity != None:
+        cover = f"https://i.scdn.co/image/{spotify_activity.assets.large_image.split(':')[1]}"
+        embed = Embed(
+            title=f"{listener.display_name}'s Spotify",
+            description="Listening to {}".format(spotify_activity.details),
+            color="#36b357",
+        )
+        # SUGGESTION: instead of "set_thumbnail", use "thumbnail=" in the Embed constructor
+        embed.set_thumbnail(url=cover)
+        embed.add_field(name="Artist", value=spotify_activity.state)
+        embed.add_field(name="Album", value=spotify_activity.assets.large_text)
+        await ctx.send(embeds=embed)
+    else:
+        embed = Embed(
+            title=f"{listener.display_name}'s Spotify",
+            description="Currently not listening to anything",
+            color="#36b357",
+        )
 
-# @bot.command()
-# async def spotify(ctx):
-#     user = ctx.author
-#     if user.activities:
-#         for activity in user.activities:
-#             if isinstance(activity, Spotify):
-#                 embed = discord.Embed(
-#                     title=f"{user.name}'s Spotify",
-#                     description="Listening to {}".format(activity.title),
-#                     color=0x36B357,
-#                 )
-#                 embed.set_thumbnail(url=activity.album_cover_url)
-#                 embed.add_field(name="Artist", value=activity.artist)
-#                 embed.add_field(name="Album", value=activity.album)
-#                 message = await ctx.send(embed=embed)
-#                 await message.add_reaction(spotify_emoji)
-#     else:
-#         embed = discord.Embed(
-#             title=f"{user.name}'s Spotify",
-#             description="Currently not listening anything",
-#             color=0x36B357,
-#         )
-#         message = await ctx.send(embed=embed)
-#         await message.add_reaction(spotify_emoji)
+    await ctx.send(embeds=embed)
 
 
 # @bot.event
@@ -448,142 +443,11 @@ async def calculate(ctx, equasion):
 
 #     await bot.process_commands(message)
 
+# @slash_command(
+#     name='clear',
+#     description='clears messages',
 
-# @bot.command()
-# async def tictactoe(ctx, p1: discord.Member, p2: discord.Member):
-#     if p1 == bot.user or p2 == bot.user:
-#         ctx.send("Mention people not bots!")
-#         return
-
-#     global count
-#     global player1
-#     global player2
-#     global turn
-#     global gameOver
-
-#     if gameOver:
-#         global board
-#         board = [
-#             ":white_large_square:",
-#             ":white_large_square:",
-#             ":white_large_square:",
-#             ":white_large_square:",
-#             ":white_large_square:",
-#             ":white_large_square:",
-#             ":white_large_square:",
-#             ":white_large_square:",
-#             ":white_large_square:",
-#         ]
-#         turn = ""
-#         gameOver = False
-#         count = 0
-
-#         player1 = p1
-#         player2 = p2
-
-#         # print the board
-#         line = ""
-#         for x in range(len(board)):
-#             if x == 2 or x == 5 or x == 8:
-#                 line += " " + board[x]
-#                 await ctx.send(line)
-#                 line = ""
-#             else:
-#                 line += " " + board[x]
-
-#         # determine who goes first
-#         num = random.randint(1, 2)
-#         if num == 1:
-#             turn = player1
-#             await ctx.send("It is <@" + str(player1.id) + ">'s turn.")
-#         elif num == 2:
-#             turn = player2
-#             await ctx.send("It is <@" + str(player2.id) + ">'s turn.")
-#     else:
-#         await ctx.send("A game is already in progress! Finish it before starting a new one.")
-
-
-# @bot.command()
-# async def place(ctx, pos: int):
-#     global turn
-#     global player1
-#     global player2
-#     global board
-#     global count
-#     global gameOver
-
-#     if not gameOver:
-#         mark = ""
-#         if turn == ctx.author:
-#             if turn == player1:
-#                 mark = ":regional_indicator_x:"
-#             elif turn == player2:
-#                 mark = ":o2:"
-#             if 0 < pos < 10 and board[pos - 1] == ":white_large_square:":
-#                 board[pos - 1] = mark
-#                 count += 1
-
-#                 # print the board
-#                 line = ""
-#                 for x in range(len(board)):
-#                     if x == 2 or x == 5 or x == 8:
-#                         line += " " + board[x]
-#                         await ctx.send(line)
-#                         line = ""
-#                     else:
-#                         line += " " + board[x]
-
-#                 checkWinner(winningConditions, mark)
-#                 if gameOver == True:
-#                     await ctx.send(mark + " wins!")
-#                 elif count >= 9:
-#                     gameOver = True
-#                     await ctx.send("It's a tie!")
-
-#                 # switch turns
-#                 if turn == player1:
-#                     turn = player2
-#                 elif turn == player2:
-#                     turn = player1
-#             else:
-#                 await ctx.send(
-#                     "Be sure to choose an integer between 1 and 9 (inclusive) and an unmarked tile."
-#                 )
-#         else:
-#             await ctx.send("It is not your turn.")
-#     else:
-#         await ctx.send("Please start a new game using the !tictactoe command.")
-
-
-# def checkWinner(winningConditions, mark):
-#     global gameOver
-#     for condition in winningConditions:
-#         if (
-#             board[condition[0]] == mark
-#             and board[condition[1]] == mark
-#             and board[condition[2]] == mark
-#         ):
-#             gameOver = True
-
-
-# @tictactoe.error
-# async def tictactoe_error(ctx, error):
-#     print(error)
-#     if isinstance(error, commands.MissingRequiredArgument):
-#         await ctx.send("Please mention 2 players for this command.")
-#     elif isinstance(error, commands.BadArgument):
-#         await ctx.send("Please make sure to mention/ping players (ie. <@688534433879556134>).")
-
-
-# @place.error
-# async def place_error(ctx, error):
-#     if isinstance(error, commands.MissingRequiredArgument):
-#         await ctx.send("Please enter a position you would like to mark.")
-#     elif isinstance(error, commands.BadArgument):
-#         await ctx.send("Please make sure to enter an integer.")
-
-
-# @Commands
+# )
 # @Commands.has_permissions(manage_messages=True)
 # async def clear(ctx, count):
 #     try:
