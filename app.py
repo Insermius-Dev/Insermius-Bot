@@ -27,7 +27,6 @@ import os
 from random import randint
 from datetime import date, datetime
 from babel.dates import format_date
-import json
 
 bot_intents: Intents = Intents.GUILD_PRESENCES | Intents.DEFAULT | Intents.GUILD_MEMBERS
 
