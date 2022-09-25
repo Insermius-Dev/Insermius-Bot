@@ -115,6 +115,7 @@ winningConditions = [
 @listen()
 async def on_startup():
     print(f"{bot.user} has connected to Discord!")
+    bot.load_extension("data.foo")
     while True:
         await bot.change_presence(
             activity=naff.Activity(
@@ -124,8 +125,6 @@ async def on_startup():
         )
         await asyncio.sleep(60)
     # load all extensions
-    # bot.load_extension("funnycommands")
-    # bot.load_extension("foo")
     # bot.load_extension("namedays")
     # bot.load_extension("ownercommands")
 
@@ -341,8 +340,10 @@ async def calculate(ctx, equasion):
     opt_type=OptionTypes.USER,
     required=False,
 )
-async def spotify(self, ctx: InteractionContext, user: Member.user = None):
-    listener = user or ctx.author
+async def spotify(self, ctx: InteractionContext, user=None):
+    listener = type(user)
+    if listener is None:
+        listener = ctx.author
 
     # Get the first activity that contains "Spotify". Return None, if none present.
     spotify_activity = next((x for x in listener.activities if x.name == "Spotify"), None)
