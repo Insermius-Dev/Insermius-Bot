@@ -9,7 +9,7 @@ class Extensionclass(Extension):
     async def check(self, ctx):
         await ctx.send("Yep, it's loaded!")
 
-    @slash_command(name="smashorpass", description="Smash or Pass")
+    @slash_command(name="smashorpass", description="Smash or Pass", scopes=[829026541950206049])
     @slash_option(
         name="the_photo",
         description="Input a link of the video/photo.",
