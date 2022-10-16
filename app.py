@@ -7,6 +7,7 @@ from naff import (
     Button,
     ButtonStyles,
     CommandTypes,
+    VoiceState,
     slash_command,
     InteractionContext,
     context_menu,
@@ -18,6 +19,7 @@ from naff import (
     OptionTypes,
     ChannelTypes,
 )
+from naff.api.voice.audio import AudioVolume
 
 from dotenv import load_dotenv
 import asyncio
@@ -115,7 +117,7 @@ winningConditions = [
 @listen()
 async def on_startup():
     print(f"{bot.user} has connected to Discord!")
-    bot.load_extension("data.foo")
+    bot.load_extension("data.ext1")
     while True:
         await bot.change_presence(
             activity=naff.Activity(
@@ -368,6 +370,56 @@ async def spotify(self, ctx: InteractionContext, user=None):
         )
 
     await ctx.send(embeds=embed)
+
+
+@slash_command("gas", description='"gas-gas-gas" by Manuel')
+async def outro(ctx: InteractionContext):
+    if not ctx.author.voice:
+        return await ctx.send("You are not in a voice channel")
+    else:
+        embed = Embed(
+            'Playing "Gas-gas-gas" by Manuel',
+            description="[Click here to join the voice channel](https://discord.gg/invite/invite)",
+            color="#36b357",
+            footer="Requested by {}".format(ctx.author.display_name),
+        )
+        await ctx.send(embed=embed)
+        jointhisvc = bot.get_channel(ctx.author.voice.channel)
+        audio = AudioVolume(
+            r"data\gas-gas-gas.mp3",
+        )
+        vc = await jointhisvc.connect(deafened=True)
+        await asyncio.sleep(0.5)
+        await vc.play(audio)
+        await asyncio.sleep(3)
+        await vc.disconnect()
+
+
+# async def wait_and_kick(member):
+#     await asyncio.sleep(27)
+#     await member.disconnect()
+
+
+# @slash_command("outro", description="Exit a voice channel in style")
+# async def outro(ctx: InteractionContext):
+#     if not ctx.author.voice:
+#         return await ctx.send("You are not in a voice channel")
+#     else:
+#         await ctx.send("You will be disconnected in 25 seconds!", ephemeral=True)
+#         jointhisvc = bot.get_channel(ctx.author.voice.channel)
+#         audio = AudioVolume(
+#             r"data\xenogenesis-outro-song.mp3",
+#         )
+#         vc = await jointhisvc.connect(deafened=True)
+#         await asyncio.sleep(0.5)
+#         if __name__ == "__main__":
+#             playstuff = await vc.play(audio)
+#             playstuff.start()
+
+#             while playstuff.is_alive():
+#                 await wait_and_kick()
+#         await asyncio.sleep(3)
+#         await vc.disconnect()
 
 
 # @bot.event
