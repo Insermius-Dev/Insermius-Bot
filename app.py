@@ -18,6 +18,7 @@ from naff import (
     slash_option,
     OptionTypes,
     ChannelTypes,
+    Color,
 )
 from naff.api.voice.audio import AudioVolume
 
@@ -159,51 +160,41 @@ async def welcome_message(ctx: InteractionContext, channel: OptionTypes.CHANNEL)
         await ctx.send(f"Added {channel.mention} to the welcome message system!")
 
 
-# @listen()
-# async def on_member_add(self, event: AddMember):
-#     print("\nRecognised that a member called " + member.name + " joined {guild.name}")
-#     member = event.member
-#     log_channel = member.guild.get_channel(id)
+@listen()
+async def on_member_add(event):
+    joiner = event.member
 
-#     embed = Embed(
-#         title=f"Welcome {member.name}",
-#         description=f"Thanks for joining {member.guild.name}!",
-#         timestamp=datetime.utcnow(),
-#         color=0x4D9D54,
-#     )
-#     embed.set_thumbnail(url=member.avatar.url)
-#     await log_channel.send(embed=embed)
+    embed = Embed(
+        title=f"Welcome {joiner.display_name}!",
+        description=f"Thanks for joining {joiner.guild.name}!",
+        timestamp=datetime.utcnow(),
+        color=Color.from_rgb(88, 109, 245),
+    )
+    embed.set_thumbnail(url=joiner.avatar.url)
+
+    message = await event.guild.system_channel.send(
+        f"Welcome {joiner.mention}! :wave: ", embed=embed
+    )
+    await message.add_reaction("👋")
+
+
+@listen()
+async def on_member_remove(event):
+    leaver = event.member
+
+    embed = Embed(
+        title=f"Bye {leaver.display_name}!",
+        description=f"Sorry to see you go {leaver.guild.name}!",
+        timestamp=datetime.utcnow(),
+        color=Color.from_rgb(255, 13, 13),
+    )
+
+    await event.guild.system_channel.send(embed=embed)
 
 
 @slash_command(name="ping", description="check the bots status")
 async def ping(ctx):
     await ctx.send("pong")
-
-
-# @bot.event
-# async def on_member_remove(member):
-
-#     if member.guild == gaming_server:
-#         print("Recognised that a member called " + member.name + " left")
-#         embed = discord.Embed(
-#             title=member.name + " left.", color=discord.Color.from_rgb(255, 13, 13)
-#         )
-#         await Gaudit_channel.send(embed=embed)
-#         print("Message sent")
-#     if member.guild == ezic_server:
-#         print("Recognised that a member called " + member.name + " left")
-#         embed = discord.Embed(
-#             title=member.name + " left.", color=discord.Color.from_rgb(255, 13, 13)
-#         )
-#         await Emod_channel.send(embed=embed)
-#         print("Message sent")
-#     elif member.guild == test_server:
-#         print("Recognised that a member called " + member.name + " left")
-#         embed = discord.Embed(
-#             title=member.name + " left.", color=discord.Color.from_rgb(255, 13, 13)
-#         )
-#         await test_audit.send(embed=embed)
-#         print("Message sent")
 
 
 # async def wait_and_ban(m: discord.Member):
