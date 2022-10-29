@@ -2,7 +2,7 @@ import naff
 import json
 from naff import Extension, slash_command, OptionTypes, slash_option, Color, Embed
 from datetime import date, datetime
-from babel.date import format_date
+from babel.dates import format_date
 
 with open("data/namedays.json", encoding="utf-8") as f:
     namedays = json.load(f)
