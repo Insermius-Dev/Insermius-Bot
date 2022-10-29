@@ -183,8 +183,8 @@ async def on_member_remove(event):
     leaver = event.member
 
     embed = Embed(
-        title=f"Bye {leaver.display_name}!",
-        description=f"Sorry to see you go {leaver.guild.name}!",
+        title=f"{leaver.display_name} left.",
+        description=f"Sorry to see you go {leaver.display_name}!",
         timestamp=datetime.utcnow(),
         color=Color.from_rgb(255, 13, 13),
     )
@@ -295,14 +295,26 @@ async def ping(ctx):
     description="randomise some numbers",
 )
 @slash_option(
-    name="first", required=True, opt_type=OptionTypes.STRING, description="smallest number"
+    name="min",
+    required=True,
+    opt_type=OptionTypes.STRING,
+    description="smallest possible number",
 )
 @slash_option(
-    name="second", required=True, opt_type=OptionTypes.STRING, description="biggest number"
+    name="max",
+    required=True,
+    opt_type=OptionTypes.STRING,
+    description="biggest possible number",
 )
 async def randomise(ctx, num1, num2):
     try:
-        await ctx.send(int(float(random.randint(int(float(num1)), int(float(num2))))))
+        await ctx.send(
+            f"""
+> `{num1}` - `{num2}`
+
+**{int(float(random.randint(int(float(num1)), int(float(num2)))))}**
+"""
+        )
     except:
         await ctx.send("Something didnt go right. Try a different aproach!")
 
@@ -333,7 +345,7 @@ async def calculate(ctx, equasion):
     opt_type=OptionTypes.USER,
     required=False,
 )
-async def spotify(self, ctx: InteractionContext, user=None):
+async def spotify(ctx: InteractionContext, user=None):
     listener = type(user)
     if listener is None:
         listener = ctx.author
