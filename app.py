@@ -114,6 +114,29 @@ winningConditions = [
     [2, 4, 6],
 ]
 
+"""floppa friday code"""
+"""___________________"""
+import schedule
+import datetime
+import time
+
+floppa_announce = bot.get_channel(1018893839769018371)
+
+
+def announce():
+
+    today = datetime.datetime.utcnow()
+    nextfriday = today + datetime.timedelta(days=7)
+    nextfridayunix = time.mktime(nextfriday.timetuple())
+
+    floppa_announce.send(
+        f"Floppa Friday is here! Next floppa friday is on <t:{int(str(nextfridayunix)[:-2])}:R>"
+    )
+
+
+schedule.every().friday.at("9:00").do(announce)
+"""---------------------"""
+
 
 @listen()
 async def on_startup():
@@ -126,6 +149,7 @@ async def on_startup():
                 type=naff.ActivityType.PLAYING,
             )
         )
+        schedule.run_pending()
         await asyncio.sleep(60)
     # load all extensions
     # bot.load_extension("namedays")
@@ -510,6 +534,8 @@ async def outro(ctx: InteractionContext):
 #         await ctx.channel.purge(limit=int(count) + 1)
 #     except:
 #         await ctx.send("Please input a string!")
+
+# code for floppa friday
 
 
 secret_TOKEN = os.environ["TOKEN"]
