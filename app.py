@@ -392,7 +392,7 @@ async def spotify(ctx: InteractionContext):
             color="#36b357",
         )
     message = await ctx.send(embeds=embed)
-    message.add_reaction(spotify_emoji)
+    await message.add_reaction(spotify_emoji)
 
 
 @slash_command("gas", description='"gas-gas-gas" by Manuel')
