@@ -31,9 +31,11 @@ from random import randint
 from datetime import date, datetime
 from babel.dates import format_date
 
+load_dotenv()
+
 bot_intents: Intents = Intents.GUILD_PRESENCES | Intents.DEFAULT | Intents.GUILD_MEMBERS
 
-load_dotenv()
+# load_dotenv()
 
 bot = Client(sync_interactions=True, intents=bot_intents, send_command_tracebacks=False)
 
@@ -123,19 +125,25 @@ import time
 floppa_announce = bot.get_channel(1018893839769018371)
 
 
-def announce():
+async def announce():
 
     today = datetime.datetime.utcnow()
     nextfriday = today + datetime.timedelta(days=7)
     nextfridayunix = time.mktime(nextfriday.timetuple())
 
-    floppa_announce.send(
+    await floppa_announce.send(
         f"Floppa Friday is here! Next floppa friday is on <t:{int(str(nextfridayunix)[:-2])}:R>"
     )
 
 
-schedule.every().friday.at("9:00").do(announce)
+schedule.every().friday.at("09:00").do(announce)
 """---------------------"""
+
+
+@listen()
+async def on_error():
+    print("Caught an error")
+    os.system("kill 1")
 
 
 @listen()
@@ -151,37 +159,34 @@ async def on_startup():
         )
         schedule.run_pending()
         await asyncio.sleep(60)
-    # load all extensions
-    # bot.load_extension("namedays")
-    # bot.load_extension("ownercommands")
 
 
-welcomeguilds = []
+# welcomeguilds = []
 
-welcomechannels = []
+# welcomechannels = []
 
 
-@slash_command(
-    name="welcome",
-    description="Configure the welcome message system",
-    sub_cmd_name="message",
-    sub_cmd_description="Send `help` for possible placeholders",
-)
-@slash_option(
-    name="channel",
-    description="The channel you'd like to send welcome messages in",
-    opt_type=OptionTypes.CHANNEL,
-    required=True,
-)
-async def welcome_message(ctx: InteractionContext, channel: OptionTypes.CHANNEL):
-    if channel.guild.id in welcomeguilds:
-        await ctx.send("This guild is already in the welcome system!")
-    elif channel.id in welcomechannels:
-        await ctx.send("This channel is already in the welcome message system!")
-    else:
-        welcomechannels.append(channel.id)
-        welcomeguilds.append(channel.guild.id)
-        await ctx.send(f"Added {channel.mention} to the welcome message system!")
+# @slash_command(
+#     name="welcome",
+#     description="Configure the welcome message system",
+#     sub_cmd_name="message",
+#     sub_cmd_description="Send `help` for possible placeholders",
+# )
+# @slash_option(
+#     name="channel",
+#     description="The channel you'd like to send welcome messages in",
+#     opt_type=OptionTypes.CHANNEL,
+#     required=True,
+# )
+# async def welcome_message(ctx: InteractionContext, channel: OptionTypes.CHANNEL):
+#     if channel.guild.id in welcomeguilds:
+#         await ctx.send("This guild is already in the welcome system!")
+#     elif channel.id in welcomechannels:
+#         await ctx.send("This channel is already in the welcome message system!")
+#     else:
+#         welcomechannels.append(channel.id)
+#         welcomeguilds.append(channel.guild.id)
+#         await ctx.send(f"Added {channel.mention} to the welcome message system!")
 
 
 @listen()
@@ -363,42 +368,34 @@ async def calculate(ctx, equasion):
 
 
 @slash_command("spotify", description="Share what you're listening to!")
-@slash_option(
-    name="user",
-    description="Check what other people are listening to",
-    opt_type=OptionTypes.USER,
-    required=False,
-)
-async def spotify(ctx: InteractionContext, user=None):
-    listener = type(user)
-    if listener is None:
-        listener = ctx.author
+async def spotify(ctx: InteractionContext):
+    listener = ctx.author
 
     # Get the first activity that contains "Spotify". Return None, if none present.
-    spotify_activity = next((x for x in listener.activities if x.name == "Spotify"), None)
+    # spotify_activity = next((x for x in listener.activities if x.name == "Spotify"), None)
 
-    if spotify_activity != None:
-        cover = f"https://i.scdn.co/image/{spotify_activity.assets.large_image.split(':')[1]}"
+    if listener.activities == "Spotify":
+        cover = f"https://i.scdn.co/image/{listener.activities.assets.large_image.split(':')[1]}"
         embed = Embed(
             title=f"{listener.display_name}'s Spotify",
-            description="Listening to {}".format(spotify_activity.details),
+            description="Listening to {}".format(listener.activities.details),
             color="#36b357",
         )
         # SUGGESTION: instead of "set_thumbnail", use "thumbnail=" in the Embed constructor
         embed.set_thumbnail(url=cover)
-        embed.add_field(name="Artist", value=spotify_activity.state)
-        embed.add_field(name="Album", value=spotify_activity.assets.large_text)
-        await ctx.send(embeds=embed)
+        embed.add_field(name="Artist", value=listener.activities.state)
+        embed.add_field(name="Album", value=listener.activities.assets.large_text)
     else:
         embed = Embed(
             title=f"{listener.display_name}'s Spotify",
             description="Currently not listening to anything",
             color="#36b357",
         )
+    message = await ctx.send(embeds=embed)
+    message.add_reaction(spotify_emoji)
 
-    await ctx.send(embeds=embed)
 
-
+@is_owner()
 @slash_command("gas", description='"gas-gas-gas" by Manuel')
 async def outro(ctx: InteractionContext):
     if not ctx.author.voice:
@@ -539,4 +536,8 @@ async def outro(ctx: InteractionContext):
 
 
 secret_TOKEN = os.environ["TOKEN"]
-bot.start(secret_TOKEN)
+try:
+    bot.run(secret_TOKEN)
+except:
+    print("Failed to log in")
+    os.system("kill 1")
