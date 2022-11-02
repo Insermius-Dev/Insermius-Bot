@@ -395,7 +395,6 @@ async def spotify(ctx: InteractionContext):
     message.add_reaction(spotify_emoji)
 
 
-@is_owner()
 @slash_command("gas", description='"gas-gas-gas" by Manuel')
 async def outro(ctx: InteractionContext):
     if not ctx.author.voice:
@@ -537,7 +536,7 @@ async def outro(ctx: InteractionContext):
 
 secret_TOKEN = os.environ["TOKEN"]
 try:
-    bot.run(secret_TOKEN)
+    bot.start(secret_TOKEN)
 except:
     print("Failed to log in")
     os.system("kill 1")
