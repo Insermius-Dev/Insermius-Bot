@@ -22,7 +22,7 @@ from naff import (
 )
 from naff.api.voice.audio import AudioVolume
 
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import asyncio
 import re
 import random
@@ -31,7 +31,7 @@ from random import randint
 from datetime import date, datetime
 from babel.dates import format_date
 
-load_dotenv()
+# load_dotenv()
 
 bot_intents: Intents = Intents.GUILD_PRESENCES | Intents.DEFAULT | Intents.GUILD_MEMBERS
 
@@ -124,19 +124,32 @@ import time
 
 floppa_announce = bot.get_channel(1018893839769018371)
 
+from naff import Task, TimeTrigger, listen, DateTrigger
 
-async def announce():
-
-    today = datetime.datetime.utcnow()
-    nextfriday = today + datetime.timedelta(days=7)
-    nextfridayunix = time.mktime(nextfriday.timetuple())
-
-    await floppa_announce.send(
-        f"Floppa Friday is here! Next floppa friday is on <t:{int(str(nextfridayunix)[:-2])}:R>"
+if datetime.datetime.today().weekday() <= 5:
+    nextfriday = datetime.datetime.today().weekday() + datetime.timedelta(
+        4 - datetime.datetime.today().weekday()
+    )
+else:
+    nextfriday = datetime.datetime.today().weekday() + datetime.timedelta(
+        -1(4 - datetime.datetime.today().weekday())
     )
 
 
-schedule.every().friday.at("09:00").do(announce)
+@Task.create(TimeTrigger(hour=9, minute=0))
+async def friday():
+    if datetime.datetime.today().weekday() == 4:
+        # rest of the code
+        today = datetime.datetime.utcnow()
+        nextfriday = today + datetime.timedelta(days=7)
+        nextfridayunix = time.mktime(nextfriday.timetuple())
+
+        await floppa_announce.send(
+            f"Floppa friday! Next floppa friday <t:{int(str(nextfridayunix)[:-2])}:R>"
+        )
+        print("sent")
+
+
 """---------------------"""
 
 
@@ -149,6 +162,7 @@ async def on_error():
 @listen()
 async def on_startup():
     print(f"{bot.user} has connected to Discord!")
+    friday.start()
     bot.load_extension("data.ext1")
     while True:
         await bot.change_presence(
@@ -374,7 +388,9 @@ async def spotify(ctx: InteractionContext):
     # Get the first activity that contains "Spotify". Return None, if none present.
     # spotify_activity = next((x for x in listener.activities if x.name == "Spotify"), None)
 
-    if listener.activities == "Spotify":
+    print(listener.activities)
+
+    if "Spotify" in listener.activities:
         cover = f"https://i.scdn.co/image/{listener.activities.assets.large_image.split(':')[1]}"
         embed = Embed(
             title=f"{listener.display_name}'s Spotify",
@@ -534,9 +550,9 @@ async def outro(ctx: InteractionContext):
 # code for floppa friday
 
 
-secret_TOKEN = os.environ["TOKEN"]
+# secret_TOKEN = os.environ["TOKEN"]
 try:
-    bot.start(secret_TOKEN)
+    bot.start("OTI5Njg3MjAwMDgwMjI4MzYy.GWbTOj.xJ9YgbXxllMfkz8_Md3f5XXDRGoF71LdgVCjw0")
 except:
     print("Failed to log in")
     os.system("kill 1")
