@@ -1,6 +1,8 @@
 # Bot made by using NAFF
 # pip install git+https://github.com/NAFTeam/NAFF@dev
 
+bot_official_version = "2.8.2"
+
 import naff
 from naff import (
     Client,
@@ -19,10 +21,13 @@ from naff import (
     OptionTypes,
     ChannelTypes,
     Color,
+    ActionRow,
+    ComponentContext,
+    spread_to_rows,
 )
 from naff.api.voice.audio import AudioVolume
 
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 import asyncio
 import re
 import random
@@ -31,11 +36,9 @@ from random import randint
 from datetime import date, datetime
 from babel.dates import format_date
 
-# load_dotenv()
+load_dotenv()
 
 bot_intents: Intents = Intents.GUILD_PRESENCES | Intents.DEFAULT | Intents.GUILD_MEMBERS
-
-# load_dotenv()
 
 bot = Client(sync_interactions=True, intents=bot_intents, send_command_tracebacks=False)
 
@@ -105,6 +108,13 @@ gameOver = True
 
 board = []
 
+epiccontribbutingppl = [
+    324352543612469258,
+    488257154701197322,
+    975738227669499916,
+    954821934808449125,
+]
+
 winningConditions = [
     [0, 1, 2],
     [3, 4, 5],
@@ -125,15 +135,6 @@ import time
 floppa_announce = bot.get_channel(1018893839769018371)
 
 from naff import Task, TimeTrigger, listen, DateTrigger
-
-if datetime.datetime.today().weekday() <= 5:
-    nextfriday = datetime.datetime.today().weekday() + datetime.timedelta(
-        4 - datetime.datetime.today().weekday()
-    )
-else:
-    nextfriday = datetime.datetime.today().weekday() + datetime.timedelta(
-        -1(4 - datetime.datetime.today().weekday())
-    )
 
 
 @Task.create(TimeTrigger(hour=9, minute=0))
@@ -175,6 +176,119 @@ async def on_startup():
         await asyncio.sleep(60)
 
 
+@slash_command(name="info", description="get info about the bot")
+async def info(ctx):
+
+    embed = Embed(
+        title="Info",
+        description="Info about the bot",
+        timestamp=datetime.datetime.utcnow(),
+        color=Color.from_hex("5e50d4"),
+        footer="Requested by " + str(ctx.author),
+        thumbnail="https://cdn.discordapp.com/attachments/983081269543993354/1041045309695987712/image.png",
+    )
+    embed.add_field(
+        name="Bot Version",
+        value=bot_official_version,
+    )
+    embed.add_field(
+        name="Guilds",
+        value=f"in {len(bot.guilds)} guilds.",
+    )
+    embed.add_field(
+        name="Created by",
+        value="<@737983831000350731>",
+    )
+
+    btn1 = Button(ButtonStyles.BLURPLE, "Contributors", emoji="⭐", custom_id="contributors")
+    btn2 = Button(ButtonStyles.BLURPLE, "Partnered servers", emoji="🏘", custom_id="guildsinvites")
+    components: list[ActionRow] = spread_to_rows(btn1, btn2)
+
+    await ctx.send(embed=embed, components=components)
+
+
+channel_cooldown = []
+invite_cooldown = []
+
+
+@listen()
+async def on_component(ctx: ComponentContext):
+    event = ctx.context
+    if event.custom_id.startswith("contributors"):
+        if event.channel.id not in channel_cooldown:
+            embed = Embed(
+                title="⭐ Contributors",
+                description=f"Epic people who have helped and made Larss_Bot what it is today!",
+                timestamp=datetime.datetime.utcnow(),
+                color=Color.from_hex("5e50d4"),
+                footer="Requested by " + str(event.author),
+            )
+            embed.add_field(
+                name="Awesome people",
+                value=f"> <@{epiccontribbutingppl[0]}> \n> <@{epiccontribbutingppl[1]}>\n> <@{epiccontribbutingppl[3]}>\n> <@{epiccontribbutingppl[2]}>",
+            )
+            await event.channel.send(embed=embed)
+            channel_cooldown.append(event.channel.id)
+            await asyncio.sleep(15)
+            channel_cooldown.remove(event.channel.id)
+        else:
+            await event.channel.send(
+                "Looks like someone already pressed the button. No need to do it again.",
+                ephemeral=True,
+            )
+
+    if event.custom_id == "guildsinvites":
+        if event.channel.id not in invite_cooldown:
+            embed = Embed(
+                title="Partner servers",
+                description=f"Press any of the buttons below to get invited to one of the partnered servers",
+                timestamp=datetime.datetime.utcnow(),
+                color=Color.from_hex("5e50d4"),
+                footer="Requested by " + str(event.author),
+            )
+
+            btn1 = Button(
+                ButtonStyles.URL,
+                "Dev lab",
+                emoji="👨‍💻",
+                url="https://discord.gg/TReMEyBQsh",
+            )
+            btn2 = Button(
+                ButtonStyles.URL,
+                "Floppa land",
+                emoji="🐱",
+                url="https://discord.gg/aAyStHu5fQ",
+            )
+            btn3 = Button(
+                ButtonStyles.URL,
+                "Tyler army",
+                emoji="🐸",
+                url="https://discord.gg/w78rcjW8ck",
+            )
+            btn4 = Button(
+                ButtonStyles.URL,
+                "Forever virgins™",
+                emoji="💀",
+                url="https://discord.gg/uTDXMfwheZ",
+            )
+            components: list[ActionRow] = spread_to_rows(
+                btn1,
+                btn2,
+                btn3,
+                btn4,
+            )
+
+            await event.channel.send(embed=embed, components=components)
+            channel_cooldown.append(event.channel.id)
+            await asyncio.sleep(15)
+            channel_cooldown.remove(event.channel.id)
+        else:
+            await event.channel.send(
+                "Looks like someone already pressed the button. No need to do it again.",
+                ephemeral=True,
+            )
+
+
 # welcomeguilds = []
 
 # welcomechannels = []
@@ -210,7 +324,7 @@ async def on_member_add(event):
     embed = Embed(
         title=f"Welcome {joiner.display_name}!",
         description=f"Thanks for joining {joiner.guild.name}!",
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.datetime.utcnow(),
         color=Color.from_rgb(88, 109, 245),
     )
     embed.set_thumbnail(url=joiner.avatar.url)
@@ -228,7 +342,7 @@ async def on_member_remove(event):
     embed = Embed(
         title=f"{leaver.display_name} left.",
         description=f"Sorry to see you go {leaver.display_name}!",
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.datetime.utcnow(),
         color=Color.from_rgb(255, 13, 13),
     )
 
@@ -240,41 +354,8 @@ async def ping(ctx):
     await ctx.send("pong")
 
 
-# async def wait_and_ban(m: discord.Member):
-#     print(f"{m.display_name} has been detected playing league of legends")
-#     await asyncio.sleep(1800)  # 30 (m) x 60 (s) = 1800 nu basic matene vispar lol
-#     gaming_server: discord.Guild = m.guild
-#     m: discord.Member = gaming_server.get_member(m.id)
-#     shall_ban = False
-#     for (
-#         a
-#     ) in m.activities:  # iteretes through his new activities and checks if hes still playing league
-#         if (
-#             a.name is not None
-#         ):  # citadi vins dazriez prosta crasho nu gnjau custom activity kkas idfk ez fix
-#             if a.name.lower() == "league of legends":
-#                 shall_ban = True  # designate the person for a ban
-#     if shall_ban:
-#         print(f"{m.display_name} has been banned from {gaming_server.name}")
-#         await m.send(
-#             f"You have been banned from {gaming_server.name} for playing too much League of Legends"
-#         )
-#         await gaming_server.ban(m, reason="played league", delete_message_days=0)
-#         await Gmain_channel.send(
-#             f"{m.display_name} has been banned from {gaming_server.name} for playing league"
-#         )
-#     else:
-#         print(f"{m.display_name} has closed the game timely")
-
-
-# @bot.event
+# @listen
 # async def on_member_update(prev, cur):
-
-#     for a in cur.activities:
-#         if cur == owner:
-#             return
-#         elif a.name.lower() == "league of legends":
-#             await wait_and_ban(cur)
 
 #     if cur == bot.user:
 #         return
@@ -550,9 +631,9 @@ async def outro(ctx: InteractionContext):
 # code for floppa friday
 
 
-# secret_TOKEN = os.environ["TOKEN"]
+secret_TOKEN = os.environ["TOKEN"]
 try:
-    bot.start("OTI5Njg3MjAwMDgwMjI4MzYy.GWbTOj.xJ9YgbXxllMfkz8_Md3f5XXDRGoF71LdgVCjw0")
+    bot.start(secret_TOKEN)
 except:
     print("Failed to log in")
     os.system("kill 1")
