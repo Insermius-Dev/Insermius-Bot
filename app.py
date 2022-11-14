@@ -1,7 +1,7 @@
 # Bot made by using NAFF
 # pip install git+https://github.com/NAFTeam/NAFF@dev
 
-bot_official_version = "2.8.5"
+bot_official_version = "2.8.6"
 
 import naff
 from naff import (
@@ -237,7 +237,7 @@ async def on_component(ctx: ComponentContext):
                 name="Little helpers",
                 value=f"> <@{lilhelpers[0]}> \n> <@{lilhelpers[1]}>\n> <@{lilhelpers[2]}>",
             )
-            await event.send(embed=embed, ephemeral=True)
+            await event.send(embed=embed)
             channel_cooldown.append(event.channel.id)
             await asyncio.sleep(15)
             channel_cooldown.remove(event.channel.id)
@@ -290,7 +290,7 @@ async def on_component(ctx: ComponentContext):
                 btn4,
             )
 
-            await event.send(embed=embed, components=components, ephemeral=True)
+            await event.send(embed=embed, components=components)
             channel_cooldown.append(event.channel.id)
             await asyncio.sleep(15)
             channel_cooldown.remove(event.channel.id)
