@@ -1,7 +1,7 @@
 # Bot made by using NAFF
 # pip install git+https://github.com/NAFTeam/NAFF@dev
 
-bot_official_version = "2.8.2"
+bot_official_version = "2.8.3"
 
 import naff
 from naff import (
@@ -110,9 +110,14 @@ board = []
 
 epiccontribbutingppl = [
     324352543612469258,
-    488257154701197322,
     975738227669499916,
+    400713431423909889,
+]
+
+lilhelpers = [
     954821934808449125,
+    830021857067532349,
+    488257154701197322,
 ]
 
 winningConditions = [
@@ -184,9 +189,9 @@ async def info(ctx):
         description="Info about the bot",
         timestamp=datetime.datetime.utcnow(),
         color=Color.from_hex("5e50d4"),
-        footer="Requested by " + str(ctx.author),
         thumbnail="https://cdn.discordapp.com/attachments/983081269543993354/1041045309695987712/image.png",
     )
+    embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar_url)
     embed.add_field(
         name="Bot Version",
         value=bot_official_version,
@@ -221,11 +226,15 @@ async def on_component(ctx: ComponentContext):
                 description=f"Epic people who have helped and made Larss_Bot what it is today!",
                 timestamp=datetime.datetime.utcnow(),
                 color=Color.from_hex("5e50d4"),
-                footer="Requested by " + str(event.author),
+            )
+            embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar_url)
+            embed.add_field(
+                name="Contributors",
+                value=f"> <@{epiccontribbutingppl[0]}> \n> <@{epiccontribbutingppl[1]}>\n> <@{epiccontribbutingppl[2]}>",
             )
             embed.add_field(
-                name="Awesome people",
-                value=f"> <@{epiccontribbutingppl[0]}> \n> <@{epiccontribbutingppl[1]}>\n> <@{epiccontribbutingppl[3]}>\n> <@{epiccontribbutingppl[2]}>",
+                name="Lilttle helpers",
+                value=f"> <@{lilhelpers[0]}> \n> <@{lilhelpers[1]}>\n> <@{lilhelpers[2]}>",
             )
             await event.channel.send(embed=embed)
             channel_cooldown.append(event.channel.id)
@@ -244,7 +253,9 @@ async def on_component(ctx: ComponentContext):
                 description=f"Press any of the buttons below to get invited to one of the partnered servers",
                 timestamp=datetime.datetime.utcnow(),
                 color=Color.from_hex("5e50d4"),
-                footer="Requested by " + str(event.author),
+            )
+            embed.set_footer(
+                text="Requested by " + str(event.author), icon_url=event.author.avatar_url
             )
 
             btn1 = Button(
@@ -320,19 +331,28 @@ async def on_component(ctx: ComponentContext):
 @listen()
 async def on_member_add(event):
     joiner = event.member
+    if joiner.bot:
+        embed = Embed(
+            description=f"Application '{joiner.dispay_name}' was added to the server!",
+            timestamp=datetime.datetime.utcnow(),
+            color=Color.from_hex("5e50d4"),
+        )
 
-    embed = Embed(
-        title=f"Welcome {joiner.display_name}!",
-        description=f"Thanks for joining {joiner.guild.name}!",
-        timestamp=datetime.datetime.utcnow(),
-        color=Color.from_rgb(88, 109, 245),
-    )
-    embed.set_thumbnail(url=joiner.avatar.url)
+        embed.set_author(text=f"Application added", icon_url=joiner.avatar_url)
+        await event.guild.system_channel.send(embed=embed)
+    else:
+        embed = Embed(
+            title=f"Welcome {joiner.display_name}!",
+            description=f"Thanks for joining {joiner.guild.name}!",
+            timestamp=datetime.datetime.utcnow(),
+            color=Color.from_rgb(88, 109, 245),
+        )
+        embed.set_thumbnail(url=joiner.avatar.url)
 
-    message = await event.guild.system_channel.send(
-        f"Welcome {joiner.mention}! :wave: ", embed=embed
-    )
-    await message.add_reaction("👋")
+        message = await event.guild.system_channel.send(
+            f"Welcome {joiner.mention}! :wave: ", embed=embed
+        )
+        await message.add_reaction("👋")
 
 
 @listen()
@@ -488,6 +508,7 @@ async def spotify(ctx: InteractionContext):
             description="Currently not listening to anything",
             color="#36b357",
         )
+    embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar_url)
     message = await ctx.send(embeds=embed)
     await message.add_reaction(spotify_emoji)
 
@@ -501,8 +522,8 @@ async def outro(ctx: InteractionContext):
             'Playing "Gas-gas-gas" by Manuel',
             description="[Click here to join the voice channel](https://discord.gg/invite/invite)",
             color="#36b357",
-            footer="Requested by {}".format(ctx.author.display_name),
         )
+        embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar_url)
         await ctx.send(embed=embed)
         jointhisvc = bot.get_channel(ctx.author.voice.channel)
         audio = AudioVolume(
