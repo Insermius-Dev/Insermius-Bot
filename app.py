@@ -1,7 +1,7 @@
 # Bot made by using NAFF
 # pip install git+https://github.com/NAFTeam/NAFF@dev
 
-bot_official_version = "2.8.4"
+bot_official_version = "2.8.5"
 
 import naff
 from naff import (
@@ -130,7 +130,6 @@ winningConditions = [
     [0, 4, 8],
     [2, 4, 6],
 ]
-
 """floppa friday code"""
 """___________________"""
 import schedule
@@ -223,25 +222,27 @@ async def on_component(ctx: ComponentContext):
         if event.channel.id not in channel_cooldown:
             embed = Embed(
                 title="⭐ Contributors",
-                description=f"Epic people who have helped and made Larss_Bot what it is today!",
+                description=f"Awesome people who have helped to make Larss_Bot what it is today!",
                 timestamp=datetime.datetime.utcnow(),
                 color=Color.from_hex("5e50d4"),
             )
-            embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar.url)
+            embed.set_footer(
+                text=f"Requested by {event.author.display_name}", icon_url=event.author.avatar.url
+            )
             embed.add_field(
                 name="Contributors",
                 value=f"> <@{epiccontribbutingppl[0]}> \n> <@{epiccontribbutingppl[1]}>\n> <@{epiccontribbutingppl[2]}>",
             )
             embed.add_field(
-                name="Lilttle helpers",
+                name="Little helpers",
                 value=f"> <@{lilhelpers[0]}> \n> <@{lilhelpers[1]}>\n> <@{lilhelpers[2]}>",
             )
-            await event.channel.send(embed=embed)
+            await event.send(embed=embed, ephemeral=True)
             channel_cooldown.append(event.channel.id)
             await asyncio.sleep(15)
             channel_cooldown.remove(event.channel.id)
         else:
-            await event.channel.send(
+            await event.send(
                 "Looks like someone already pressed the button. No need to do it again.",
                 ephemeral=True,
             )
@@ -255,7 +256,7 @@ async def on_component(ctx: ComponentContext):
                 color=Color.from_hex("5e50d4"),
             )
             embed.set_footer(
-                text="Requested by " + str(event.author), icon_url=event.author.avatar.url
+                text=f"Requested by {event.author.display_name}", icon_url=event.author.avatar.url
             )
 
             btn1 = Button(
@@ -289,12 +290,13 @@ async def on_component(ctx: ComponentContext):
                 btn4,
             )
 
-            await event.channel.send(embed=embed, components=components)
+            await event.send(embed=embed, components=components, ephemeral=True)
             channel_cooldown.append(event.channel.id)
             await asyncio.sleep(15)
             channel_cooldown.remove(event.channel.id)
         else:
-            await event.channel.send(
+            # ephemeral not gonna work, once again
+            await event.send(
                 "Looks like someone already pressed the button. No need to do it again.",
                 ephemeral=True,
             )
@@ -303,7 +305,6 @@ async def on_component(ctx: ComponentContext):
 # welcomeguilds = []
 
 # welcomechannels = []
-
 
 # @slash_command(
 #     name="welcome",
@@ -540,7 +541,6 @@ async def outro(ctx: InteractionContext):
 #     await asyncio.sleep(27)
 #     await member.disconnect()
 
-
 # @slash_command("outro", description="Exit a voice channel in style")
 # async def outro(ctx: InteractionContext):
 #     if not ctx.author.voice:
@@ -561,7 +561,6 @@ async def outro(ctx: InteractionContext):
 #                 await wait_and_kick()
 #         await asyncio.sleep(3)
 #         await vc.disconnect()
-
 
 # @bot.event
 # async def on_message(message):
@@ -650,7 +649,6 @@ async def outro(ctx: InteractionContext):
 #         await ctx.send("Please input a string!")
 
 # code for floppa friday
-
 
 secret_TOKEN = os.environ["TOKEN"]
 try:
