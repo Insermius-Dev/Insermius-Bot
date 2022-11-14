@@ -1,7 +1,7 @@
 # Bot made by using NAFF
 # pip install git+https://github.com/NAFTeam/NAFF@dev
 
-bot_official_version = "2.8.3"
+bot_official_version = "2.8.4"
 
 import naff
 from naff import (
@@ -191,7 +191,7 @@ async def info(ctx):
         color=Color.from_hex("5e50d4"),
         thumbnail="https://cdn.discordapp.com/attachments/983081269543993354/1041045309695987712/image.png",
     )
-    embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar_url)
+    embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar.url)
     embed.add_field(
         name="Bot Version",
         value=bot_official_version,
@@ -227,7 +227,7 @@ async def on_component(ctx: ComponentContext):
                 timestamp=datetime.datetime.utcnow(),
                 color=Color.from_hex("5e50d4"),
             )
-            embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar_url)
+            embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar.url)
             embed.add_field(
                 name="Contributors",
                 value=f"> <@{epiccontribbutingppl[0]}> \n> <@{epiccontribbutingppl[1]}>\n> <@{epiccontribbutingppl[2]}>",
@@ -255,7 +255,7 @@ async def on_component(ctx: ComponentContext):
                 color=Color.from_hex("5e50d4"),
             )
             embed.set_footer(
-                text="Requested by " + str(event.author), icon_url=event.author.avatar_url
+                text="Requested by " + str(event.author), icon_url=event.author.avatar.url
             )
 
             btn1 = Button(
@@ -508,7 +508,7 @@ async def spotify(ctx: InteractionContext):
             description="Currently not listening to anything",
             color="#36b357",
         )
-    embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar_url)
+    embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar.url)
     message = await ctx.send(embeds=embed)
     await message.add_reaction(spotify_emoji)
 
@@ -523,7 +523,7 @@ async def outro(ctx: InteractionContext):
             description="[Click here to join the voice channel](https://discord.gg/invite/invite)",
             color="#36b357",
         )
-        embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar_url)
+        embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar.url)
         await ctx.send(embed=embed)
         jointhisvc = bot.get_channel(ctx.author.voice.channel)
         audio = AudioVolume(
