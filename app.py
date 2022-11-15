@@ -1,7 +1,7 @@
 # Bot made by using NAFF
 # pip install git+https://github.com/NAFTeam/NAFF@dev
 
-bot_official_version = "2.8.6"
+bot_official_version = "2.8.7"
 
 import naff
 from naff import (
@@ -328,46 +328,64 @@ async def on_component(ctx: ComponentContext):
 #         welcomeguilds.append(channel.guild.id)
 #         await ctx.send(f"Added {channel.mention} to the welcome message system!")
 
+with open("nowelcome.txt") as f:
+    lines = f.readlines()
+
 
 @listen()
 async def on_member_add(event):
     joiner = event.member
-    if joiner.bot:
-        embed = Embed(
-            description=f"Application '{joiner.dispay_name}' was added to the server!",
-            timestamp=datetime.datetime.utcnow(),
-            color=Color.from_hex("5e50d4"),
-        )
+    if event.guild.id in lines:
+        pass
+    elif not event.guild.id in lines:
+        if joiner.bot:
+            embed = Embed(
+                description=f"Application '{joiner.display_name}' was added to the server!",
+                timestamp=datetime.datetime.utcnow(),
+                color=Color.from_hex("5e50d4"),
+            )
 
-        embed.set_author(text=f"Application added", icon_url=joiner.avatar_url)
-        await event.guild.system_channel.send(embed=embed)
-    else:
-        embed = Embed(
-            title=f"Welcome {joiner.display_name}!",
-            description=f"Thanks for joining {joiner.guild.name}!",
-            timestamp=datetime.datetime.utcnow(),
-            color=Color.from_rgb(88, 109, 245),
-        )
-        embed.set_thumbnail(url=joiner.avatar.url)
+            embed.set_author(text=f"Application added", icon_url=joiner.avatar_url)
+            await event.guild.system_channel.send(embed=embed)
+        else:
+            embed = Embed(
+                title=f"Welcome {joiner.display_name}!",
+                description=f"Thanks for joining {joiner.guild.name}!",
+                timestamp=datetime.datetime.utcnow(),
+                color=Color.from_rgb(88, 109, 245),
+            )
+            embed.set_thumbnail(url=joiner.avatar.url)
 
-        message = await event.guild.system_channel.send(
-            f"Welcome {joiner.mention}! :wave: ", embed=embed
-        )
-        await message.add_reaction("👋")
+            message = await event.guild.system_channel.send(
+                f"Welcome {joiner.mention}! :wave: ", embed=embed
+            )
+            await message.add_reaction("👋")
 
 
 @listen()
 async def on_member_remove(event):
     leaver = event.member
+    if event.guild.id in lines:
+        pass
+    elif not event.guild.id in lines:
+        if leaver.bot:
+            embed = Embed(
+                description=f"Application '{leaver.display_name}' was removed from the server!",
+                timestamp=datetime.datetime.utcnow(),
+                color=Color.from_hex("5e50d4"),
+            )
 
-    embed = Embed(
-        title=f"{leaver.display_name} left.",
-        description=f"Sorry to see you go {leaver.display_name}!",
-        timestamp=datetime.datetime.utcnow(),
-        color=Color.from_rgb(255, 13, 13),
-    )
+            embed.set_author(text=f"Application added", icon_url=leaver.avatar_url)
+            await event.guild.system_channel.send(embed=embed)
+        else:
+            embed = Embed(
+                title=f"{leaver.display_name} left.",
+                description=f"Sorry to see you go {leaver.display_name}!",
+                timestamp=datetime.datetime.utcnow(),
+                color=Color.from_rgb(255, 13, 13),
+            )
 
-    await event.guild.system_channel.send(embed=embed)
+            await event.guild.system_channel.send(embed=embed)
 
 
 @slash_command(name="ping", description="check the bots status")
@@ -457,7 +475,7 @@ async def randomise(ctx, num1, num2):
             f"""
 > `{num1}` - `{num2}`
 
-**{int(float(random.randint(int(float(num1)), int(float(num2)))))}**
+**{int(float(random.randint(int(num1), int(num2))))}**
 """
         )
     except:
