@@ -1,6 +1,16 @@
 import naff
 import json
-from naff import Extension, slash_command, OptionTypes, slash_option, Color, Embed
+from naff import (
+    Extension,
+    slash_command,
+    OptionTypes,
+    slash_option,
+    Color,
+    Embed,
+    ActionRow,
+    Button,
+    ButtonStyles,
+)
 from datetime import date, datetime
 from babel.dates import format_date
 
@@ -46,16 +56,28 @@ Smash or Pass?
     )
     async def nameday(self, ctx, name=None):
         if name == None:
+            components = [
+                ActionRow(
+                    Button(
+                        label="Rādīt visus",
+                        style=ButtonStyles.RED,
+                        custom_id="extendedlistshow",
+                        emoji="📅",
+                    )
+                ),
+            ]
             today = date.today().strftime("%m-%d")
             embed = Embed(
                 title="Šodien vārda dienu svin:",
                 description=", ".join(namedays[today]),
                 color=Color.from_rgb(255, 13, 13),
+                footer="requested by " + str(ctx.author),
+                timestamp=datetime.utcnow(),
             )
             embed.set_thumbnail(
                 url="https://cdn.discordapp.com/attachments/930891009007710218/1006812016675135568/IMG_7631.jpg"
             )
-            await ctx.send(embed=embed)
+            await ctx.send(embed=embed, component=components)
         else:
             nday = None
             for k in namedays.keys():

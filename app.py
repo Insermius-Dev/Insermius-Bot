@@ -1,7 +1,7 @@
 # Bot made by using NAFF
 # pip install git+https://github.com/NAFTeam/NAFF@dev
 
-bot_official_version = "2.8.7"
+bot_official_version = "2.9.0"
 
 import naff
 from naff import (
@@ -24,10 +24,11 @@ from naff import (
     ActionRow,
     ComponentContext,
     spread_to_rows,
+    ComponentContext,
 )
 from naff.api.voice.audio import AudioVolume
 
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import asyncio
 import re
 import random
@@ -35,8 +36,9 @@ import os
 from random import randint
 from datetime import date, datetime
 from babel.dates import format_date
+import json
 
-load_dotenv()
+# load_dotenv()
 
 bot_intents: Intents = Intents.GUILD_PRESENCES | Intents.DEFAULT | Intents.GUILD_MEMBERS
 
@@ -136,6 +138,7 @@ import schedule
 import datetime
 import time
 
+flop_serbor = bot.get_guild(1018893839769018368)
 floppa_announce = bot.get_channel(1018893839769018371)
 
 from naff import Task, TimeTrigger, listen, DateTrigger
@@ -211,14 +214,33 @@ async def info(ctx):
     await ctx.send(embed=embed, components=components)
 
 
+# @listen()
+# async def on_guild_join(guild):
+#     if bot.is_ready:
+#         print("New guild joined")
+#         dm = await bot.owner.fetch_dm()
+#         invite = await guild.guild.system_channel.create_invite()
+#         embed = Embed(
+#             title="New guild",
+#             description=f"Joined {guild.guild.name} with {guild.guild.member_count} members",
+#             timestamp=datetime.datetime.utcnow(),
+#             color=Color.from_hex("5e50d4"),
+#         )
+#         await dm.send(invite, embed=embed)
+
+
 channel_cooldown = []
 invite_cooldown = []
+nameday_cooldown = []
+
+with open("data/namedays-extended.json", encoding="utf-8") as f:
+    namedays_ext = json.load(f)
 
 
 @listen()
 async def on_component(ctx: ComponentContext):
-    event = ctx.context
-    if event.custom_id.startswith("contributors"):
+    event = ctx.ctx
+    if event.custom_id == "contributors":
         if event.channel.id not in channel_cooldown:
             embed = Embed(
                 title="⭐ Contributors",
@@ -300,6 +322,24 @@ async def on_component(ctx: ComponentContext):
                 "Looks like someone already pressed the button. No need to do it again.",
                 ephemeral=True,
             )
+    if event.custom_id == "extendedlistshow":
+        if event.channel.id not in nameday_cooldown:
+            today = date.today().strftime("%m-%d")
+            embed = Embed(
+                title="Visi šodienas vārdi",
+                description="> " + "\n> ".join(namedays_ext[today]),
+                color=Color.from_rgb(255, 13, 13),
+            )
+            await event.send(embed=embed)
+            nameday_cooldown.append(event.channel.id)
+            await asyncio.sleep(15)
+            nameday_cooldown.remove(event.channel.id)
+        else:
+            # ephemeral not gonna work, once again
+            await event.send(
+                "Looks like someone already pressed the button. No need to do it again.",
+                ephemeral=True,
+            )
 
 
 # welcomeguilds = []
@@ -329,23 +369,23 @@ async def on_component(ctx: ComponentContext):
 #         await ctx.send(f"Added {channel.mention} to the welcome message system!")
 
 with open("nowelcome.txt") as f:
+    global lines
     lines = f.readlines()
 
 
 @listen()
 async def on_member_add(event):
     joiner = event.member
-    if event.guild.id in lines:
+    if event.guild.id == 998607296986877963 or event.guild.id == 870046872864165888:
         pass
     elif not event.guild.id in lines:
         if joiner.bot:
             embed = Embed(
                 description=f"Application '{joiner.display_name}' was added to the server!",
-                timestamp=datetime.datetime.utcnow(),
-                color=Color.from_hex("5e50d4"),
+                color=Color.from_hex("58f728"),
             )
 
-            embed.set_author(text=f"Application added", icon_url=joiner.avatar_url)
+            embed.set_author("Application added", icon_url=joiner.avatar.url)
             await event.guild.system_channel.send(embed=embed)
         else:
             embed = Embed(
@@ -365,17 +405,18 @@ async def on_member_add(event):
 @listen()
 async def on_member_remove(event):
     leaver = event.member
-    if event.guild.id in lines:
+    if event.guild.id == 998607296986877963 or event.guild.id == 870046872864165888:
+        pass
+    elif leaver == bot.user:
         pass
     elif not event.guild.id in lines:
         if leaver.bot:
             embed = Embed(
                 description=f"Application '{leaver.display_name}' was removed from the server!",
-                timestamp=datetime.datetime.utcnow(),
-                color=Color.from_hex("5e50d4"),
+                color=Color.from_hex("f73528"),
             )
 
-            embed.set_author(text=f"Application added", icon_url=leaver.avatar_url)
+            embed.set_author(f"Application removed", icon_url=leaver.avatar.url)
             await event.guild.system_channel.send(embed=embed)
         else:
             embed = Embed(
@@ -532,27 +573,27 @@ async def spotify(ctx: InteractionContext):
     await message.add_reaction(spotify_emoji)
 
 
-@slash_command("gas", description='"gas-gas-gas" by Manuel')
-async def outro(ctx: InteractionContext):
-    if not ctx.author.voice:
-        return await ctx.send("You are not in a voice channel")
-    else:
-        embed = Embed(
-            'Playing "Gas-gas-gas" by Manuel',
-            description="[Click here to join the voice channel](https://discord.gg/invite/invite)",
-            color="#36b357",
-        )
-        embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar.url)
-        await ctx.send(embed=embed)
-        jointhisvc = bot.get_channel(ctx.author.voice.channel)
-        audio = AudioVolume(
-            r"data\gas-gas-gas.mp3",
-        )
-        vc = await jointhisvc.connect(deafened=True)
-        await asyncio.sleep(0.5)
-        await vc.play(audio)
-        await asyncio.sleep(3)
-        await vc.disconnect()
+# @slash_command("gas", description='"gas-gas-gas" by Manuel')
+# async def outro(ctx: InteractionContext):
+#     if not ctx.author.voice:
+#         return await ctx.send("You are not in a voice channel")
+#     else:
+#         embed = Embed(
+#             'Playing "Gas-gas-gas" by Manuel',
+#             description="[Click here to join the voice channel](https://discord.gg/invite/invite)",
+#             color="#36b357",
+#         )
+#         embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar.url)
+#         await ctx.send(embed=embed)
+#         jointhisvc = bot.get_channel(ctx.author.voice.channel)
+#         audio = AudioVolume(
+#             r"data\gas-gas-gas.mp3",
+#         )
+#         vc = await jointhisvc.connect(deafened=True)
+#         await asyncio.sleep(0.5)
+#         await vc.play(audio)
+#         await asyncio.sleep(3)
+#         await vc.disconnect()
 
 
 # async def wait_and_kick(member):
