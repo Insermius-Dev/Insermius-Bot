@@ -62,7 +62,7 @@ Smash or Pass?
                         label="Rādīt visus",
                         style=ButtonStyles.RED,
                         custom_id="extendedlistshow",
-                        emoji="📅",
+                        emoji="🗓",
                     )
                 ),
             ]
@@ -71,13 +71,11 @@ Smash or Pass?
                 title="Šodien vārda dienu svin:",
                 description=", ".join(namedays[today]),
                 color=Color.from_rgb(255, 13, 13),
-                footer="requested by " + str(ctx.author),
-                timestamp=datetime.utcnow(),
             )
             embed.set_thumbnail(
                 url="https://cdn.discordapp.com/attachments/930891009007710218/1006812016675135568/IMG_7631.jpg"
             )
-            await ctx.send(embed=embed, component=components)
+            await ctx.send(embed=embed, components=components)
         else:
             nday = None
             for k in namedays.keys():

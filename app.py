@@ -1,7 +1,7 @@
 # Bot made by using NAFF
 # pip install git+https://github.com/NAFTeam/NAFF@dev
 
-bot_official_version = "2.9.0"
+bot_official_version = "2.9.1"
 
 import naff
 from naff import (
