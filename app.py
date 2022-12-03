@@ -176,6 +176,7 @@ async def on_startup():
     friday.start()
     bot.load_extension("data.ext1")
     bot.load_extension("data.tictactoe")
+    bot.load_extension("data.githubmessages")
     while True:
         await bot.change_presence(
             activity=naff.Activity(
