@@ -1,7 +1,7 @@
 # Bot made by using NAFF
 # pip install git+https://github.com/NAFTeam/NAFF@dev
 
-bot_official_version = "2.9.1"
+bot_official_version = "2.10.0"
 
 import naff
 from naff import (
@@ -38,6 +38,9 @@ from datetime import date, datetime
 from babel.dates import format_date
 import json
 
+from keep_alive import keep_alive
+
+keep_alive()
 # load_dotenv()
 
 bot_intents: Intents = Intents.GUILD_PRESENCES | Intents.DEFAULT | Intents.GUILD_MEMBERS
@@ -172,6 +175,7 @@ async def on_startup():
     print(f"{bot.user} has connected to Discord!")
     friday.start()
     bot.load_extension("data.ext1")
+    bot.load_extension("data.tictactoe")
     while True:
         await bot.change_presence(
             activity=naff.Activity(
@@ -227,7 +231,6 @@ async def info(ctx):
 #             color=Color.from_hex("5e50d4"),
 #         )
 #         await dm.send(invite, embed=embed)
-
 
 channel_cooldown = []
 invite_cooldown = []
@@ -594,7 +597,6 @@ async def spotify(ctx: InteractionContext):
 #         await vc.play(audio)
 #         await asyncio.sleep(3)
 #         await vc.disconnect()
-
 
 # async def wait_and_kick(member):
 #     await asyncio.sleep(27)
