@@ -1,7 +1,7 @@
 # Bot made by using NAFF
 # pip install git+https://github.com/NAFTeam/NAFF@dev
 
-bot_official_version = "2.10.0"
+bot_official_version = "2.10.1"
 
 import naff
 from naff import (
@@ -25,6 +25,7 @@ from naff import (
     ComponentContext,
     spread_to_rows,
     ComponentContext,
+    is_owner,
 )
 from naff.api.voice.audio import AudioVolume
 
@@ -546,6 +547,7 @@ async def calculate(ctx, equasion):
         await ctx.send("Thats not a math equasion...")
 
 
+@is_owner()
 @slash_command("spotify", description="Share what you're listening to!")
 async def spotify(ctx: InteractionContext):
     listener = ctx.author
