@@ -1,6 +1,5 @@
 # Bot made by using NAFF
 # pip install git+https://github.com/NAFTeam/NAFF@dev
-
 bot_official_version = "2.10.1"
 
 import naff
@@ -27,7 +26,6 @@ from naff import (
     ComponentContext,
     is_owner,
 )
-from naff.api.voice.audio import AudioVolume
 
 # from dotenv import load_dotenv
 import asyncio
@@ -48,21 +46,21 @@ bot_intents: Intents = Intents.GUILD_PRESENCES | Intents.DEFAULT | Intents.GUILD
 
 bot = Client(sync_interactions=True, intents=bot_intents, send_command_tracebacks=False)
 
-lab = bot.get_guild(974354202430169139)
-labsuggestion_channel = bot.get_channel(974360212033110106)
-lab_audit = bot.get_channel(974361855952834621)
-lab_announce = bot.get_channel(979306543487025184)
-labmain_channel = bot.get_channel(974354203583606836)
-# labannounce_role = lab.get_role(979447462379003964)
-owner = bot.get_user(737983831000350731)
-gaming_server = bot.get_guild(829026541950206049)
-Gsuggestion_channel = bot.get_channel(968944421481623642)
-Gmain_channel = bot.get_channel(829026542495203390)
-Gaudit_channel = bot.get_channel(975052349666107432)
-Gsuggestion_channel = bot.get_channel(968944421481623642)
-Emain_channel = bot.get_channel(954823151601221712)
-Emod_channel = bot.get_channel(962591528369418240)
-ezic_server = bot.get_guild(954823151139827774)
+# lab = bot.get_guild(974354202430169139)
+# labsuggestion_channel = bot.get_channel(974360212033110106)
+# lab_audit = bot.get_channel(974361855952834621)
+# lab_announce = bot.get_channel(979306543487025184)
+# labmain_channel = bot.get_channel(974354203583606836)
+# # labannounce_role = lab.get_role(979447462379003964)
+# owner = bot.get_user(737983831000350731)
+# gaming_server = bot.get_guild(829026541950206049)
+# Gsuggestion_channel = bot.get_channel(968944421481623642)
+# Gmain_channel = bot.get_channel(829026542495203390)
+# Gaudit_channel = bot.get_channel(975052349666107432)
+# Gsuggestion_channel = bot.get_channel(968944421481623642)
+# Emain_channel = bot.get_channel(954823151601221712)
+# Emod_channel = bot.get_channel(962591528369418240)
+# ezic_server = bot.get_guild(954823151139827774)
 # roles
 # labmember_role = lab.get_role(974360634663768085)
 # gaming server gaming roles
@@ -126,43 +124,33 @@ lilhelpers = [
     488257154701197322,
 ]
 
-winningConditions = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-]
-"""floppa friday code"""
-"""___________________"""
-import schedule
-import datetime
-import time
+# """floppa friday code"""
+# """___________________"""
+# import schedule
+# import datetime
+# import time
 
-flop_serbor = bot.get_guild(1018893839769018368)
-floppa_announce = bot.get_channel(1018893839769018371)
+# flop_serbor = bot.get_guild(1018893839769018368)
+# floppa_announce = bot.get_channel(1018893839769018371)
 
-from naff import Task, TimeTrigger, listen, DateTrigger
+# from naff import Task, TimeTrigger, listen, DateTrigger
 
 
-@Task.create(TimeTrigger(hour=9, minute=0))
-async def friday():
-    if datetime.datetime.today().weekday() == 4:
-        # rest of the code
-        today = datetime.datetime.utcnow()
-        nextfriday = today + datetime.timedelta(days=7)
-        nextfridayunix = time.mktime(nextfriday.timetuple())
+# @Task.create(TimeTrigger(hour=9, minute=0))
+# async def friday():
+#     if datetime.datetime.today().weekday() == 4:
+#         # rest of the code
+#         today = datetime.datetime.utcnow()
+#         nextfriday = today + datetime.timedelta(days=7)
+#         nextfridayunix = time.mktime(nextfriday.timetuple())
 
-        await floppa_announce.send(
-            f"Floppa friday! Next floppa friday <t:{int(str(nextfridayunix)[:-2])}:R>"
-        )
-        print("sent")
+#         await floppa_announce.send(
+#             f"Floppa friday! Next floppa friday <t:{int(str(nextfridayunix)[:-2])}:R>"
+#         )
+#         print("sent")
 
 
-"""---------------------"""
+# """---------------------"""
 
 
 @listen()
@@ -174,19 +162,43 @@ async def on_error():
 @listen()
 async def on_startup():
     print(f"{bot.user} has connected to Discord!")
-    friday.start()
     bot.load_extension("data.ext1")
     bot.load_extension("data.tictactoe")
-    bot.load_extension("data.githubmessages")
     while True:
-        await bot.change_presence(
-            activity=naff.Activity(
-                name=random.choice(playingStatus),
-                type=naff.ActivityType.PLAYING,
+        random_activity = randint(1, 2)
+        if random_activity == 1:
+            await bot.change_presence(
+                activity=naff.Activity(
+                    name=random.choice(playingStatus),
+                    type=naff.ActivityType.PLAYING,
+                )
             )
-        )
-        schedule.run_pending()
-        await asyncio.sleep(60)
+            await asyncio.sleep(60)
+        elif random_activity == 2:
+            await bot.change_presence(
+                activity=naff.Activity(
+                    name=random.choice(watchingStatus),
+                    type=naff.ActivityType.WATCHING,
+                )
+            )
+            await asyncio.sleep(60)
+        # HEY WHAT ARE YOU DOING HERE THIS IS IN BETA
+        # elif random_activity == 3:
+        #     if len.bot.guilds.endswith() == 1:
+        #         await bot.change_presence(
+        #             activity=naff.Activity(
+        #                 type=naff.ActivityType.STREAMING,
+        #                 url="{0} server".format(len(bot.guilds)),
+        #             )
+        #         )
+        #     else:
+        #         await bot.change_presence(
+        #             activity=naff.Activity(
+        #                 type=naff.ActivityType.STREAMING,
+        #                 url="{0} servers".format(len(bot.guilds)),
+        #             )
+        #         )
+        #     await asyncio.sleep(60)
 
 
 @slash_command(name="info", description="get info about the bot")
@@ -381,7 +393,11 @@ with open("nowelcome.txt") as f:
 @listen()
 async def on_member_add(event):
     joiner = event.member
-    if event.guild.id == 998607296986877963 or event.guild.id == 870046872864165888:
+    if (
+        event.guild.id == 998607296986877963
+        or event.guild.id == 870046872864165888
+        or event.guild.id == 1045987877961613312
+    ):
         pass
     elif not event.guild.id in lines:
         if joiner.bot:
@@ -410,7 +426,11 @@ async def on_member_add(event):
 @listen()
 async def on_member_remove(event):
     leaver = event.member
-    if event.guild.id == 998607296986877963 or event.guild.id == 870046872864165888:
+    if (
+        event.guild.id == 998607296986877963
+        or event.guild.id == 870046872864165888
+        or event.guild.id == 1045987877961613312
+    ):
         pass
     elif leaver == bot.user:
         pass
@@ -436,7 +456,8 @@ async def on_member_remove(event):
 
 @slash_command(name="ping", description="check the bots status")
 async def ping(ctx):
-    await ctx.send("pong")
+    message = await ctx.send("pong")
+    await message.add_reaction("🟢")
 
 
 # @listen
