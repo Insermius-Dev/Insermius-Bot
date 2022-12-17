@@ -1,6 +1,6 @@
 # Bot made by using NAFF
 # pip install git+https://github.com/NAFTeam/NAFF@dev
-bot_official_version = "2.10.1"
+bot_official_version = "2.11.0"
 
 import naff
 from naff import (
@@ -27,7 +27,6 @@ from naff import (
     is_owner,
 )
 
-# from dotenv import load_dotenv
 import asyncio
 import re
 import random
@@ -37,10 +36,13 @@ from datetime import date, datetime
 from babel.dates import format_date
 import json
 
-from keep_alive import keep_alive
+from dotenv import load_dotenv
 
-keep_alive()
-# load_dotenv()
+load_dotenv()
+
+# from keep_alive import keep_alive
+
+# keep_alive()
 
 bot_intents: Intents = Intents.GUILD_PRESENCES | Intents.DEFAULT | Intents.GUILD_MEMBERS
 
@@ -135,7 +137,6 @@ lilhelpers = [
 
 # from naff import Task, TimeTrigger, listen, DateTrigger
 
-
 # @Task.create(TimeTrigger(hour=9, minute=0))
 # async def friday():
 #     if datetime.datetime.today().weekday() == 4:
@@ -148,7 +149,6 @@ lilhelpers = [
 #             f"Floppa friday! Next floppa friday <t:{int(str(nextfridayunix)[:-2])}:R>"
 #         )
 #         print("sent")
-
 
 # """---------------------"""
 
@@ -164,8 +164,9 @@ async def on_startup():
     print(f"{bot.user} has connected to Discord!")
     bot.load_extension("data.ext1")
     bot.load_extension("data.tictactoe")
+    bot.load_extension("data.ghostgame")
     while True:
-        random_activity = randint(1, 2)
+        random_activity = randint(1, 3)
         if random_activity == 1:
             await bot.change_presence(
                 activity=naff.Activity(
@@ -182,23 +183,24 @@ async def on_startup():
                 )
             )
             await asyncio.sleep(60)
-        # HEY WHAT ARE YOU DOING HERE THIS IS IN BETA
-        # elif random_activity == 3:
-        #     if len.bot.guilds.endswith() == 1:
-        #         await bot.change_presence(
-        #             activity=naff.Activity(
-        #                 type=naff.ActivityType.STREAMING,
-        #                 url="{0} server".format(len(bot.guilds)),
-        #             )
-        #         )
-        #     else:
-        #         await bot.change_presence(
-        #             activity=naff.Activity(
-        #                 type=naff.ActivityType.STREAMING,
-        #                 url="{0} servers".format(len(bot.guilds)),
-        #             )
-        #         )
-        #     await asyncio.sleep(60)
+        elif random_activity == 3:
+            if str(len(bot.guilds)).endswith("1"):
+                await bot.change_presence(
+                    activity=naff.Activity(
+                        type=naff.ActivityType.STREAMING,
+                        url="https://www.twitch.tv/larssj_",
+                        name="{0} server".format(len(bot.guilds)),
+                    )
+                )
+            else:
+                await bot.change_presence(
+                    activity=naff.Activity(
+                        type=naff.ActivityType.STREAMING,
+                        name="{0} servers".format(len(bot.guilds)),
+                        url="https://www.twitch.tv/larssj_",
+                    )
+                )
+            await asyncio.sleep(60)
 
 
 @slash_command(name="info", description="get info about the bot")
@@ -207,7 +209,7 @@ async def info(ctx):
     embed = Embed(
         title="Info",
         description="Info about the bot",
-        timestamp=datetime.datetime.utcnow(),
+        timestamp=datetime.utcnow(),
         color=Color.from_hex("5e50d4"),
         thumbnail="https://cdn.discordapp.com/attachments/983081269543993354/1041045309695987712/image.png",
     )
@@ -262,7 +264,7 @@ async def on_component(ctx: ComponentContext):
             embed = Embed(
                 title="⭐ Contributors",
                 description=f"Awesome people who have helped to make Larss_Bot what it is today!",
-                timestamp=datetime.datetime.utcnow(),
+                timestamp=datetime.utcnow(),
                 color=Color.from_hex("5e50d4"),
             )
             embed.set_footer(
@@ -291,7 +293,7 @@ async def on_component(ctx: ComponentContext):
             embed = Embed(
                 title="Partner servers",
                 description=f"Press any of the buttons below to get invited to one of the partnered servers",
-                timestamp=datetime.datetime.utcnow(),
+                timestamp=datetime.utcnow(),
                 color=Color.from_hex("5e50d4"),
             )
             embed.set_footer(
