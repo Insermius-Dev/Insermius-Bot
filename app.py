@@ -1,6 +1,6 @@
 # Bot made by using NAFF
 # pip install git+https://github.com/NAFTeam/NAFF@dev
-bot_official_version = "2.11.0"
+bot_official_version = "3.0.0"
 
 import naff
 from naff import (
@@ -35,6 +35,7 @@ from random import randint
 from datetime import date, datetime
 from babel.dates import format_date
 import json
+import time
 
 from dotenv import load_dotenv
 
@@ -107,13 +108,6 @@ watchingStatus = ["Youtube", "Twitch", "the stock market", "birds", "Anime"]
 unedited_ndaytext = None
 defenitionmade = False
 
-player1 = ""
-player2 = ""
-turn = ""
-gameOver = True
-
-board = []
-
 epiccontribbutingppl = [
     324352543612469258,
     975738227669499916,
@@ -164,7 +158,9 @@ async def on_startup():
     print(f"{bot.user} has connected to Discord!")
     bot.load_extension("data.ext1")
     bot.load_extension("data.tictactoe")
-    bot.load_extension("data.ghostgame")
+    # bot.load_extension("data.ghostgame")
+    global now_unix
+    now_unix = time.mktime(datetime.utcnow().timetuple())
     while True:
         random_activity = randint(1, 3)
         if random_activity == 1:
@@ -184,19 +180,19 @@ async def on_startup():
             )
             await asyncio.sleep(60)
         elif random_activity == 3:
-            if str(len(bot.guilds)).endswith("1"):
+            if str(len(bot.guilds)).endswith("1") and not str(len(bot.guilds)).endswith("11"):
                 await bot.change_presence(
                     activity=naff.Activity(
                         type=naff.ActivityType.STREAMING,
                         url="https://www.twitch.tv/larssj_",
-                        name="{0} server".format(len(bot.guilds)),
+                        name="to {0} server".format(len(bot.guilds)),
                     )
                 )
             else:
                 await bot.change_presence(
                     activity=naff.Activity(
                         type=naff.ActivityType.STREAMING,
-                        name="{0} servers".format(len(bot.guilds)),
+                        name="to {0} servers".format(len(bot.guilds)),
                         url="https://www.twitch.tv/larssj_",
                     )
                 )
@@ -226,6 +222,10 @@ async def info(ctx):
         name="Created by",
         value="<@737983831000350731>",
     )
+    embed.add_field(
+        name="Last startup",
+        value=f"<t:{int(str(now_unix)[:-2])}:R>",
+    )
 
     btn1 = Button(ButtonStyles.BLURPLE, "Contributors", emoji="⭐", custom_id="contributors")
     btn2 = Button(ButtonStyles.BLURPLE, "Partnered servers", emoji="🏘", custom_id="guildsinvites")
@@ -233,20 +233,6 @@ async def info(ctx):
 
     await ctx.send(embed=embed, components=components)
 
-
-# @listen()
-# async def on_guild_join(guild):
-#     if bot.is_ready:
-#         print("New guild joined")
-#         dm = await bot.owner.fetch_dm()
-#         invite = await guild.guild.system_channel.create_invite()
-#         embed = Embed(
-#             title="New guild",
-#             description=f"Joined {guild.guild.name} with {guild.guild.member_count} members",
-#             timestamp=datetime.datetime.utcnow(),
-#             color=Color.from_hex("5e50d4"),
-#         )
-#         await dm.send(invite, embed=embed)
 
 channel_cooldown = []
 invite_cooldown = []
@@ -361,47 +347,15 @@ async def on_component(ctx: ComponentContext):
             )
 
 
-# welcomeguilds = []
-
-# welcomechannels = []
-
-# @slash_command(
-#     name="welcome",
-#     description="Configure the welcome message system",
-#     sub_cmd_name="message",
-#     sub_cmd_description="Send `help` for possible placeholders",
-# )
-# @slash_option(
-#     name="channel",
-#     description="The channel you'd like to send welcome messages in",
-#     opt_type=OptionTypes.CHANNEL,
-#     required=True,
-# )
-# async def welcome_message(ctx: InteractionContext, channel: OptionTypes.CHANNEL):
-#     if channel.guild.id in welcomeguilds:
-#         await ctx.send("This guild is already in the welcome system!")
-#     elif channel.id in welcomechannels:
-#         await ctx.send("This channel is already in the welcome message system!")
-#     else:
-#         welcomechannels.append(channel.id)
-#         welcomeguilds.append(channel.guild.id)
-#         await ctx.send(f"Added {channel.mention} to the welcome message system!")
-
-with open("nowelcome.txt") as f:
-    global lines
-    lines = f.readlines()
-
-
 @listen()
 async def on_member_add(event):
+    with open("data/nowelcome.txt") as f:
+        lines = f.read().split(", ")
+    print(lines)
     joiner = event.member
-    if (
-        event.guild.id == 998607296986877963
-        or event.guild.id == 870046872864165888
-        or event.guild.id == 1045987877961613312
-    ):
+    if str(event.guild.id) in lines:
         pass
-    elif not event.guild.id in lines:
+    elif not str(event.guild.id) in lines:
         if joiner.bot:
             embed = Embed(
                 description=f"Application '{joiner.display_name}' was added to the server!",
@@ -414,7 +368,7 @@ async def on_member_add(event):
             embed = Embed(
                 title=f"Welcome {joiner.display_name}!",
                 description=f"Thanks for joining {joiner.guild.name}!",
-                timestamp=datetime.datetime.utcnow(),
+                timestamp=datetime.utcnow(),
                 color=Color.from_rgb(88, 109, 245),
             )
             embed.set_thumbnail(url=joiner.avatar.url)
@@ -427,16 +381,15 @@ async def on_member_add(event):
 
 @listen()
 async def on_member_remove(event):
+    with open("data/nowelcome.txt") as f:
+        lines = f.read().split(", ")
+    print(lines)
     leaver = event.member
-    if (
-        event.guild.id == 998607296986877963
-        or event.guild.id == 870046872864165888
-        or event.guild.id == 1045987877961613312
-    ):
+    if str(event.guild.id) in lines:
         pass
     elif leaver == bot.user:
         pass
-    elif not event.guild.id in lines:
+    elif not str(event.guild.id) in lines:
         if leaver.bot:
             embed = Embed(
                 description=f"Application '{leaver.display_name}' was removed from the server!",
@@ -449,7 +402,7 @@ async def on_member_remove(event):
             embed = Embed(
                 title=f"{leaver.display_name} left.",
                 description=f"Sorry to see you go {leaver.display_name}!",
-                timestamp=datetime.datetime.utcnow(),
+                timestamp=datetime.utcnow(),
                 color=Color.from_rgb(255, 13, 13),
             )
 
