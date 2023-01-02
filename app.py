@@ -1,6 +1,6 @@
 # Bot made by using NAFF
 # pip install git+https://github.com/NAFTeam/NAFF@dev
-bot_official_version = "3.0.0"
+bot_official_version = "3.1.0"
 
 import naff
 from naff import (
@@ -159,6 +159,7 @@ async def on_startup():
     bot.load_extension("data.ext1")
     bot.load_extension("data.tictactoe")
     # bot.load_extension("data.ghostgame")
+    bot.load_extension("data.lichess")
     global now_unix
     now_unix = time.mktime(datetime.utcnow().timetuple())
     while True:
@@ -289,14 +290,14 @@ async def on_component(ctx: ComponentContext):
             btn1 = Button(
                 ButtonStyles.URL,
                 "Dev lab",
-                emoji="👨‍💻",
+                emoji="🧪",
                 url="https://discord.gg/TReMEyBQsh",
             )
             btn2 = Button(
                 ButtonStyles.URL,
-                "Floppa land",
+                "Big-Floppa software solutions",
                 emoji="🐱",
-                url="https://discord.gg/aAyStHu5fQ",
+                url="https://discord.gg/MDVcb8wdUd",
             )
             btn3 = Button(
                 ButtonStyles.URL,
@@ -304,17 +305,10 @@ async def on_component(ctx: ComponentContext):
                 emoji="🐸",
                 url="https://discord.gg/w78rcjW8ck",
             )
-            btn4 = Button(
-                ButtonStyles.URL,
-                "Forever virgins™",
-                emoji="💀",
-                url="https://discord.gg/uTDXMfwheZ",
-            )
             components: list[ActionRow] = spread_to_rows(
                 btn1,
                 btn2,
                 btn3,
-                btn4,
             )
 
             await event.send(embed=embed, components=components)
@@ -350,12 +344,12 @@ async def on_component(ctx: ComponentContext):
 @listen()
 async def on_member_add(event):
     with open("data/nowelcome.txt") as f:
-        lines = f.read().split(", ")
-    print(lines)
+        lines = f.readlines()
+    int_lines = [eval(i) for i in lines]
     joiner = event.member
-    if str(event.guild.id) in lines:
+    if event.guild.id in int_lines:
         pass
-    elif not str(event.guild.id) in lines:
+    elif not event.guild.id in int_lines:
         if joiner.bot:
             embed = Embed(
                 description=f"Application '{joiner.display_name}' was added to the server!",
@@ -382,14 +376,14 @@ async def on_member_add(event):
 @listen()
 async def on_member_remove(event):
     with open("data/nowelcome.txt") as f:
-        lines = f.read().split(", ")
-    print(lines)
+        lines = f.readlines()
+    int_lines = [eval(i) for i in lines]
     leaver = event.member
-    if str(event.guild.id) in lines:
+    if event.guild.id in int_lines:
         pass
     elif leaver == bot.user:
         pass
-    elif not str(event.guild.id) in lines:
+    elif not event.guild.id in int_lines:
         if leaver.bot:
             embed = Embed(
                 description=f"Application '{leaver.display_name}' was removed from the server!",
@@ -523,36 +517,35 @@ async def calculate(ctx, equasion):
         await ctx.send("Thats not a math equasion...")
 
 
-@is_owner()
-@slash_command("spotify", description="Share what you're listening to!")
-async def spotify(ctx: InteractionContext):
-    listener = ctx.author
+# @slash_command("spotify", description="Share what you're listening to!")
+# async def spotify(ctx: InteractionContext):
+#     listener = ctx.author
 
-    # Get the first activity that contains "Spotify". Return None, if none present.
-    # spotify_activity = next((x for x in listener.activities if x.name == "Spotify"), None)
+#     # Get the first activity that contains "Spotify". Return None, if none present.
+#     # spotify_activity = next((x for x in listener.activities if x.name == "Spotify"), None)
 
-    print(listener.activities)
+#     print(listener.activities)
 
-    if "Spotify" in listener.activities:
-        cover = f"https://i.scdn.co/image/{listener.activities.assets.large_image.split(':')[1]}"
-        embed = Embed(
-            title=f"{listener.display_name}'s Spotify",
-            description="Listening to {}".format(listener.activities.details),
-            color="#36b357",
-        )
-        # SUGGESTION: instead of "set_thumbnail", use "thumbnail=" in the Embed constructor
-        embed.set_thumbnail(url=cover)
-        embed.add_field(name="Artist", value=listener.activities.state)
-        embed.add_field(name="Album", value=listener.activities.assets.large_text)
-    else:
-        embed = Embed(
-            title=f"{listener.display_name}'s Spotify",
-            description="Currently not listening to anything",
-            color="#36b357",
-        )
-    embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar.url)
-    message = await ctx.send(embeds=embed)
-    await message.add_reaction(spotify_emoji)
+#     if listener.activities[name] == "Spotify":
+#         cover = f"https://i.scdn.co/image/{listener.activities.assets.large_image.split(':')[1]}"
+#         embed = Embed(
+#             title=f"{listener.display_name}'s Spotify",
+#             description="Listening to {}".format(listener.activities.details),
+#             color="#36b357",
+#             thumbnail=cover,
+#         )
+#         embed.add_field(name="Artist", value=listener.activities.state)
+#         embed.add_field(name="Album", value=listener.activities.assets.large_text)
+#     else:
+#         embed = Embed(
+#             title=f"{listener.display_name}'s Spotify",
+#             description="Currently not listening to anything",
+#             color="#36b357",
+#             timestamp=datetime.utcnow(),
+#         )
+#     embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar.url)
+#     message = await ctx.send(embeds=embed)
+#     await message.add_reaction(spotify_emoji)
 
 
 # @slash_command("gas", description='"gas-gas-gas" by Manuel')

@@ -112,44 +112,46 @@ Smash or Pass?
             await ctx.send(embed=embed)
 
     # TODO: Fix the invite creation
-    # @listen()
-    # async def on_guild_join(self, guild):
-    #     if self.bot.is_ready:
-    #         print("New guild joined")
-    #         dm = await self.bot.owner.fetch_dm()
-    #         invite = await guild.guild.system_channel.create_invite()
-    #         embed = Embed(
-    #             title=guild.guild.name,
-    #             description=guild.guild.description,
-    #             timestamp=datetime.utcnow(),
-    #             color=Color.from_hex("32a852"),
-    #             thumbnail=guild.guild.icon,
-    #         )
-    #         # embed.add_field(name="Member count", value=len(guild.guild.members))
-    #         # embed.add_field(name="Created", value=guild.guild.created_at)
-    #         # embed.add_field(name="Boost level", value="Level {0}".format(guild.guild.premium_tier))
-    #         await dm.send(invite, embed=embed)
-    #         with open("nowelcome.txt", "w") as f:
-    #             lines = str(f.readlines()).split(",")
-    #             lines.append(guild.guild.id)
-    #             f.write(",".join(lines))
+    @listen()
+    async def on_guild_join(self, guild):
+        if self.bot.is_ready:
+            print("New guild joined")
+            #         dm = await self.bot.owner.fetch_dm()
+            #         invite = await guild.guild.system_channel.create_invite()
+            #         embed = Embed(
+            #             title=guild.guild.name,
+            #             description=guild.guild.description,
+            #             timestamp=datetime.utcnow(),
+            #             color=Color.from_hex("32a852"),
+            #             thumbnail=guild.guild.icon,
+            #         )
+            #         # embed.add_field(name="Member count", value=len(guild.guild.members))
+            #         # embed.add_field(name="Created", value=guild.guild.created_at)
+            #         # embed.add_field(name="Boost level", value="Level {0}".format(guild.guild.premium_tier))
+            #         await dm.send(invite, embed=embed)
+            with open("nowelcome.txt", "w") as f:
+                lines = f.readlines()
+                lines.append(guild.guild.id)
+                f.write("\n".join(lines))
 
-    # @listen()
-    # async def on_guild_remove(self, guild):
-    #     if self.bot.is_ready:
-    #         print("Guild left")
-    #         dm = await self.bot.owner.fetch_dm()
-    #         embed = Embed(
-    #             title="left " + guild.guild.name,
-    #             timestamp=datetime.utcnow(),
-    #             color=Color.from_hex("b50a07"),
-    #             thumbnail=guild.guild.icon,
-    #         )
-    #         with open("nowelcome.txt", "w") as f:
-    #             lines = str(f.readlines()).split(",")
-    #             if guild.guild.id in lines:
-    #                 lines.remove(guild.guild.id)
-    #                 f.write(",".join(lines))
+    @listen()
+    async def on_guild_remove(self, guild):
+        if self.bot.is_ready:
+            print("Guild left")
+            #         dm = await self.bot.owner.fetch_dm()
+            #         embed = Embed(
+            #             title="left " + guild.guild.name,
+            #             timestamp=datetime.utcnow(),
+            #             color=Color.from_hex("b50a07"),
+            #             thumbnail=guild.guild.icon,
+            #         )
+            with open("nowelcome.txt", "w") as f:
+                lines = f.readlines()
+                int_lines = [eval(i) for i in lines]
+                if guild.guild.id in int_lines:
+                    int_lines.remove(guild.guild.id)
+                    f.write("\n".join(int_lines))
+
     #         await dm.send(embed=embed)
 
 

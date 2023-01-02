@@ -23,20 +23,22 @@ class GhostGameExtension(Extension):
         embed = Embed(
             title="Ghost game",
             description="There are three doors in front of you...",
-            color=Color.from_hex(808080),
+            color=Color.from_hex("808080"),
         )
-        embed.add_footer(text="Press one of the 3 buttons below to pick a door!")
+        embed.set_footer(text="Press one of the 3 buttons below to pick a door!")
 
-        game_message_ids.append(ctx.message.id)
-        game_channel_ids.append(ctx.channel.id)
+        message = await ctx.send(
+            "<@!{0}>".format(ctx.author.id), embed=embed, components=components
+        )
+
+        game_message_ids.append(message.id)
+        game_channel_ids.append(message.id)
         players.append(ctx.author.id)
         door_count.append(0)
 
-        ctx.send("<@!{0}>".format(ctx.author.id), embed=embed, components=components)
-
-    @listen
+    @listen()
     async def on_component(self, ctx):
-
+        ctx = ctx.ctx
         ghost_door = randint(1, 3)
 
         if ctx.custom_id.startswith("door_"):
@@ -46,7 +48,7 @@ class GhostGameExtension(Extension):
                 )
             elif ctx.author.id in players and game_message_ids.index(
                 ctx.message.id
-            ) != players.idex(ctx.author.id):
+            ) != players.index(ctx.author.id):
                 channel = self.bot.get_channel(game_channel_ids[players.index(ctx.author.id)])
                 message = await channel.fetch_message(
                     game_message_ids[players.index(ctx.author.id)]
@@ -57,36 +59,43 @@ class GhostGameExtension(Extension):
                 )
             elif ctx.author.id in players and game_message_ids.index(
                 ctx.message.id
-            ) == players.idex(ctx.author.id):
+            ) == players.index(ctx.author.id):
                 door = int(ctx.custom_id.split("_")[-1])
 
                 embed_gameover = Embed(
                     title="Game over!",
-                    description="The ghost got you! You went trough {0} doors.".format(
+                    description="The ghost got you! You went through {0} doors.".format(
                         door_count[players.index(ctx.author.id)]
                     ),
-                    color=Color.from_hex(808080),
+                    color=Color.from_hex("808080"),
                 )
 
-                embed_gameover.add_footer(
+                embed_gameover.set_footer(
                     text="Boo ;) (thanks for playing)".format(
                         door_count[players.index(ctx.author.id)]
                     )
                 )
 
-                embed_gameover.add_timestamp(timestamp=datetime.utcnow())
+                embed_gameover.timestamp = datetime.utcnow()
 
                 if door == ghost_door:
-                    await ctx.edit_origin(embed=embed_gameover, components=components.disable())
-                    channel = self.bot.get_channel(game_channel_ids[players.index(ctx.author.id)])
-                    message = await channel.fetch_message(
+                    components[0].components[0].disabled = True
+                    components[0].components[1].disabled = True
+                    components[0].components[2].disabled = True
+                    await ctx.edit_origin(embed=embed_gameover, components=components)
+                    channel = await self.bot.fetch_channel(
+                        game_channel_ids[players.index(ctx.author.id)]
+                    )
+                    message = await channel.get_message(
                         game_message_ids[players.index(ctx.author.id)]
                     )
                     await message.add_reaction("👻")
                 else:
-                    door_count[players.index(ctx.author.id)] += 1
+                    door_count[players.index(ctx.author.id)] = (
+                        door_count[players.index(ctx.author.id)] + 1
+                    )
                     await ctx.edit_origin(
-                        content="You opened door {0}. Its clear".format(door),
+                        content="Door {0}.".format(door_count[players.index(ctx.author.id)]),
                         components=components,
                     )
 
