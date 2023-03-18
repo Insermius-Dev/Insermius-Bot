@@ -129,7 +129,7 @@ Smash or Pass?
             #         # embed.add_field(name="Created", value=guild.guild.created_at)
             #         # embed.add_field(name="Boost level", value="Level {0}".format(guild.guild.premium_tier))
             #         await dm.send(invite, embed=embed)
-            with open("nowelcome.txt", "w") as f:
+            with open("data/nowelcome.txt", "w") as f:
                 lines = f.readlines()
                 lines.append(guild.guild.id)
                 f.write("\n".join(lines))
@@ -145,7 +145,7 @@ Smash or Pass?
             #             color=Color.from_hex("b50a07"),
             #             thumbnail=guild.guild.icon,
             #         )
-            with open("nowelcome.txt", "w") as f:
+            with open("data/nowelcome.txt", "w") as f:
                 lines = f.readlines()
                 int_lines = [eval(i) for i in lines]
                 if guild.guild.id in int_lines:
