@@ -41,9 +41,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# from keep_alive import keep_alive
+from keep_alive import keep_alive
 
-# keep_alive()
+keep_alive()
 
 bot_intents: Intents = Intents.GUILD_PRESENCES | Intents.DEFAULT | Intents.GUILD_MEMBERS
 
