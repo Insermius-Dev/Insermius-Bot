@@ -1,12 +1,12 @@
 from flask import Flask
 from threading import Thread
 
-app = Flask("Join discord.gg/TReMEyBQsh!")
+app = Flask("")
 
 
 @app.route("/")
 def home():
-    return ""
+    return "Join discord.gg/TReMEyBQsh!"
 
 
 def run():
