@@ -120,6 +120,13 @@ lilhelpers = [
     488257154701197322,
 ]
 
+channel_cooldown = []
+invite_cooldown = []
+nameday_cooldown = []
+
+with open("data/namedays-extended.json", encoding="utf-8") as f:
+    namedays_ext = json.load(f)
+
 # """floppa friday code"""
 # """___________________"""
 # import schedule
@@ -156,13 +163,13 @@ async def on_error():
 @listen()
 async def on_startup():
     print(f"{bot.user} has connected to Discord!")
-    bot.load_extension("data.ext1")
+    bot.load_extension("data.ext1")#Load all games
     bot.load_extension("data.tictactoe")
     # bot.load_extension("data.ghostgame")
     bot.load_extension("data.lichess")
     global now_unix
     now_unix = time.mktime(datetime.utcnow().timetuple())
-    while True:
+    while True:#Select a random activity, which will change every 60 seconds
         random_activity = randint(1, 3)
         if random_activity == 1:
             await bot.change_presence(
@@ -200,9 +207,11 @@ async def on_startup():
             await asyncio.sleep(60)
 
 
-@slash_command(name="info", description="get info about the bot")
+@slash_command(
+    name="info", 
+    description="get info about the bot",
+    )
 async def info(ctx):
-
     embed = Embed(
         title="Info",
         description="Info about the bot",
@@ -233,14 +242,6 @@ async def info(ctx):
     components: list[ActionRow] = spread_to_rows(btn1, btn2)
 
     await ctx.send(embed=embed, components=components)
-
-
-channel_cooldown = []
-invite_cooldown = []
-nameday_cooldown = []
-
-with open("data/namedays-extended.json", encoding="utf-8") as f:
-    namedays_ext = json.load(f)
 
 
 @listen()
@@ -342,15 +343,16 @@ async def on_component(ctx: ComponentContext):
 
 
 @listen()
-async def on_member_add(event):
-    with open("data/nowelcome.txt") as f:
+async def on_member_add(event):#When a user joins
+    with open("data/nowelcome.txt", "r") as f:#Get all joined users
         lines = f.readlines()
-    int_lines = [eval(i) for i in lines]
+        int_lines = [eval(i) for i in lines]
+        f.close
     joiner = event.member
-    if event.guild.id in int_lines:
+    if event.guild.id in int_lines:#Check if user already joined
         pass
     elif not event.guild.id in int_lines:
-        if joiner.bot:
+        if joiner.bot:#Check if a bot joined
             embed = Embed(
                 description=f"Application '{joiner.display_name}' was added to the server!",
                 color=Color.from_hex("58f728"),
@@ -358,7 +360,7 @@ async def on_member_add(event):
 
             embed.set_author("Application added", icon_url=joiner.avatar.url)
             await event.guild.system_channel.send(embed=embed)
-        else:
+        else:#A regular user joined
             embed = Embed(
                 title=f"Welcome {joiner.display_name}!",
                 description=f"Thanks for joining {joiner.guild.name}!",
@@ -374,10 +376,11 @@ async def on_member_add(event):
 
 
 @listen()
-async def on_member_remove(event):
-    with open("data/nowelcome.txt") as f:
+async def on_member_remove(event):#On member leave
+    with open("data/nowelcome.txt", "r") as f:
         lines = f.readlines()
-    int_lines = [eval(i) for i in lines]
+        int_lines = [eval(i) for i in lines]
+        f.close()
     leaver = event.member
     if event.guild.id in int_lines:
         pass
@@ -488,11 +491,7 @@ async def ping(ctx):
 async def randomise(ctx, num1, num2):
     try:
         await ctx.send(
-            f"""
-> `{num1}` - `{num2}`
-
-**{int(float(random.randint(int(num1), int(num2))))}**
-"""
+            f"> `{num1}` - `{num2}` \n**{random.randint(int(num1), int(num2))}**"
         )
     except:
         await ctx.send("Something didnt go right. Try a different aproach!")
@@ -686,6 +685,6 @@ async def calculate(ctx, equasion):
 secret_TOKEN = os.environ["TOKEN"]
 try:
     bot.start(secret_TOKEN)
-except:
-    print("Failed to log in")
+except Exception as e:
     os.system("kill 1")
+    raise Exception(f"Failed to log in, reason: {e}")
