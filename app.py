@@ -41,9 +41,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from keep_alive import keep_alive
+from Bot_website import start
 
-keep_alive()
+start()  # starts the website (https://larss-bot.onrender.com)
 
 bot_intents: Intents = Intents.GUILD_PRESENCES | Intents.DEFAULT | Intents.GUILD_MEMBERS
 
@@ -163,13 +163,14 @@ async def on_error():
 @listen()
 async def on_startup():
     print(f"{bot.user} has connected to Discord!")
-    bot.load_extension("data.ext1")#Load all games
+    guild = bot.get_guild(829026541950206049)
+    bot.load_extension("data.ext1")  # Load all games
     bot.load_extension("data.tictactoe")
     # bot.load_extension("data.ghostgame")
     bot.load_extension("data.lichess")
     global now_unix
     now_unix = time.mktime(datetime.utcnow().timetuple())
-    while True:#Select a random activity, which will change every 60 seconds
+    while True:  # Select a random activity, which will change every 60 seconds
         random_activity = randint(1, 3)
         if random_activity == 1:
             await bot.change_presence(
@@ -208,9 +209,9 @@ async def on_startup():
 
 
 @slash_command(
-    name="info", 
+    name="info",
     description="get info about the bot",
-    )
+)
 async def info(ctx):
     embed = Embed(
         title="Info",
@@ -343,16 +344,16 @@ async def on_component(ctx: ComponentContext):
 
 
 @listen()
-async def on_member_add(event):#When a user joins
-    with open("data/nowelcome.txt", "r") as f:#Get all joined users
+async def on_member_add(event):  # When a user joins
+    with open("data/nowelcome.txt", "r") as f:  # Get all joined users
         lines = f.readlines()
         int_lines = [eval(i) for i in lines]
         f.close
     joiner = event.member
-    if event.guild.id in int_lines:#Check if user already joined
+    if event.guild.id in int_lines:  # Check if user already joined
         pass
     elif not event.guild.id in int_lines:
-        if joiner.bot:#Check if a bot joined
+        if joiner.bot:  # Check if a bot joined
             embed = Embed(
                 description=f"Application '{joiner.display_name}' was added to the server!",
                 color=Color.from_hex("58f728"),
@@ -360,7 +361,7 @@ async def on_member_add(event):#When a user joins
 
             embed.set_author("Application added", icon_url=joiner.avatar.url)
             await event.guild.system_channel.send(embed=embed)
-        else:#A regular user joined
+        else:  # A regular user joined
             embed = Embed(
                 title=f"Welcome {joiner.display_name}!",
                 description=f"Thanks for joining {joiner.guild.name}!",
@@ -376,7 +377,7 @@ async def on_member_add(event):#When a user joins
 
 
 @listen()
-async def on_member_remove(event):#On member leave
+async def on_member_remove(event):  # On member leave
     with open("data/nowelcome.txt", "r") as f:
         lines = f.readlines()
         int_lines = [eval(i) for i in lines]
@@ -490,9 +491,7 @@ async def ping(ctx):
 )
 async def randomise(ctx, num1, num2):
     try:
-        await ctx.send(
-            f"> `{num1}` - `{num2}` \n**{random.randint(int(num1), int(num2))}**"
-        )
+        await ctx.send(f"> `{num1}` - `{num2}` \n**{random.randint(int(num1), int(num2))}**")
     except:
         await ctx.send("Something didnt go right. Try a different aproach!")
 
