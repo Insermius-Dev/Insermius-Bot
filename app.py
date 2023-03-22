@@ -1,6 +1,6 @@
 # Bot made by using NAFF
 # pip install git+https://github.com/NAFTeam/NAFF@dev
-bot_official_version = "3.1.0"
+bot_official_version = "3.2.0"
 
 import naff
 from naff import (
@@ -112,6 +112,7 @@ epiccontribbutingppl = [
     324352543612469258,
     975738227669499916,
     400713431423909889,
+    717769897278570507,
 ]
 
 lilhelpers = [
@@ -259,10 +260,20 @@ async def on_component(ctx: ComponentContext):
             embed.set_footer(
                 text=f"Requested by {event.author.display_name}", icon_url=event.author.avatar.url
             )
+
+            value = ""
+            for contributor in epiccontribbutingppl:
+                value += f"> <@{contributor}> \n"
+
             embed.add_field(
                 name="Contributors",
-                value=f"> <@{epiccontribbutingppl[0]}> \n> <@{epiccontribbutingppl[1]}>\n> <@{epiccontribbutingppl[2]}>",
+                value=value,
             )
+
+            value = ""
+            for lilhelper in lilhelpers:
+                value += f"> <@{lilhelper}> \n"
+
             embed.add_field(
                 name="Little helpers",
                 value=f"> <@{lilhelpers[0]}> \n> <@{lilhelpers[1]}>\n> <@{lilhelpers[2]}>",
