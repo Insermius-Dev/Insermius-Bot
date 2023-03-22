@@ -276,7 +276,7 @@ async def on_component(ctx: ComponentContext):
 
             embed.add_field(
                 name="Little helpers",
-                value=f"> <@{lilhelpers[0]}> \n> <@{lilhelpers[1]}>\n> <@{lilhelpers[2]}>",
+                value=value,
             )
             await event.send(embed=embed)
             channel_cooldown.append(event.channel.id)
