@@ -398,6 +398,8 @@ async def on_member_remove(event):  # On member leave
         pass
     elif leaver == bot.user:
         pass
+    elif event.guild.id == 1091392952024182905:
+        pass
     elif not event.guild.id in int_lines:
         if leaver.bot:
             embed = Embed(
@@ -526,35 +528,44 @@ async def calculate(ctx, equasion):
         await ctx.send("Thats not a math equasion...")
 
 
-# @slash_command("spotify", description="Share what you're listening to!")
-# async def spotify(ctx: InteractionContext):
-#     listener = ctx.author
+@bot.command(
+    "spotify",
+    description="Share what you're listening to!",
+    options=interactions.Option(
+        name="min",
+        required=True,
+        type=interactions.OptionType.STRING,
+        description="smallest possible number",
+    ),
+)
+async def spotify(ctx: InteractionContext):
+    listener = ctx.author
 
-#     # Get the first activity that contains "Spotify". Return None, if none present.
-#     # spotify_activity = next((x for x in listener.activities if x.name == "Spotify"), None)
+    # Get the first activity that contains "Spotify". Return None, if none present.
+    # spotify_activity = next((x for x in listener.activities if x.name == "Spotify"), None)
 
-#     print(listener.activities)
+    print(listener.activities)
 
-#     if listener.activities[name] == "Spotify":
-#         cover = f"https://i.scdn.co/image/{listener.activities.assets.large_image.split(':')[1]}"
-#         embed = Embed(
-#             title=f"{listener.display_name}'s Spotify",
-#             description="Listening to {}".format(listener.activities.details),
-#             color="#36b357",
-#             thumbnail=cover,
-#         )
-#         embed.add_field(name="Artist", value=listener.activities.state)
-#         embed.add_field(name="Album", value=listener.activities.assets.large_text)
-#     else:
-#         embed = Embed(
-#             title=f"{listener.display_name}'s Spotify",
-#             description="Currently not listening to anything",
-#             color="#36b357",
-#             timestamp=datetime.utcnow(),
-#         )
-#     embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar.url)
-#     message = await ctx.send(embeds=embed)
-#     await message.add_reaction(spotify_emoji)
+    if listener.activities[name] == "Spotify":
+        cover = f"https://i.scdn.co/image/{listener.activities.assets.large_image.split(':')[1]}"
+        embed = Embed(
+            title=f"{listener.display_name}'s Spotify",
+            description="Listening to {}".format(listener.activities.details),
+            color="#36b357",
+            thumbnail=cover,
+        )
+        embed.add_field(name="Artist", value=listener.activities.state)
+        embed.add_field(name="Album", value=listener.activities.assets.large_text)
+    else:
+        embed = Embed(
+            title=f"{listener.display_name}'s Spotify",
+            description="Currently not listening to anything",
+            color="#36b357",
+            timestamp=datetime.utcnow(),
+        )
+    embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar.url)
+    message = await ctx.send(embeds=embed)
+    await message.add_reaction(spotify_emoji)
 
 
 # @slash_command("gas", description='"gas-gas-gas" by Manuel')
