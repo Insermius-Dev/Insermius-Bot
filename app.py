@@ -398,7 +398,7 @@ async def on_member_remove(event):  # On member leave
         pass
     elif leaver == bot.user:
         pass
-    elif event.guild.id == 1091392952024182905:
+    elif int(event.guild.id) == 1090004044111696075:
         pass
     elif not event.guild.id in int_lines:
         if leaver.bot:
