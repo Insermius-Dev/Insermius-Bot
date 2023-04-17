@@ -1,4 +1,4 @@
-[![Join our Discord server](https://img.shields.io/badge/-Discord_server-blue?style=plastic&logo=discord&link=https://discord.gg/TReMEyBQsh&labelColor=black)](https://discord.gg/TReMEyBQsh)
+[![Join our Discord server](https://img.shields.io/discord/974354202430169139?style=flat&logo=discord&link=https://discord.gg/TReMEyBQsh&color=blue)](https://discord.gg/TReMEyBQsh)
 # Larss_Bot
 The main repository for Larss_Bot#8440 
 
