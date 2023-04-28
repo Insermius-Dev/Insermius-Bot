@@ -30,7 +30,7 @@ class Extensionclass(Extension):
     @slash_command(
         name="smashorpass",
         description="Smash or Pass",
-        scopes=[829026541950206049, 905462820009828352],
+        scopes=[829026541950206049, 905462820009828352, 1101188533135360082],
     )
     @slash_option(
         name="the_photo",
