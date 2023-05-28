@@ -1,4 +1,16 @@
-from naff import *
+import interactions as inter
+from interactions import (
+    Extension,
+    slash_command,
+    OptionType,
+    slash_option,
+    Color,
+    Embed,
+    ActionRow,
+    Button,
+    ButtonStyle,
+    listen,
+)
 from random import randint
 from datetime import datetime
 
@@ -9,9 +21,9 @@ game_channel_ids = []
 
 components = [
     ActionRow(
-        Button(custom_id="door_1", label="1", style=ButtonStyles.BLURPLE),
-        Button(custom_id="door_2", label="2", style=ButtonStyles.BLURPLE),
-        Button(custom_id="door_3", label="3", style=ButtonStyles.BLURPLE),
+        Button(custom_id="door_1", label="1", style=ButtonStyle.BLURPLE),
+        Button(custom_id="door_2", label="2", style=ButtonStyle.BLURPLE),
+        Button(custom_id="door_3", label="3", style=ButtonStyle.BLURPLE),
     )
 ]
 

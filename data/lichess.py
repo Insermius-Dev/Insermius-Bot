@@ -1,7 +1,19 @@
 import berserk as lichess
 from dotenv import load_dotenv
 import os
-from naff import *
+import interactions as inter
+from interactions import (
+    Extension,
+    slash_command,
+    OptionType,
+    slash_option,
+    Color,
+    Embed,
+    ActionRow,
+    Button,
+    ButtonStyle,
+    listen,
+)
 from datetime import *
 
 load_dotenv()
@@ -17,7 +29,7 @@ class Lichess(Extension):
         name="username",
         description="Input a username to get stats",
         required=True,
-        opt_type=OptionTypes.STRING,
+        opt_type=OptionType.STRING,
     )
     async def lichess(self, ctx, username):
 

@@ -1,19 +1,20 @@
-import naff
+import interactions as inter
 import json
-from naff import (
+from interactions import (
     Extension,
     slash_command,
-    OptionTypes,
     slash_option,
     Color,
     Embed,
     ActionRow,
     Button,
-    ButtonStyles,
+    ButtonStyle,
     listen,
+    OptionType,
 )
 from datetime import date, datetime
 from babel.dates import format_date
+from calculator import calculate
 
 with open("data/namedays.json", encoding="utf-8") as f:
     namedays = json.load(f)
@@ -23,37 +24,33 @@ with open("data/namedays-extended.json", encoding="utf-8") as f:
 
 
 class Extensionclass(Extension):
-    @slash_command(name="checkext", description="Check if extension is loaded")
-    async def check(self, ctx):
-        await ctx.send("Yep, it's loaded!")
-
-    @slash_command(
-        name="smashorpass",
-        description="Smash or Pass",
-        scopes=[829026541950206049, 905462820009828352],
-    )
-    @slash_option(
-        name="the_photo",
-        description="Input a link of the video/photo.",
-        required=True,
-        opt_type=OptionTypes.STRING,
-    )
-    async def smashorpass(self, ctx, spicyphoto):
-        message = await ctx.send(
-            f"""
-Smash or Pass?
-{spicyphoto}
-"""
-        )
-        await message.add_reaction("<:smash:1023135175237980231>")
-        await message.add_reaction("<:pass:1023135160310448191>")
+    #     @slash_command(
+    #         name="smashorpass",
+    #         description="Smash or Pass",
+    #         scopes=[829026541950206049, 905462820009828352],
+    #     )
+    #     @slash_option(
+    #         name="the_photo",
+    #         description="Input a link of the video/photo.",
+    #         required=True,
+    #         opt_type=OptionType.STRING,
+    #     )
+    #     async def smashorpass(self, ctx, spicyphoto):
+    #         message = await ctx.send(
+    #             f"""
+    # Smash or Pass?
+    # {spicyphoto}
+    # """
+    #         )
+    #         await message.add_reaction("<:smash:1023135175237980231>")
+    #         await message.add_reaction("<:pass:1023135160310448191>")
 
     @slash_command(name="vd", description="Get latvian namedays.")
     @slash_option(
         name="name",
         description="Input a name to get nameday date.",
         required=False,
-        opt_type=OptionTypes.STRING,
+        opt_type=OptionType.STRING,
     )
     async def nameday(self, ctx, name=None):
         if name == None:
@@ -61,7 +58,7 @@ Smash or Pass?
                 ActionRow(
                     Button(
                         label="Rādīt visus",
-                        style=ButtonStyles.RED,
+                        style=ButtonStyle.RED,
                         custom_id="extendedlistshow",
                         emoji="🗓",
                     )
@@ -153,6 +150,26 @@ Smash or Pass?
                     f.write("\n".join(int_lines))
 
     #         await dm.send(embed=embed)
+    @slash_command(name="calculate", description="calculate some numbers")
+    @slash_option(
+        name="equation",
+        required=True,
+        opt_type=OptionType.STRING,
+        description="input your math equation",
+    )
+    async def calc(self, ctx, equation):
+        try:
+            answer = calculate(equation)
+            embed = Embed(
+                title="Calculator",
+                color=Color.from_rgb(52, 152, 219),
+                timestamp=datetime.utcnow(),
+            )
+            embed.add_field(name="Expression", value=f"`{equation}`")
+            embed.add_field(name="Result", value=f"{answer}")
+            await ctx.send(embed=embed)
+        except Exception as e:
+            await ctx.send(f"Something went wrong... \n `{e}`")
 
 
 def setup(bot):

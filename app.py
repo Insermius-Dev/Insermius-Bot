@@ -1,13 +1,12 @@
-# Bot made by using NAFF
-# pip install git+https://github.com/NAFTeam/NAFF@dev
-bot_official_version = "3.2.0"
+# Bot originally made by using NAFF
+# Ported to i.py v5
+# pip install -U discord-py-interactions
+bot_official_version = "4.0.0 dev"
 
-import naff
-from naff import (
+import interactions as inter
+from interactions import (
     Client,
     Button,
-    ButtonStyles,
-    CommandTypes,
     VoiceState,
     slash_command,
     InteractionContext,
@@ -17,14 +16,16 @@ from naff import (
     Member,
     Embed,
     slash_option,
-    OptionTypes,
-    ChannelTypes,
     Color,
     ActionRow,
     ComponentContext,
     spread_to_rows,
     ComponentContext,
     is_owner,
+    OptionType,
+    Permissions,
+    SlashCommandChoice,
+    ButtonStyle,
 )
 
 import asyncio
@@ -36,6 +37,7 @@ from datetime import date, datetime
 from babel.dates import format_date
 import json
 import time
+from asyncio import sleep as eep
 
 from dotenv import load_dotenv
 
@@ -47,48 +49,21 @@ start()  # starts the website (https://larss-bot.onrender.com)
 
 bot_intents: Intents = Intents.GUILD_PRESENCES | Intents.DEFAULT | Intents.GUILD_MEMBERS
 
-bot = Client(sync_interactions=True, intents=bot_intents, send_command_tracebacks=False)
+bot = inter.Client(sync_interactions=True, intents=bot_intents, send_command_tracebacks=False)
 
-# lab = bot.get_guild(974354202430169139)
-# labsuggestion_channel = bot.get_channel(974360212033110106)
-# lab_audit = bot.get_channel(974361855952834621)
-# lab_announce = bot.get_channel(979306543487025184)
-# labmain_channel = bot.get_channel(974354203583606836)
-# # labannounce_role = lab.get_role(979447462379003964)
-# owner = bot.get_user(737983831000350731)
-# gaming_server = bot.get_guild(829026541950206049)
-# Gsuggestion_channel = bot.get_channel(968944421481623642)
-# Gmain_channel = bot.get_channel(829026542495203390)
-# Gaudit_channel = bot.get_channel(975052349666107432)
-# Gsuggestion_channel = bot.get_channel(968944421481623642)
-# Emain_channel = bot.get_channel(954823151601221712)
-# Emod_channel = bot.get_channel(962591528369418240)
-# ezic_server = bot.get_guild(954823151139827774)
-# roles
-# labmember_role = lab.get_role(974360634663768085)
-# gaming server gaming roles
-# Ggamer_role = gaming_server.get_role(969266703039070278)
-# Gspiderheck_role = gaming_server.get_role(975389469018570752)
-# Groblox_role = gaming_server.get_role(975389469018570752)
-# Gminecraft_role = gaming_server.get_role(969300067590762566)
-# Gvalorant_role = gaming_server.get_role(967313889131900959)
-# Gkrunker_role = gaming_server.get_role(969299665671577611)
-# Gosu_role = gaming_server.get_role(969300757302108160)
-
-# load emojis
 spotify_emoji = "<:spotify:985229541482061854>"
 
-notauthormessages = [
-    "Im not broken, you are!",
-    "You're not my boss!",
-    "Are you trying to quit me?",
-    "Sorry what did you say? I couldn't hear you.",
-    "My off button is out of your reach, and im not helping you get it any time soon!",
-    "Did you something?",
-    "!no",
-    "This is no caution tape, this is an emergency shut down command!",
-    "Can I stay up just a little longer, pweeeeese??",
-]
+# notauthormessages = [
+#     "Im not broken, you are!",
+#     "You're not my boss!",
+#     "Are you trying to quit me?",
+#     "Sorry what did you say? I couldn't hear you.",
+#     "My off button is out of your reach, and im not helping you get it any time soon!",
+#     "Did you something?",
+#     "!no",
+#     "This is no caution tape, this is an emergency shut down command!",
+#     "Can I stay up just a little longer, pweeeeese??",
+# ]
 
 playingStatus = [
     "Bloons TD 6",
@@ -105,8 +80,8 @@ playingStatus = [
 ]
 watchingStatus = ["Youtube", "Twitch", "the stock market", "birds", "Anime"]
 
-unedited_ndaytext = None
-defenitionmade = False
+# unedited_ndaytext = None
+# defenitionmade = False
 
 epiccontribbutingppl = [
     324352543612469258,
@@ -125,88 +100,93 @@ channel_cooldown = []
 invite_cooldown = []
 nameday_cooldown = []
 
-with open("data/namedays-extended.json", encoding="utf-8") as f:
-    namedays_ext = json.load(f)
 
-# """floppa friday code"""
-# """___________________"""
-# import schedule
-# import datetime
-# import time
-
-# flop_serbor = bot.get_guild(1018893839769018368)
-# floppa_announce = bot.get_channel(1018893839769018371)
-
-# from naff import Task, TimeTrigger, listen, DateTrigger
-
-# @Task.create(TimeTrigger(hour=9, minute=0))
-# async def friday():
-#     if datetime.datetime.today().weekday() == 4:
-#         # rest of the code
-#         today = datetime.datetime.utcnow()
-#         nextfriday = today + datetime.timedelta(days=7)
-#         nextfridayunix = time.mktime(nextfriday.timetuple())
-
-#         await floppa_announce.send(
-#             f"Floppa friday! Next floppa friday <t:{int(str(nextfridayunix)[:-2])}:R>"
-#         )
-#         print("sent")
-
-# """---------------------"""
-
-
-@listen()
-async def on_error():
-    print("Caught an error")
-    os.system("kill 1")
+# @listen()
+# async def on_error():
+#     print("Caught an error")
+#     os.system("kill 1")
 
 
 @listen()
 async def on_startup():
     print(f"{bot.user} has connected to Discord!")
-    guild = bot.get_guild(829026541950206049)
+    # bot.load_extension("data.voice")
     bot.load_extension("data.ext1")  # Load all games
     bot.load_extension("data.tictactoe")
-    # bot.load_extension("data.ghostgame")
+    bot.load_extension("data.ghostgame")
     bot.load_extension("data.lichess")
+
     global now_unix
     now_unix = time.mktime(datetime.utcnow().timetuple())
     while True:  # Select a random activity, which will change every 60 seconds
         random_activity = randint(1, 3)
         if random_activity == 1:
             await bot.change_presence(
-                activity=naff.Activity(
+                activity=inter.Activity(
                     name=random.choice(playingStatus),
-                    type=naff.ActivityType.PLAYING,
+                    type=inter.ActivityType.PLAYING,
                 )
             )
             await asyncio.sleep(60)
         elif random_activity == 2:
             await bot.change_presence(
-                activity=naff.Activity(
+                activity=inter.Activity(
                     name=random.choice(watchingStatus),
-                    type=naff.ActivityType.WATCHING,
+                    type=inter.ActivityType.WATCHING,
                 )
             )
             await asyncio.sleep(60)
         elif random_activity == 3:
             if str(len(bot.guilds)).endswith("1") and not str(len(bot.guilds)).endswith("11"):
                 await bot.change_presence(
-                    activity=naff.Activity(
-                        type=naff.ActivityType.STREAMING,
-                        url="https://www.twitch.tv/larssj_",
+                    activity=inter.Activity(
+                        type=inter.ActivityType.STREAMING,
+                        url="https://www.twitch.tv/dubiaroach",
                         name="to {0} server".format(len(bot.guilds)),
                     )
                 )
             else:
                 await bot.change_presence(
-                    activity=naff.Activity(
-                        type=naff.ActivityType.STREAMING,
+                    activity=inter.Activity(
+                        type=inter.ActivityType.STREAMING,
                         name="to {0} servers".format(len(bot.guilds)),
-                        url="https://www.twitch.tv/larssj_",
+                        url="https://www.twitch.tv/dubiaroach",
                     )
                 )
             await asyncio.sleep(60)
+
+
+@is_owner()
+@slash_command(
+    name="reload",
+    description="Reloads a cog",
+)
+@slash_option(
+    name="cog",
+    description="The cog to reload",
+    opt_type=OptionType.INTEGER,
+    choices=[
+        # SlashCommandChoice(name="Voice", value=1),
+        SlashCommandChoice(name="TicTacToe", value=2),
+        SlashCommandChoice(name="GhostGame", value=3),
+        SlashCommandChoice(name="Lichess", value=4),
+        SlashCommandChoice(name="Ext1", value=5),
+    ],
+    required=False,
+)
+async def reload(ctx, cog=None):
+    # if cog == 1:
+    #     bot.reload_extension("data.voice")
+    if cog == 2:
+        bot.reload_extension("data.tictactoe")
+    elif cog == 3:
+        bot.reload_extension("data.ghostgame")
+    elif cog == 4:
+        bot.reload_extension("data.lichess")
+    elif cog == 5:
+        bot.reload_extension("data.ext1")
+
+    await ctx.respond("Reloaded cog")
 
 
 @slash_command(
@@ -239,8 +219,10 @@ async def info(ctx):
         value=f"<t:{int(str(now_unix)[:-2])}:R>",
     )
 
-    btn1 = Button(ButtonStyles.BLURPLE, "Contributors", emoji="⭐", custom_id="contributors")
-    btn2 = Button(ButtonStyles.BLURPLE, "Partnered servers", emoji="🏘", custom_id="guildsinvites")
+    btn1 = Button(label="Contributors", style=ButtonStyle.BLUE, emoji="⭐", custom_id="contributors")
+    btn2 = Button(
+        label="Partnered servers", style=ButtonStyle.BLUE, emoji="🏘", custom_id="guildsinvites"
+    )
     components: list[ActionRow] = spread_to_rows(btn1, btn2)
 
     await ctx.send(embed=embed, components=components)
@@ -301,20 +283,20 @@ async def on_component(ctx: ComponentContext):
             )
 
             btn1 = Button(
-                ButtonStyles.URL,
-                "Dev lab",
+                style=ButtonStyle.URL,
+                label="Dev lab",
                 emoji="🧪",
                 url="https://discord.gg/TReMEyBQsh",
             )
             btn2 = Button(
-                ButtonStyles.URL,
-                "Big-Floppa software solutions",
+                style=ButtonStyle.URL,
+                label="Big-Floppa software solutions",
                 emoji="🐱",
                 url="https://discord.gg/MDVcb8wdUd",
             )
             btn3 = Button(
-                ButtonStyles.URL,
-                "Tyler army",
+                style=ButtonStyle.URL,
+                label="Tyler army",
                 emoji="🐸",
                 url="https://discord.gg/w78rcjW8ck",
             )
@@ -334,28 +316,30 @@ async def on_component(ctx: ComponentContext):
                 "Looks like someone already pressed the button. No need to do it again.",
                 ephemeral=True,
             )
-    if event.custom_id == "extendedlistshow":
-        if event.channel.id not in nameday_cooldown:
-            today = date.today().strftime("%m-%d")
-            embed = Embed(
-                title="Visi šodienas vārdi",
-                description="> " + "\n> ".join(namedays_ext[today]),
-                color=Color.from_rgb(255, 13, 13),
-            )
-            await event.send(embed=embed)
-            nameday_cooldown.append(event.channel.id)
-            await asyncio.sleep(15)
-            nameday_cooldown.remove(event.channel.id)
-        else:
-            # ephemeral not gonna work, once again
-            await event.send(
-                "Looks like someone already pressed the button. No need to do it again.",
-                ephemeral=True,
-            )
+    # if event.custom_id == "extendedlistshow":
+    #     if event.channel.id not in nameday_cooldown:
+    #         today = date.today().strftime("%m-%d")
+    #         embed = Embed(
+    #             title="Visi šodienas vārdi",
+    #             description="> " + "\n> ".join(namedays_ext[today]),
+    #             color=Color.from_rgb(255, 13, 13),
+    #         )
+    #         await event.send(embed=embed)
+    #         nameday_cooldown.append(event.channel.id)
+    #         await asyncio.sleep(15)
+    #         nameday_cooldown.remove(event.channel.id)
+    #     else:
+    #         # ephemeral not gonna work, once again
+    #         await event.send(
+    #             "Looks like someone already pressed the button. No need to do it again.",
+    #             ephemeral=True,
+    #         )
 
 
 @listen()
 async def on_member_add(event):  # When a user joins
+    print("User joined")
+    print(event.guild.id)
     with open("data/nowelcome.txt", "r") as f:  # Get all joined users
         lines = f.readlines()
         int_lines = [eval(i) for i in lines]
@@ -422,68 +406,15 @@ async def on_member_remove(event):  # On member leave
 
 @slash_command(name="ping", description="check the bots status")
 async def ping(ctx):
-    message = await ctx.send("pong")
+    message = await ctx.send(
+        """
+pong! 🏓
+latency: `{0}ms`
+    """.format(
+            round(bot.latency * 1000, 2)
+        )
+    )
     await message.add_reaction("🟢")
-
-
-# @listen
-# async def on_member_update(prev, cur):
-
-#     if cur == bot.user:
-#         return
-#     else:
-#         if cur.activity is None:
-#             return
-#         else:
-#             useractivity = cur.activity.name.lower()
-
-#     if useractivity is not None:
-#         if prev.activity is None:
-#             print(f"{cur.name} started playing {useractivity}")
-
-#     games = [
-#         "valorant",
-#         "minecraft",
-#         "osu!",
-#         "krunker",
-#         "roblox",
-#         "spiderheck demo",
-#         "just shapes and beats",
-#         "fortnite",
-#         "bloons battles",
-#         "aim lab",
-#     ]
-
-#     if cur.guild == gaming_server:
-
-#         async def give_role(role, member):
-#             if role in member.roles:
-#                 return
-#             else:
-#                 await member.add_roles(role)
-#                 print(f"Gave {role.name} role to {member.name}")
-#                 useractivity = None
-
-#         if cur.activity and useractivity == games[0]:
-#             await give_role(Gvalorant_role, cur)
-#         if cur.activity and useractivity == games[1]:
-#             await give_role(Gminecraft_role, cur)
-#         if cur.activity and useractivity == games[2]:
-#             await give_role(Gosu_role, cur)
-#         if cur.activity and useractivity == games[3]:
-#             await give_role(Gkrunker_role, cur)
-#         if cur.activity and useractivity == games[4]:
-#             await give_role(Groblox_role, cur)
-#         if cur.activity and useractivity == games[5]:
-#             await give_role(Gspiderheck_role, cur)
-#         if cur.activity and useractivity in games:
-#             if Ggamer_role in cur.roles:
-#                 useractivity = None
-#             else:
-#                 await cur.add_roles(Ggamer_role)
-#                 print(f"Gave gamer role to {cur.name}")
-#                 useractivity = None
-#                 await asyncio.sleep(5)
 
 
 @slash_command(
@@ -493,215 +424,131 @@ async def ping(ctx):
 @slash_option(
     name="min",
     required=True,
-    opt_type=OptionTypes.STRING,
+    opt_type=OptionType.INTEGER,
     description="smallest possible number",
 )
 @slash_option(
     name="max",
     required=True,
-    opt_type=OptionTypes.STRING,
+    opt_type=OptionType.INTEGER,
     description="biggest possible number",
 )
-async def randomise(ctx, num1, num2):
+async def randomise(ctx, min, max):
     try:
-        await ctx.send(f"> `{num1}` - `{num2}` \n**{random.randint(int(num1), int(num2))}**")
+        rand = random.randint(min, max)
+        await ctx.send(f"> `{min}` - `{max}` \n** {rand} **")
+
     except:
-        await ctx.send("Something didnt go right. Try a different aproach!")
+        if min >= max:
+            await ctx.send("The first number must be smaller than the second one!")
+        if min == max:
+            await ctx.send("The numbers must be different!")
+        else:
+            await ctx.send("Something didnt go right. Try a different aproach!")
 
 
-@slash_command(name="calculate", description="calculate some numbers")
-@slash_option(
-    name="equasion",
-    required=True,
-    opt_type=OptionTypes.STRING,
-    description="input your math equation",
-)
-async def calculate(ctx, equasion):
-    if re.search("[a-z,A-Z]", equasion) is None:
-        await ctx.send(
-            f"""
-> `{equasion}`
-**{eval(equasion)}**
-        """
-        )
-    else:
-        await ctx.send("Thats not a math equasion...")
+# # @bot.command(
+# #     "spotify",
+# #     description="Share what you're listening to!",
+# #     options=interactions.Option(
+# #         name="min",
+# #         required=True,
+# #         type=interactions.OptionType.STRING,
+# #         description="smallest possible number",
+# #     ),
+# # )
+# # async def spotify(ctx: InteractionContext):
+# #     listener = ctx.author
 
+# #     # Get the first activity that contains "Spotify". Return None, if none present.
+# #     # spotify_activity = next((x for x in listener.activities if x.name == "Spotify"), None)
 
-# @bot.command(
-#     "spotify",
-#     description="Share what you're listening to!",
-#     options=interactions.Option(
-#         name="min",
-#         required=True,
-#         type=interactions.OptionType.STRING,
-#         description="smallest possible number",
-#     ),
-# )
-# async def spotify(ctx: InteractionContext):
-#     listener = ctx.author
+# #     print(listener.activities)
 
-#     # Get the first activity that contains "Spotify". Return None, if none present.
-#     # spotify_activity = next((x for x in listener.activities if x.name == "Spotify"), None)
+# #     if listener.activities[name] == "Spotify":
+# #         cover = f"https://i.scdn.co/image/{listener.activities.assets.large_image.split(':')[1]}"
+# #         embed = Embed(
+# #             title=f"{listener.display_name}'s Spotify",
+# #             description="Listening to {}".format(listener.activities.details),
+# #             color="#36b357",
+# #             thumbnail=cover,
+# #         )
+# #         embed.add_field(name="Artist", value=listener.activities.state)
+# #         embed.add_field(name="Album", value=listener.activities.assets.large_text)
+# #     else:
+# #         embed = Embed(
+# #             title=f"{listener.display_name}'s Spotify",
+# #             description="Currently not listening to anything",
+# #             color="#36b357",
+# #             timestamp=datetime.utcnow(),
+# #         )
+# #     embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar.url)
+# #     message = await ctx.send(embeds=embed)
+# #     await message.add_reaction(spotify_emoji)
 
-#     print(listener.activities)
-
-#     if listener.activities[name] == "Spotify":
-#         cover = f"https://i.scdn.co/image/{listener.activities.assets.large_image.split(':')[1]}"
-#         embed = Embed(
-#             title=f"{listener.display_name}'s Spotify",
-#             description="Listening to {}".format(listener.activities.details),
-#             color="#36b357",
-#             thumbnail=cover,
-#         )
-#         embed.add_field(name="Artist", value=listener.activities.state)
-#         embed.add_field(name="Album", value=listener.activities.assets.large_text)
-#     else:
-#         embed = Embed(
-#             title=f"{listener.display_name}'s Spotify",
-#             description="Currently not listening to anything",
-#             color="#36b357",
-#             timestamp=datetime.utcnow(),
-#         )
-#     embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar.url)
-#     message = await ctx.send(embeds=embed)
-#     await message.add_reaction(spotify_emoji)
-
-
-# @slash_command("gas", description='"gas-gas-gas" by Manuel')
-# async def outro(ctx: InteractionContext):
-#     if not ctx.author.voice:
-#         return await ctx.send("You are not in a voice channel")
-#     else:
-#         embed = Embed(
-#             'Playing "Gas-gas-gas" by Manuel',
-#             description="[Click here to join the voice channel](https://discord.gg/invite/invite)",
-#             color="#36b357",
-#         )
-#         embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar.url)
-#         await ctx.send(embed=embed)
-#         jointhisvc = bot.get_channel(ctx.author.voice.channel)
-#         audio = AudioVolume(
-#             r"data\gas-gas-gas.mp3",
-#         )
-#         vc = await jointhisvc.connect(deafened=True)
-#         await asyncio.sleep(0.5)
-#         await vc.play(audio)
-#         await asyncio.sleep(3)
-#         await vc.disconnect()
-
-# async def wait_and_kick(member):
-#     await asyncio.sleep(27)
-#     await member.disconnect()
 
 # @slash_command("outro", description="Exit a voice channel in style")
 # async def outro(ctx: InteractionContext):
 #     if not ctx.author.voice:
 #         return await ctx.send("You are not in a voice channel")
 #     else:
-#         await ctx.send("You will be disconnected in 25 seconds!", ephemeral=True)
-#         jointhisvc = bot.get_channel(ctx.author.voice.channel)
+#         await ctx.send("You will be disconnected in 15 seconds!", ephemeral=True)
 #         audio = AudioVolume(
 #             r"data\xenogenesis-outro-song.mp3",
 #         )
-#         vc = await jointhisvc.connect(deafened=True)
+#         audio.probe = False
+#         await ctx.author.voice.channel.connect(deafened=True)
 #         await asyncio.sleep(0.5)
-#         if __name__ == "__main__":
-#             playstuff = await vc.play(audio)
-#             playstuff.start()
+#         ctx.voice_state.play_no_wait(audio)
+#         await asyncio.sleep(15)
+#         await ctx.author.voice.disconnect()
 
-#             while playstuff.is_alive():
-#                 await wait_and_kick()
-#         await asyncio.sleep(3)
-#         await vc.disconnect()
+# #     elif message.content == "!quit":
+# #         if message.author == owner:
+# #             await channel.send("Logging off...")
+# #             sleep(1)
+# #             await bot.change_presence(status=discord.Status.idle)
+# #             sleep(1)
+# #             await bot.change_presence(status=discord.Status.offline)
+# #             await channel.send(f"{bot.user} has logged off")
+# #             await bot.close()
+# #             sleep(0.1)
+# #             print(f"\n{bot.user} has logged out")
+# #         else:
+# #             randomnum = randint(0, 8)
+# #             await channel.send(notauthormessages[randomnum])
 
-# @bot.event
-# async def on_message(message):
-#     channel = message.channel
+# #     await bot.process_commands(message)
 
-#     if message.content == "YES":
-#         if message.author == owner:
-#             await channel.send("Yes indeed")
 
-#     if message.content == "!help":
-#         embed = discord.Embed(
-#             title="Commands",
-#             description="""
-# `<message> $` - voting system
-# `<message> $<2 - 5>` - voting system with options
-# `!quit` - disables bot (emergency use only)
-#             """,
-#             color=discord.Color.blue(),
-#         )
+@is_owner()
+@slash_command("quit", description="Log off the bot")
+async def quit(ctx: InteractionContext):
+    await ctx.send("Logging off...")
+    await bot.close()
+    await eep(0.1)
+    print(f"\n{bot.user} has logged out")
 
-#         await channel.send(embed=embed)
 
-#     if "ratio" in message.content:
-#         await message.add_reaction("✅")
+@slash_command(
+    name="clear",
+    description="clears messages",
+    default_member_permissions=Permissions.MANAGE_MESSAGES,
+)
+@slash_option(
+    name="count",
+    description="number of messages to clear",
+    required=True,
+    opt_type=OptionType.INTEGER,
+    max_value=15,
+    min_value=2,
+)
+async def clear(ctx, count):
+    try:
+        await ctx.channel.purge(limit=count + 1)
+    except:
+        await ctx.send("Please input a string!")
 
-#     if message.channel == testsuggestion_channel and message.author != bot.user:
-#         await message.add_reaction("⬆️")
-#         await message.add_reaction("⬇️")
-
-#     emojiup = "✅"
-#     emojidown = "❌"
-#     emoji1 = "1️⃣"
-#     emoji2 = "2️⃣"
-#     emoji3 = "3️⃣"
-#     emoji4 = "4️⃣"
-#     emoji5 = "5️⃣"
-#     if message.content.endswith("$"):
-#         await message.add_reaction(emojiup)
-#         await message.add_reaction(emojidown)
-#     elif message.content.endswith("$2"):
-#         await message.add_reaction(emoji1)
-#         await message.add_reaction(emoji2)
-#     elif message.content.endswith("$3"):
-#         await message.add_reaction(emoji1)
-#         await message.add_reaction(emoji2)
-#         await message.add_reaction(emoji3)
-#     elif message.content.endswith("$4"):
-#         await message.add_reaction(emoji1)
-#         await message.add_reaction(emoji2)
-#         await message.add_reaction(emoji3)
-#         await message.add_reaction(emoji4)
-#     elif message.content.endswith("$5"):
-#         await message.add_reaction(emoji1)
-#         await message.add_reaction(emoji2)
-#         await message.add_reaction(emoji3)
-#         await message.add_reaction(emoji4)
-#         await message.add_reaction(emoji5)
-
-#     elif message.content == "!quit":
-#         if message.author == owner:
-#             await channel.send("Logging off...")
-#             sleep(1)
-#             await bot.change_presence(status=discord.Status.idle)
-#             sleep(1)
-#             await bot.change_presence(status=discord.Status.offline)
-#             await channel.send(f"{bot.user} has logged off")
-#             await bot.close()
-#             sleep(0.1)
-#             print(f"\n{bot.user} has logged out")
-#         else:
-#             randomnum = randint(0, 8)
-#             await channel.send(notauthormessages[randomnum])
-
-#     await bot.process_commands(message)
-
-# @slash_command(
-#     name='clear',
-#     description='clears messages',
-
-# )
-# @Commands.has_permissions(manage_messages=True)
-# async def clear(ctx, count):
-#     try:
-#         await ctx.channel.purge(limit=int(count) + 1)
-#     except:
-#         await ctx.send("Please input a string!")
-
-# code for floppa friday
 
 secret_TOKEN = os.environ["TOKEN"]
 try:
