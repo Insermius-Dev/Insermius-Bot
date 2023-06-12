@@ -10,6 +10,25 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# from pydantic import BaseModel
+# from beanie import Model
+# from enum import Enum
+
+# class MessageType(Enum):
+#   Welcome: 1
+#   Leave: 2
+
+# class Message(BaseModel):
+#   type_: MessageType
+#   message: str
+#   enabled: bool = True
+#   color: str
+
+# class Guild(Document):
+#   guild_id: int
+#   channel: int
+#   welcome_message: Message  # type_ = MessageType.Welcome
+#   leave_message: Message    # type_ = MessageType.Leave
 
 class TestModel(Document):
     txtvalue: str
@@ -21,6 +40,15 @@ class User(Document):
     username: str
     active: bool
 
+class Guild(Document):
+    guild_id: int
+    welcome_channel: int
+    wecome_message: str
+    leave_message: str
+    welcome_message_enabled: bool
+    leave_message_enabled: bool
+    welcome_message_color: str
+    leave_message_color: str
 
 password = os.getenv("MONGO_PASSWORD")
 username = os.getenv("MONGO_USERNAME")

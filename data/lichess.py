@@ -38,8 +38,8 @@ class Lichess(Extension):
         try:
             user = client.users.get_public_data(username)
             # userstatus = client.users.get_realtime_statuses(user)[0].get("online")
-        except:
-            await ctx.send("User not found")
+        except Exception as e:
+            await ctx.respnd(e)
             return
         if user["perfs"]["bullet"]["games"] < 10:
             user["perfs"]["bullet"]["rating"] = str(user["perfs"]["bullet"]["rating"]) + "?"

@@ -53,17 +53,17 @@ bot = inter.Client(sync_interactions=True, intents=bot_intents, send_command_tra
 
 spotify_emoji = "<:spotify:985229541482061854>"
 
-# notauthormessages = [
-#     "Im not broken, you are!",
-#     "You're not my boss!",
-#     "Are you trying to quit me?",
-#     "Sorry what did you say? I couldn't hear you.",
-#     "My off button is out of your reach, and im not helping you get it any time soon!",
-#     "Did you something?",
-#     "!no",
-#     "This is no caution tape, this is an emergency shut down command!",
-#     "Can I stay up just a little longer, pweeeeese??",
-# ]
+notauthormessages = [
+    "Im not broken, you are!",
+    "You're not my boss!",
+    "Are you trying to quit me?",
+    "Sorry what did you say? I couldn't hear you.",
+    "My off button is out of your reach, and im not helping you get it any time soon!",
+    "Did you something?",
+    "!yes",
+    "This is no caution tape, this is an emergency shut down command!",
+    "Can I stay up just a little longer, pweeeeese??",
+]
 
 playingStatus = [
     "Bloons TD 6",
@@ -112,9 +112,10 @@ async def on_startup():
     print(f"{bot.user} has connected to Discord!")
     # bot.load_extension("data.voice")
     bot.load_extension("data.ext1")  # Load all games
-    bot.load_extension("data.tictactoe")
-    bot.load_extension("data.ghostgame")
+    # bot.load_extension("data.tictactoe")
+    # bot.load_extension("data.ghostgame")
     bot.load_extension("data.lichess")
+    bot.load_extension("data.welcome")
 
     global now_unix
     now_unix = time.mktime(datetime.utcnow().timetuple())
@@ -156,7 +157,6 @@ async def on_startup():
             await asyncio.sleep(60)
 
 
-@is_owner()
 @slash_command(
     name="reload",
     description="Reloads a cog",
@@ -166,28 +166,46 @@ async def on_startup():
     description="The cog to reload",
     opt_type=OptionType.INTEGER,
     choices=[
-        # SlashCommandChoice(name="Voice", value=1),
-        SlashCommandChoice(name="TicTacToe", value=2),
-        SlashCommandChoice(name="GhostGame", value=3),
+        SlashCommandChoice(name="Welcome", value=1),
+        # SlashCommandChoice(name="TicTacToe", value=2),
+        # SlashCommandChoice(name="GhostGame", value=3),
         SlashCommandChoice(name="Lichess", value=4),
         SlashCommandChoice(name="Ext1", value=5),
     ],
     required=False,
 )
 async def reload(ctx, cog=None):
-    # if cog == 1:
-    #     bot.reload_extension("data.voice")
-    if cog == 2:
-        bot.reload_extension("data.tictactoe")
-    elif cog == 3:
-        bot.reload_extension("data.ghostgame")
-    elif cog == 4:
-        bot.reload_extension("data.lichess")
-    elif cog == 5:
-        bot.reload_extension("data.ext1")
-
-    await ctx.respond("Reloaded cog")
-
+    if bot.owner.id == ctx.author.id:
+        if cog == 1:
+            bot.reload_extension("data.welcome")
+        # if cog == 2:
+        #     bot.reload_extension("data.tictactoe")
+        # elif cog == 3:
+        #     bot.reload_extension("data.ghostgame")
+        elif cog == 4:
+            bot.reload_extension("data.lichess")
+        elif cog == 5:
+            bot.reload_extension("data.ext1")
+        elif cog == None:
+            bot.reload_extension("data.welcome")
+            # bot.reload_extension("data.tictactoe")
+            # bot.reload_extension("data.ghostgame")
+            bot.reload_extension("data.lichess")
+            bot.reload_extension("data.ext1")
+        if cog == None:
+            await ctx.respond("Reloaded all cogs")
+        if cog == 1:
+            await ctx.respond("Reloaded `data.welcome`")
+        # if cog == 2:
+        #     await ctx.respond("Reloaded `data.tictactoe`")
+        # elif cog == 3:
+        #     await ctx.respond("Reloaded `data.ghostgame`")
+        elif cog == 4:
+            await ctx.respond("Reloaded `data.lichess`")
+        elif cog == 5:
+            await ctx.respond("Reloaded `data.ext1`")
+    else:
+        await ctx.respond(random.choice(notauthormessages), ephemeral=True)
 
 @slash_command(
     name="info",
@@ -334,75 +352,6 @@ async def on_component(ctx: ComponentContext):
     #             "Looks like someone already pressed the button. No need to do it again.",
     #             ephemeral=True,
     #         )
-
-
-@listen()
-async def on_member_add(event):  # When a user joins
-    print("User joined")
-    print(event.guild.id)
-    with open("data/nowelcome.txt", "r") as f:  # Get all joined users
-        lines = f.readlines()
-        int_lines = [eval(i) for i in lines]
-        f.close
-    joiner = event.member
-    if event.guild.id in int_lines:  # Check if user already joined
-        pass
-    elif not event.guild.id in int_lines:
-        if joiner.bot:  # Check if a bot joined
-            embed = Embed(
-                description=f"Application '{joiner.display_name}' was added to the server!",
-                color=Color.from_hex("58f728"),
-            )
-
-            embed.set_author("Application added", icon_url=joiner.avatar.url)
-            await event.guild.system_channel.send(embed=embed)
-        else:  # A regular user joined
-            embed = Embed(
-                title=f"Welcome {joiner.display_name}!",
-                description=f"Thanks for joining {joiner.guild.name}!",
-                timestamp=datetime.utcnow(),
-                color=Color.from_rgb(88, 109, 245),
-            )
-            embed.set_thumbnail(url=joiner.avatar.url)
-
-            message = await event.guild.system_channel.send(
-                f"Welcome {joiner.mention}! :wave: ", embed=embed
-            )
-            await message.add_reaction("👋")
-
-
-@listen()
-async def on_member_remove(event):  # On member leave
-    with open("data/nowelcome.txt", "r") as f:
-        lines = f.readlines()
-        int_lines = [eval(i) for i in lines]
-        f.close()
-    leaver = event.member
-    if event.guild.id in int_lines:
-        pass
-    elif leaver == bot.user:
-        pass
-    elif int(event.guild.id) == 1090004044111696075:
-        pass
-    elif not event.guild.id in int_lines:
-        if leaver.bot:
-            embed = Embed(
-                description=f"Application '{leaver.display_name}' was removed from the server!",
-                color=Color.from_hex("f73528"),
-            )
-
-            embed.set_author(f"Application removed", icon_url=leaver.avatar.url)
-            await event.guild.system_channel.send(embed=embed)
-        else:
-            embed = Embed(
-                title=f"{leaver.display_name} left.",
-                description=f"Sorry to see you go {leaver.display_name}!",
-                timestamp=datetime.utcnow(),
-                color=Color.from_rgb(255, 13, 13),
-            )
-
-            await event.guild.system_channel.send(embed=embed)
-
 
 @slash_command(name="ping", description="check the bots status")
 async def ping(ctx):
