@@ -56,9 +56,9 @@ class welcome(Extension):
             int_lines = [eval(i) for i in lines]
             f.close()
         leaver = event.member
-        if event.guild.id in int_lines:
+        if leaver == self.bot.user:
             pass
-        elif leaver == self.bot.user:
+        elif event.guild.id in int_lines:
             pass
         elif int(event.guild.id) == 1090004044111696075:
             pass
@@ -80,6 +80,82 @@ class welcome(Extension):
                 )
 
                 await event.guild.system_channel.send(embed=embed)
+    
+    # TODO: Fix the invite creation
+    @listen()
+    async def on_guild_join(self, event):
+        if self.bot.is_ready:
+            print("New guild joined")
+            dm = self.bot.owner
+            invites = []
+            best_invite = None
+            for channel in event.guild.channels:
+                channel_invites = await channel.fetch_invites()
+                for invite in channel_invites:
+                    invites.append(invite)
+            if invites == []:
+                print("No invites found. Generating invite...")
+                for channel in event.guild.channels:
+                    if channel.permissions_for(event.guild.me).create_instant_invite:
+                        best_invite = await channel.create_invite() 
+                        return
+                if invites == []:
+                    print("No invite perms")
+                    best_invite = ""
+            
+            if invites != []:
+                # calculate the best invite and create an invite if the best invite is bad
+                for invite in invites:
+                    if invite.max_uses == 0 or invite.max_uses > 10:
+                        if invite.max_age == 0 or invite.max_age > 604800:
+                            if invite.temporary == False:
+                                best_invite = invite
+                                break
+                if best_invite == None:
+                    print("No good invite found. Creating invite...")
+                    for channel in event.guild.channels:
+                        if channel.permissions_for(event.guild.me).create_instant_invite:
+                            best_invite = await channel.create_invite() 
+                            return
+                    if invites == []:
+                        print("No invite perms")
+                        best_invite = ""
+                
+            embed = Embed(
+                title=event.guild.name,
+                description=event.guild.description,
+                timestamp=datetime.utcnow(),
+                color=Color.from_hex("32a852"),
+                thumbnail=event.guild.icon.url,
+            )
+            embed.add_field(name="Member count", value=len(event.guild.members))
+            embed.add_field(name="Created", value=event.guild.created_at)
+            embed.add_field(name="Boost level", value="Level {0}".format(event.guild.premium_tier))
+            await dm.send(best_invite.link, embed=embed)
+            # with open("data/nowelcome.txt", "w") as f:
+            #     lines = f.readlines()
+            #     lines.append(event.guild.id)
+            #     f.write("\n".join(lines))
+
+    @listen()
+    async def on_guild_left(self, event):
+        if self.bot.is_ready:
+            print("Guild left")
+            dm = self.bot.owner
+            embed = Embed(
+                title="Removed from " + event.guild.name,
+                description="",
+                timestamp=datetime.utcnow(),
+                color=Color.from_hex("b50a07"),
+                thumbnail=event.guild.icon.url,
+            )
+            # with open("data/nowelcome.txt", "w") as f:
+            #     lines = f.readlines()
+            #     int_lines = [eval(i) for i in lines]
+            #     if event.guild.id in int_lines:
+            #         int_lines.remove(event.guild.id)
+            #         f.write("\n".join(int_lines))
+            await dm.send(embed=embed)
 
 def setup(bot):
     welcome(bot)

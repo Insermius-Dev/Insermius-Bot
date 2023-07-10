@@ -51,8 +51,6 @@ bot_intents: Intents = Intents.GUILD_PRESENCES | Intents.DEFAULT | Intents.GUILD
 
 bot = inter.Client(sync_interactions=True, intents=bot_intents, send_command_tracebacks=False)
 
-spotify_emoji = "<:spotify:985229541482061854>"
-
 notauthormessages = [
     "Im not broken, you are!",
     "You're not my boss!",
@@ -106,6 +104,8 @@ nameday_cooldown = []
 #     print("Caught an error")
 #     os.system("kill 1")
 
+delete_btn = Button(style=ButtonStyle.RED, custom_id="delete", emoji="🗑️")
+
 
 @listen()
 async def on_startup():
@@ -116,6 +116,49 @@ async def on_startup():
     # bot.load_extension("data.ghostgame")
     bot.load_extension("data.lichess")
     bot.load_extension("data.welcome")
+
+    guild = bot.get_guild(1039230943346573362)
+
+    # testing code
+
+    # if bot.is_ready:
+    #     print("Bot ready")
+    #     dm = bot.owner
+    #     invites = []
+    #     best_invite = None
+    #     for channels in guild.channels:
+    #         channel_invites = await channel.fetch_invites()
+    #         for invite in channel_invites:
+    #             invites.append(invite)
+    #     if invites == []:
+    #         print("No invites found. Generating invite...")
+    #         for channel in guild.channels:
+    #             if channel.permissions_for(guild.me).create_instant_invite:
+    #                 best_invite = await channel.create_invite() 
+    #                 return
+    #         if invites == []:
+    #             print("No invite perms")
+    #             best_invite = ""
+        
+    #     if invites != []:
+    #         # calculate the best invite and create an invite if the best invite is bad
+    #         for invite in invites:
+    #             if invite.max_uses == 0 or invite.max_uses > 10:
+    #                 if invite.max_age == 0 or invite.max_age > 604800:
+    #                     if invite.temporary == False:
+    #                         best_invite = invite
+    #                         break
+    #         if best_invite == None:
+    #             print("No good invite found. Creating invite...")
+    #             for channel in guild.channels:
+    #                 if channel.permissions_for(guild.me).create_instant_invite:
+    #                     best_invite = await channel.create_invite() 
+    #                     return
+    #             if invites == []:
+    #                 print("No invite perms")
+    #                 best_invite = ""
+
+    # await dm.send(best_invite.link)
 
     global now_unix
     now_unix = time.mktime(datetime.utcnow().timetuple())
@@ -178,34 +221,26 @@ async def reload(ctx, cog=None):
     if bot.owner.id == ctx.author.id:
         if cog == 1:
             bot.reload_extension("data.welcome")
+            await ctx.respond("Reloaded `data.welcome`")
         # if cog == 2:
         #     bot.reload_extension("data.tictactoe")
         # elif cog == 3:
         #     bot.reload_extension("data.ghostgame")
         elif cog == 4:
             bot.reload_extension("data.lichess")
+            await ctx.respond("Reloaded `data.lichess`")
         elif cog == 5:
             bot.reload_extension("data.ext1")
+            await ctx.respond("Reloaded `data.ext1`")
         elif cog == None:
             bot.reload_extension("data.welcome")
             # bot.reload_extension("data.tictactoe")
             # bot.reload_extension("data.ghostgame")
             bot.reload_extension("data.lichess")
             bot.reload_extension("data.ext1")
-        if cog == None:
             await ctx.respond("Reloaded all cogs")
-        if cog == 1:
-            await ctx.respond("Reloaded `data.welcome`")
-        # if cog == 2:
-        #     await ctx.respond("Reloaded `data.tictactoe`")
-        # elif cog == 3:
-        #     await ctx.respond("Reloaded `data.ghostgame`")
-        elif cog == 4:
-            await ctx.respond("Reloaded `data.lichess`")
-        elif cog == 5:
-            await ctx.respond("Reloaded `data.ext1`")
     else:
-        await ctx.respond(random.choice(notauthormessages), ephemeral=True)
+        await ctx.respond(random.choice(notauthormessages), ephemeral=True, components=[delete_btn])
 
 @slash_command(
     name="info",
@@ -242,6 +277,7 @@ async def info(ctx):
         label="Partnered servers", style=ButtonStyle.BLUE, emoji="🏘", custom_id="guildsinvites"
     )
     components: list[ActionRow] = spread_to_rows(btn1, btn2)
+    components.append(ActionRow(delete_btn))
 
     await ctx.send(embed=embed, components=components)
 
@@ -278,7 +314,7 @@ async def on_component(ctx: ComponentContext):
                 name="Little helpers",
                 value=value,
             )
-            await event.send(embed=embed)
+            await event.send(embed=embed, components=[delete_btn])
             channel_cooldown.append(event.channel.id)
             await asyncio.sleep(15)
             channel_cooldown.remove(event.channel.id)
@@ -323,6 +359,7 @@ async def on_component(ctx: ComponentContext):
                 btn2,
                 btn3,
             )
+            components.append(ActionRow(delete_btn))
 
             await event.send(embed=embed, components=components)
             channel_cooldown.append(event.channel.id)
@@ -352,6 +389,14 @@ async def on_component(ctx: ComponentContext):
     #             "Looks like someone already pressed the button. No need to do it again.",
     #             ephemeral=True,
     #         )
+    if event.custom_id == "delete":
+        if (
+            event.message.interaction._user_id == event.author.id
+            or event.author.has_permission(Permissions.MANAGE_MESSAGES) == True
+        ):
+            await event.message.delete()
+        else:
+            await event.send("Not your interaction.", ephemeral=True)
 
 @slash_command(name="ping", description="check the bots status")
 async def ping(ctx):
@@ -384,56 +429,32 @@ latency: `{0}ms`
 )
 async def randomise(ctx, min, max):
     try:
+        #check if the numbers are floats
+        try:
+            min = int(min)
+            max = int(max)
+        except:
+            await ctx.send("The numbers must be integers!", ephemeral=True)
+            return
         rand = random.randint(min, max)
-        await ctx.send(f"> `{min}` - `{max}` \n** {rand} **")
+        embed = Embed(
+            title=rand,
+            description=f"> `{min}` - `{max}`",
+            color=Color.from_hex("5e50d4"),
+            timestamp=datetime.utcnow(),
+        )
+        embed.set_footer(
+            text=f"Requested by {ctx.author.display_name}", icon_url=ctx.author.avatar.url
+        )
+        await ctx.send(embed=embed, components=[delete_btn])
 
     except:
         if min >= max:
-            await ctx.send("The first number must be smaller than the second one!")
+            await ctx.send("The first number must be smaller than the second one!", ephemeral=True)
         if min == max:
-            await ctx.send("The numbers must be different!")
+            await ctx.send("The numbers cant be the same!", ephemeral=True)
         else:
-            await ctx.send("Something didnt go right. Try a different aproach!")
-
-
-# # @bot.command(
-# #     "spotify",
-# #     description="Share what you're listening to!",
-# #     options=interactions.Option(
-# #         name="min",
-# #         required=True,
-# #         type=interactions.OptionType.STRING,
-# #         description="smallest possible number",
-# #     ),
-# # )
-# # async def spotify(ctx: InteractionContext):
-# #     listener = ctx.author
-
-# #     # Get the first activity that contains "Spotify". Return None, if none present.
-# #     # spotify_activity = next((x for x in listener.activities if x.name == "Spotify"), None)
-
-# #     print(listener.activities)
-
-# #     if listener.activities[name] == "Spotify":
-# #         cover = f"https://i.scdn.co/image/{listener.activities.assets.large_image.split(':')[1]}"
-# #         embed = Embed(
-# #             title=f"{listener.display_name}'s Spotify",
-# #             description="Listening to {}".format(listener.activities.details),
-# #             color="#36b357",
-# #             thumbnail=cover,
-# #         )
-# #         embed.add_field(name="Artist", value=listener.activities.state)
-# #         embed.add_field(name="Album", value=listener.activities.assets.large_text)
-# #     else:
-# #         embed = Embed(
-# #             title=f"{listener.display_name}'s Spotify",
-# #             description="Currently not listening to anything",
-# #             color="#36b357",
-# #             timestamp=datetime.utcnow(),
-# #         )
-# #     embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar.url)
-# #     message = await ctx.send(embeds=embed)
-# #     await message.add_reaction(spotify_emoji)
+            await ctx.send("Something didnt go right. Try a different aproach!", ephemeral=True)
 
 
 # @slash_command("outro", description="Exit a voice channel in style")
@@ -469,7 +490,6 @@ async def randomise(ctx, min, max):
 
 # #     await bot.process_commands(message)
 
-
 @is_owner()
 @slash_command("quit", description="Log off the bot")
 async def quit(ctx: InteractionContext):
@@ -489,14 +509,66 @@ async def quit(ctx: InteractionContext):
     description="number of messages to clear",
     required=True,
     opt_type=OptionType.INTEGER,
-    max_value=15,
+    max_value=30,
     min_value=2,
 )
-async def clear(ctx, count):
+@slash_option(
+    name="user",
+    description="user to clear messages from",
+    required=False,
+    opt_type=OptionType.USER,
+)
+@slash_option(
+    name="bot",
+    description="clear messages only from bots",
+    required=False,
+    opt_type=OptionType.BOOLEAN,
+)
+async def clear(ctx, count, user=None, bot=False):
     try:
-        await ctx.channel.purge(limit=count + 1)
-    except:
-        await ctx.send("Please input a string!")
+        count = int(count)
+    except e as Exception:
+        await ctx.send("Please input an integer", ephemeral=True)
+        return
+    reason = f"@{ctx.author.display_name}({ctx.author.id}) cleared {count} messages"
+    if user:
+        if bot:
+            if user.bot:
+                await ctx.channel.purge(
+                    deletion_limit=count,
+                    predicate=lambda m: m.author == user,
+                    reason=reason,
+                )
+            else:
+                count = 0
+        else:
+            await ctx.channel.purge(
+                deletion_limit=count,
+                predicate=lambda m: m.author == user,
+                reason=reason,
+            )
+    elif bot:
+        await ctx.channel.purge(
+            deletion_limit=count,
+            predicate=lambda m: m.author == user.bot,
+            reason=reason,
+        )
+    if (user == None) and (bot == False):
+        await ctx.channel.purge(deletion_limit=count)
+    if user == None:
+        user = "`All`"
+    elif user:
+        user = user.mention
+    embed = Embed(
+        title="Messages deleted successfully",
+        description=f"> `{count}` messages deleted succesfully",
+        color=Color.from_hex("5e50d4"),
+    )
+    embed.add_field(
+        name="Parameters",
+        value=f"> User: {user}\n> Bot only: `{bot}`",
+    )
+    await ctx.send(embed=embed, ephemeral=True)
 
 
 secret_TOKEN = os.environ["TOKEN"]

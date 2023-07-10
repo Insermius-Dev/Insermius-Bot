@@ -16,6 +16,8 @@ from interactions import (
 )
 from datetime import *
 
+delete_btn = Button(style=ButtonStyle.RED, custom_id="delete", emoji="🗑️")
+
 load_dotenv()
 api_key = os.getenv("LICHESS_API")
 
@@ -97,7 +99,7 @@ class Lichess(Extension):
         )
         embed.add_field(name="Patreon status", value=f"> {user['patron']}")
         # embed.add_field(name="Full profile", value=f"> {status}")
-        await ctx.send(embed=embed)
+        await ctx.send(embed=embed, components=[delete_btn])
 
 
 def setup(bot):

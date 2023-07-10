@@ -16,14 +16,50 @@ from datetime import date, datetime
 from babel.dates import format_date
 from calculator import calculate
 
+delete_btn = Button(style=ButtonStyle.RED, custom_id="delete", emoji="🗑️")
+
 with open("data/namedays.json", encoding="utf-8") as f:
     namedays = json.load(f)
 
 with open("data/namedays-extended.json", encoding="utf-8") as f:
     namedays_ext = json.load(f)
 
+spotify_emoji = "<:spotify:985229541482061854>"
 
 class Extensionclass(Extension):
+
+    @slash_command(
+        name="spotify",
+        description="Share what you're listening to!",
+    )
+    async def spotify(self, ctx):
+        listener = ctx.author
+
+        # Get the first activity that contains "Spotify". Return None, if none present.
+        spotify_activity = next((x for x in listener.activities if x.name == "Spotify"), None)
+
+
+        if spotify_activity is not None:
+            cover = f"https://i.scdn.co/image/{spotify_activity.assets.large_image.split(':')[1]}"
+            embed = Embed(
+                title=f"{listener.display_name}'s Spotify",
+                description="Listening to {}".format(spotify_activity.name),
+                color="#36b357",
+                thumbnail=cover,
+            )
+            embed.add_field(name="Artist", value=spotify_activity.state)
+            embed.add_field(name="Album", value=spotify_activity.assets.large_text)
+        else:
+            embed = Embed(
+                title=f"{listener.display_name}'s Spotify",
+                description="Currently not listening to anything",
+                color="#36b357",
+                timestamp=datetime.utcnow(),
+            )
+        embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar.url)
+        message = await ctx.send(embeds=embed, components=[delete_btn])
+        # await message.add_reaction(spotify_emoji)
+
     #     @slash_command(
     #         name="smashorpass",
     #         description="Smash or Pass",
@@ -108,47 +144,6 @@ class Extensionclass(Extension):
     #             )
     #         await ctx.send(embed=embed)
 
-    # TODO: Fix the invite creation
-    @listen()
-    async def on_guild_join(self, guild):
-        if self.bot.is_ready:
-            print("New guild joined")
-            #         dm = await self.bot.owner.fetch_dm()
-            #         invite = await guild.guild.system_channel.create_invite()
-            #         embed = Embed(
-            #             title=guild.guild.name,
-            #             description=guild.guild.description,
-            #             timestamp=datetime.utcnow(),
-            #             color=Color.from_hex("32a852"),
-            #             thumbnail=guild.guild.icon,
-            #         )
-            #         # embed.add_field(name="Member count", value=len(guild.guild.members))
-            #         # embed.add_field(name="Created", value=guild.guild.created_at)
-            #         # embed.add_field(name="Boost level", value="Level {0}".format(guild.guild.premium_tier))
-            #         await dm.send(invite, embed=embed)
-            with open("data/nowelcome.txt", "w") as f:
-                lines = f.readlines()
-                lines.append(guild.guild.id)
-                f.write("\n".join(lines))
-
-    @listen()
-    async def on_guild_remove(self, guild):
-        if self.bot.is_ready:
-            print("Guild left")
-            #         dm = await self.bot.owner.fetch_dm()
-            #         embed = Embed(
-            #             title="left " + guild.guild.name,
-            #             timestamp=datetime.utcnow(),
-            #             color=Color.from_hex("b50a07"),
-            #             thumbnail=guild.guild.icon,
-            #         )
-            with open("data/nowelcome.txt", "w") as f:
-                lines = f.readlines()
-                int_lines = [eval(i) for i in lines]
-                if guild.guild.id in int_lines:
-                    int_lines.remove(guild.guild.id)
-                    f.write("\n".join(int_lines))
-
     #         await dm.send(embed=embed)
     @slash_command(name="calculate", description="calculate some numbers")
     @slash_option(
@@ -167,9 +162,9 @@ class Extensionclass(Extension):
             )
             embed.add_field(name="Expression", value=f"`{equation}`")
             embed.add_field(name="Result", value=f"{answer}")
-            await ctx.send(embed=embed)
+            await ctx.send(embed=embed, components=[delete_btn])
         except Exception as e:
-            await ctx.send(f"Something went wrong... \n `{e}`")
+            await ctx.send(f"Something went wrong... \n `{e}`", components=[delete_btn])
 
 
 def setup(bot):
