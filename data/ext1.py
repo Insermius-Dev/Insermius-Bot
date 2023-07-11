@@ -43,7 +43,7 @@ class Extensionclass(Extension):
             cover = f"https://i.scdn.co/image/{spotify_activity.assets.large_image.split(':')[1]}"
             embed = Embed(
                 title=f"{listener.display_name}'s Spotify",
-                description="Listening to {}".format(spotify_activity.name),
+                description="Listening to {}".format(spotify_activity.details),
                 color="#36b357",
                 thumbnail=cover,
             )

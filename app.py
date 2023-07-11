@@ -86,7 +86,6 @@ epiccontribbutingppl = [
     975738227669499916,
     400713431423909889,
     717769897278570507,
-    196018858455334912,
 ]
 
 lilhelpers = [
@@ -97,6 +96,8 @@ lilhelpers = [
 
 url_links_contributors = []
 url_links_lilhelpers = []
+usernames_contributors = []
+usernames_lilhelpers = []
 
 channel_cooldown = []
 invite_cooldown = []
@@ -114,11 +115,18 @@ base=os.path.dirname("templates/")
 html=open(os.path.join(base, "index.html"))
 soup = bs(html, 'html.parser')
 
-for i in range(len(epiccontribbutingppl)):
-    url_links_contributors.append((bot.get_user(epiccontribbutingppl[i])).avatar.url)
+# for i in range(len(epiccontribbutingppl)):
+#     url_links_contributors.append((bot.get_user(epiccontribbutingppl[i])).avatar.url)
+#     usernames_contributors.append((bot.get_user(epiccontribbutingppl[i])).name)
 
-for id in lilhelpers:
-    url_links_lilhelpers.append((bot.get_user(lilhelpers[i])).avatar.url)
+# for id in lilhelpers:
+#     url_links_lilhelpers.append((bot.get_user(lilhelpers[i])).avatar.url)
+#     usernames_lilhelpers.append((bot.get_user(lilhelpers[i])).name)
+
+html = f"""
+<table>
+</table>
+"""
 
 @listen()
 async def on_startup():
@@ -130,13 +138,23 @@ async def on_startup():
     bot.load_extension("data.lichess")
     bot.load_extension("data.welcome")
 
-    old_text = soup.find("table", {"id": "contributors"})
-    new_text = old_text.find(text=re.compile('')).replace_with(epiccontribbutingppl)
-    old_text = soup.find("table", {"id": "lilhelpers"})
-    new_text = old_text.find(text=re.compile('')).replace_with(lilhelpers)
+    contr_icons = []
+    contr_usernames = []
+    
+    lilhelp_icons = []
+    lilhelp_usernames = []
 
-    with open("index.html", "wb") as f:
-        f.write(soup.prettify("utf-8"))
+    for contributor in epiccontribbutingppl:
+        contr_icons.append(bot.get_user(contributor).avatar.url)
+        contr_usernames.append(bot.get_user(contributor).username)
+    
+    for lilhelper in lilhelpers:
+        lilhelp_icons.append(bot.get_user(lilhelper).avatar.url)
+        lilhelp_usernames.append(bot.get_user(lilhelp_usernames).username)
+
+
+    # with open("index.html", "wb") as f:
+    #     f.write(soup.prettify("utf-8"))
 
     start()
 
