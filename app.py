@@ -116,12 +116,12 @@ html=open(os.path.join(base, "index.html"))
 soup = bs(html, 'html.parser')
 
 # for i in range(len(epiccontribbutingppl)):
-#     url_links_contributors.append((bot.get_user(epiccontribbutingppl[i])).avatar.url)
-#     usernames_contributors.append((bot.get_user(epiccontribbutingppl[i])).name)
+#     url_links_contributors.append((bot.fetch_user(epiccontribbutingppl[i])).avatar.url)
+#     usernames_contributors.append((bot.fetch_user(epiccontribbutingppl[i])).name)
 
 # for id in lilhelpers:
-#     url_links_lilhelpers.append((bot.get_user(lilhelpers[i])).avatar.url)
-#     usernames_lilhelpers.append((bot.get_user(lilhelpers[i])).name)
+#     url_links_lilhelpers.append((bot.fetch_user(lilhelpers[i])).avatar.url)
+#     usernames_lilhelpers.append((bot.fetch_user(lilhelpers[i])).name)
 
 html = f"""
 <table>
@@ -145,12 +145,12 @@ async def on_startup():
     lilhelp_usernames = []
 
     for contributor in epiccontribbutingppl:
-        contr_icons.append(bot.get_user(contributor).avatar.url)
-        contr_usernames.append(bot.get_user(contributor).username)
+        contr_icons.append(bot.fetch_user(contributor).avatar.url)
+        contr_usernames.append(bot.fetch_user(contributor).username)
     
     for lilhelper in lilhelpers:
-        lilhelp_icons.append(bot.get_user(lilhelper).avatar.url)
-        lilhelp_usernames.append(bot.get_user(lilhelp_usernames).username)
+        lilhelp_icons.append(bot.fetch_user(lilhelper).avatar.url)
+        lilhelp_usernames.append(bot.fetch_user(lilhelp_usernames).username)
 
 
     # with open("index.html", "wb") as f:
@@ -298,92 +298,82 @@ async def info(ctx):
 @listen()
 async def on_component(ctx: ComponentContext):
     event = ctx.ctx
-    if event.custom_id == "contributors":
-        if event.channel.id not in channel_cooldown:
-            embed = Embed(
-                title="⭐ Contributors",
-                description=f"Awesome people who have helped to make Larss_Bot what it is today!",
-                timestamp=datetime.utcnow(),
-                color=Color.from_hex("5e50d4"),
-            )
-            embed.set_footer(
-                text=f"Requested by {event.author.display_name}", icon_url=event.author.avatar.url
-            )
+    match event.custom_id:
+    case "contributors":
+        message_components = event.message.components
+        message_components[0].components[0].disabled = True
+        event.message.edit(components=message_components)
+        
+        embed = Embed(
+            title="⭐ Contributors",
+            description=f"Awesome people who have helped to make Larss_Bot what it is today!",
+            timestamp=datetime.utcnow(),
+            color=Color.from_hex("5e50d4"),
+        )
+        embed.set_footer(
+            text=f"Requested by {event.author.display_name}", icon_url=event.author.avatar.url
+        )
 
-            value = ""
-            for contributor in epiccontribbutingppl:
-                value += f"> <@{contributor}> \n"
+        value = ""
+        for contributor in epiccontribbutingppl:
+            value += f"> <@{contributor}> \n"
 
-            embed.add_field(
-                name="Contributors",
-                value=value,
-            )
+        embed.add_field(
+            name="Contributors",
+            value=value,
+        )
 
-            value = ""
-            for lilhelper in lilhelpers:
-                value += f"> <@{lilhelper}> \n"
+        value = ""
+        for lilhelper in lilhelpers:
+            value += f"> <@{lilhelper}> \n"
 
-            embed.add_field(
-                name="Little helpers",
-                value=value,
-            )
-            await event.send(embed=embed, components=[delete_btn])
-            channel_cooldown.append(event.channel.id)
-            await asyncio.sleep(15)
-            channel_cooldown.remove(event.channel.id)
-        else:
-            await event.send(
-                "Looks like someone already pressed the button. No need to do it again.",
-                ephemeral=True,
-            )
+        embed.add_field(
+            name="Little helpers",
+            value=value,
+        )
+        await event.send(embed=embed, components=[delete_btn])
 
-    if event.custom_id == "guildsinvites":
-        if event.channel.id not in invite_cooldown:
-            embed = Embed(
-                title="Partner servers",
-                description=f"Press any of the buttons below to get invited to one of the partnered servers",
-                timestamp=datetime.utcnow(),
-                color=Color.from_hex("5e50d4"),
-            )
-            embed.set_footer(
-                text=f"Requested by {event.author.display_name}", icon_url=event.author.avatar.url
-            )
+    case "guildsinvites":
+        message_components = event.message.components
+        message_components[0].components[1].disabled = True
+        event.message.edit(components=message_components)
+        
+        embed = Embed(
+            title="Partner servers",
+            description=f"Press any of the buttons below to get invited to one of the partnered servers",
+            timestamp=datetime.utcnow(),
+            color=Color.from_hex("5e50d4"),
+        )
+        embed.set_footer(
+            text=f"Requested by {event.author.display_name}", icon_url=event.author.avatar.url
+        )
 
-            btn1 = Button(
-                style=ButtonStyle.URL,
-                label="Dev lab",
-                emoji="🧪",
-                url="https://discord.gg/TReMEyBQsh",
-            )
-            btn2 = Button(
-                style=ButtonStyle.URL,
-                label="Big-Floppa software solutions",
-                emoji="🐱",
-                url="https://discord.gg/MDVcb8wdUd",
-            )
-            btn3 = Button(
-                style=ButtonStyle.URL,
-                label="Tyler army",
-                emoji="🐸",
-                url="https://discord.gg/w78rcjW8ck",
-            )
-            components: list[ActionRow] = spread_to_rows(
-                btn1,
-                btn2,
-                btn3,
-            )
-            components.append(ActionRow(delete_btn))
+        btn1 = Button(
+            style=ButtonStyle.URL,
+            label="Dev lab",
+            emoji="🧪",
+            url="https://discord.gg/TReMEyBQsh",
+        )
+        btn2 = Button(
+            style=ButtonStyle.URL,
+            label="Big-Floppa software solutions",
+            emoji="🐱",
+            url="https://discord.gg/MDVcb8wdUd",
+        )
+        btn3 = Button(
+            style=ButtonStyle.URL,
+            label="Tyler army",
+            emoji="🐸",
+            url="https://discord.gg/w78rcjW8ck",
+        )
+        components: list[ActionRow] = ActionRow(
+            btn1,
+            btn2,
+            btn3
+        )
+        components.append(ActionRow(delete_btn))
 
-            await event.send(embed=embed, components=components)
-            channel_cooldown.append(event.channel.id)
-            await asyncio.sleep(15)
-            channel_cooldown.remove(event.channel.id)
-        else:
-            # ephemeral not gonna work, once again
-            await event.send(
-                "Looks like someone already pressed the button. No need to do it again.",
-                ephemeral=True,
-            )
+        await event.send(embed=embed, components=components)
     # if event.custom_id == "extendedlistshow":
     #     if event.channel.id not in nameday_cooldown:
     #         today = date.today().strftime("%m-%d")
@@ -402,10 +392,10 @@ async def on_component(ctx: ComponentContext):
     #             "Looks like someone already pressed the button. No need to do it again.",
     #             ephemeral=True,
     #         )
-    if event.custom_id == "delete":
+    case "delete":
         if (
             event.message.interaction._user_id == event.author.id
-            or event.author.has_permission(Permissions.MANAGE_MESSAGES) == True
+            or event.author.has_permission(Permissions.MANAGE_MESSAGES)
         ):
             await event.message.delete()
         else:
