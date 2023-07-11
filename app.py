@@ -38,14 +38,14 @@ from babel.dates import format_date
 import json
 import time
 from asyncio import sleep as eep
+import pandas as pd
+from bs4 import BeautifulSoup as bs
 
 from dotenv import load_dotenv
 
 load_dotenv()
 
 from Bot_website import start
-
-start()  # starts the website (https://larss-bot.onrender.com)
 
 bot_intents: Intents = Intents.GUILD_PRESENCES | Intents.DEFAULT | Intents.GUILD_MEMBERS
 
@@ -86,6 +86,7 @@ epiccontribbutingppl = [
     975738227669499916,
     400713431423909889,
     717769897278570507,
+    196018858455334912,
 ]
 
 lilhelpers = [
@@ -93,6 +94,9 @@ lilhelpers = [
     830021857067532349,
     488257154701197322,
 ]
+
+url_links_contributors = []
+url_links_lilhelpers = []
 
 channel_cooldown = []
 invite_cooldown = []
@@ -106,6 +110,15 @@ nameday_cooldown = []
 
 delete_btn = Button(style=ButtonStyle.RED, custom_id="delete", emoji="🗑️")
 
+base=os.path.dirname("templates/")
+html=open(os.path.join(base, "index.html"))
+soup = bs(html, 'html.parser')
+
+for i in range(len(epiccontribbutingppl)):
+    url_links_contributors.append((bot.get_user(epiccontribbutingppl[i])).avatar.url)
+
+for id in lilhelpers:
+    url_links_lilhelpers.append((bot.get_user(lilhelpers[i])).avatar.url)
 
 @listen()
 async def on_startup():
@@ -117,48 +130,29 @@ async def on_startup():
     bot.load_extension("data.lichess")
     bot.load_extension("data.welcome")
 
-    guild = bot.get_guild(1039230943346573362)
+    old_text = soup.find("table", {"id": "contributors"})
+    new_text = old_text.find(text=re.compile('')).replace_with(epiccontribbutingppl)
+    old_text = soup.find("table", {"id": "lilhelpers"})
+    new_text = old_text.find(text=re.compile('')).replace_with(lilhelpers)
 
-    # testing code
+    with open("index.html", "wb") as f:
+        f.write(soup.prettify("utf-8"))
 
-    # if bot.is_ready:
-    #     print("Bot ready")
-    #     dm = bot.owner
-    #     invites = []
-    #     best_invite = None
-    #     for channels in guild.channels:
-    #         channel_invites = await channel.fetch_invites()
-    #         for invite in channel_invites:
-    #             invites.append(invite)
-    #     if invites == []:
-    #         print("No invites found. Generating invite...")
-    #         for channel in guild.channels:
-    #             if channel.permissions_for(guild.me).create_instant_invite:
-    #                 best_invite = await channel.create_invite() 
-    #                 return
-    #         if invites == []:
-    #             print("No invite perms")
-    #             best_invite = ""
-        
-    #     if invites != []:
-    #         # calculate the best invite and create an invite if the best invite is bad
-    #         for invite in invites:
-    #             if invite.max_uses == 0 or invite.max_uses > 10:
-    #                 if invite.max_age == 0 or invite.max_age > 604800:
-    #                     if invite.temporary == False:
-    #                         best_invite = invite
-    #                         break
-    #         if best_invite == None:
-    #             print("No good invite found. Creating invite...")
-    #             for channel in guild.channels:
-    #                 if channel.permissions_for(guild.me).create_instant_invite:
-    #                     best_invite = await channel.create_invite() 
-    #                     return
-    #             if invites == []:
-    #                 print("No invite perms")
-    #                 best_invite = ""
+    start()
 
-    # await dm.send(best_invite.link)
+    guild_list = bot.guilds
+    guild_names = []
+    guild_members = []
+    guild_ids = []
+
+    for i in range(len(guild_list)):
+        guild_names.append(guild_list[i].name)
+        guild_members.append(guild_list[i].member_count)
+        guild_ids.append(guild_list[i].id)
+
+    guild_list = pd.DataFrame({"id": guild_ids, "guild": guild_names, "members": guild_members})
+    guild_list.set_index("id", inplace=True)
+    print(guild_list)
 
     global now_unix
     now_unix = time.mktime(datetime.utcnow().timetuple())
@@ -253,6 +247,7 @@ async def info(ctx):
         timestamp=datetime.utcnow(),
         color=Color.from_hex("5e50d4"),
         thumbnail="https://cdn.discordapp.com/attachments/983081269543993354/1041045309695987712/image.png",
+        url="https://larss-bot.onrender.com"
     )
     embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar.url)
     embed.add_field(

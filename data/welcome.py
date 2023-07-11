@@ -10,8 +10,11 @@ from interactions import (
     ButtonStyle,
     listen,
     OptionType,
+    Permissions,
 )
 from datetime import date, datetime
+
+delete_btn = Button(style=ButtonStyle.RED, custom_id="delete", emoji="🗑️")
 
 class welcome(Extension):
     @listen()
@@ -85,20 +88,17 @@ class welcome(Extension):
     @listen()
     async def on_guild_join(self, event):
         if self.bot.is_ready:
-            print("New guild joined")
+            print("Bot ready")
             dm = self.bot.owner
             invites = []
             best_invite = None
-            for channel in event.guild.channels:
-                channel_invites = await channel.fetch_invites()
-                for invite in channel_invites:
-                    invites.append(invite)
+            invites = await event.guild.fetch_invites()
             if invites == []:
                 print("No invites found. Generating invite...")
                 for channel in event.guild.channels:
-                    if channel.permissions_for(event.guild.me).create_instant_invite:
-                        best_invite = await channel.create_invite() 
-                        return
+                    if event.guild.me.has_permission(Permissions.CREATE_INSTANT_INVITE):
+                        best_invite = await channel.create_invite(max_age=0)
+                        break
                 if invites == []:
                     print("No invite perms")
                     best_invite = ""
@@ -114,24 +114,41 @@ class welcome(Extension):
                 if best_invite == None:
                     print("No good invite found. Creating invite...")
                     for channel in event.guild.channels:
-                        if channel.permissions_for(event.guild.me).create_instant_invite:
-                            best_invite = await channel.create_invite() 
-                            return
+                        if event.guild.me.has_permission(Permissions.CREATE_INSTANT_INVITE):
+                            best_invite = await channel.create_invite(max_age=0) 
+                            break
                     if invites == []:
                         print("No invite perms")
                         best_invite = ""
-                
+
+            print(best_invite.link)
+            await dm.send(best_invite.link)
             embed = Embed(
                 title=event.guild.name,
                 description=event.guild.description,
                 timestamp=datetime.utcnow(),
-                color=Color.from_hex("32a852"),
+                color=Color.from_hex("5e50d4"),
                 thumbnail=event.guild.icon.url,
             )
             embed.add_field(name="Member count", value=len(event.guild.members))
             embed.add_field(name="Created", value=event.guild.created_at)
             embed.add_field(name="Boost level", value="Level {0}".format(event.guild.premium_tier))
             await dm.send(best_invite.link, embed=embed)
+
+            embed = Embed(
+                title="Thanks for adding me to your wonderful server!",
+                description="""
+I use slash commands. Use /info for some basic info!
+
+If you have any suggestions or issues please report them in my [support server](https://discord.gg/TReMEyBQsh)!
+Also check out [my beta website](https://larss-bot.onrender.com)! 
+
+‼ Important note: This bot is still under constant development and may have bugs, issues and other misshappens like random downtime and others. ‼""",
+                timestamp=datetime.utcnow(),
+                color=Color.from_hex("32a852"),
+            )
+            embed.set_footer(text="Enjoy!", icon_url=self.bot.owner.avatar.url)
+            await event.guild.system_channel.send(embed=embed, components=[delete_btn])
             # with open("data/nowelcome.txt", "w") as f:
             #     lines = f.readlines()
             #     lines.append(event.guild.id)
@@ -144,7 +161,7 @@ class welcome(Extension):
             dm = self.bot.owner
             embed = Embed(
                 title="Removed from " + event.guild.name,
-                description="",
+                description=str(event.guild.id),
                 timestamp=datetime.utcnow(),
                 color=Color.from_hex("b50a07"),
                 thumbnail=event.guild.icon.url,
