@@ -116,12 +116,12 @@ html=open(os.path.join(base, "index.html"))
 soup = bs(html, 'html.parser')
 
 # for i in range(len(epiccontribbutingppl)):
-#     url_links_contributors.append((bot.get_user(epiccontribbutingppl[i])).avatar.url)
-#     usernames_contributors.append((bot.get_user(epiccontribbutingppl[i])).name)
+#     url_links_contributors.append((bot.fetch_user(epiccontribbutingppl[i])).avatar.url)
+#     usernames_contributors.append((bot.fetch_user(epiccontribbutingppl[i])).name)
 
 # for id in lilhelpers:
-#     url_links_lilhelpers.append((bot.get_user(lilhelpers[i])).avatar.url)
-#     usernames_lilhelpers.append((bot.get_user(lilhelpers[i])).name)
+#     url_links_lilhelpers.append((bot.fetch_user(lilhelpers[i])).avatar.url)
+#     usernames_lilhelpers.append((bot.fetch_user(lilhelpers[i])).name)
 
 html = f"""
 <table>
@@ -130,6 +130,7 @@ html = f"""
 
 @listen()
 async def on_startup():
+
     print(f"{bot.user} has connected to Discord!")
     # bot.load_extension("data.voice")
     bot.load_extension("data.ext1")  # Load all games
@@ -150,7 +151,8 @@ async def on_startup():
     
     for lilhelper in lilhelpers:
         lilhelp_icons.append(bot.get_user(lilhelper).avatar.url)
-        lilhelp_usernames.append(bot.get_user(lilhelp_usernames).username)
+        lilhelp_usernames.append(bot.get_user(lilhelper).username)
+
 
 
     # with open("index.html", "wb") as f:
@@ -298,8 +300,12 @@ async def info(ctx):
 @listen()
 async def on_component(ctx: ComponentContext):
     event = ctx.ctx
-    if event.custom_id == "contributors":
-        if event.channel.id not in channel_cooldown:
+    match event.custom_id:
+        case "contributors":
+            message_components = event.message.components
+            message_components[0].components[0].disabled = True
+            await event.message.edit(components=message_components)
+            
             embed = Embed(
                 title="⭐ Contributors",
                 description=f"Awesome people who have helped to make Larss_Bot what it is today!",
@@ -328,17 +334,12 @@ async def on_component(ctx: ComponentContext):
                 value=value,
             )
             await event.send(embed=embed, components=[delete_btn])
-            channel_cooldown.append(event.channel.id)
-            await asyncio.sleep(15)
-            channel_cooldown.remove(event.channel.id)
-        else:
-            await event.send(
-                "Looks like someone already pressed the button. No need to do it again.",
-                ephemeral=True,
-            )
 
-    if event.custom_id == "guildsinvites":
-        if event.channel.id not in invite_cooldown:
+        case "guildsinvites":
+            message_components = event.message.components
+            message_components[0].components[1].disabled = True
+            await event.message.edit(components=message_components)
+            
             embed = Embed(
                 title="Partner servers",
                 description=f"Press any of the buttons below to get invited to one of the partnered servers",
@@ -367,49 +368,36 @@ async def on_component(ctx: ComponentContext):
                 emoji="🐸",
                 url="https://discord.gg/w78rcjW8ck",
             )
-            components: list[ActionRow] = spread_to_rows(
-                btn1,
-                btn2,
-                btn3,
-            )
-            components.append(ActionRow(delete_btn))
+            components: list[ActionRow] = spread_to_rows(btn1, btn2, btn3)
+            components.append(ActionRow(delete_btn))  
 
             await event.send(embed=embed, components=components)
-            channel_cooldown.append(event.channel.id)
-            await asyncio.sleep(15)
-            channel_cooldown.remove(event.channel.id)
-        else:
-            # ephemeral not gonna work, once again
-            await event.send(
-                "Looks like someone already pressed the button. No need to do it again.",
-                ephemeral=True,
-            )
-    # if event.custom_id == "extendedlistshow":
-    #     if event.channel.id not in nameday_cooldown:
-    #         today = date.today().strftime("%m-%d")
-    #         embed = Embed(
-    #             title="Visi šodienas vārdi",
-    #             description="> " + "\n> ".join(namedays_ext[today]),
-    #             color=Color.from_rgb(255, 13, 13),
-    #         )
-    #         await event.send(embed=embed)
-    #         nameday_cooldown.append(event.channel.id)
-    #         await asyncio.sleep(15)
-    #         nameday_cooldown.remove(event.channel.id)
-    #     else:
-    #         # ephemeral not gonna work, once again
-    #         await event.send(
-    #             "Looks like someone already pressed the button. No need to do it again.",
-    #             ephemeral=True,
-    #         )
-    if event.custom_id == "delete":
-        if (
-            event.message.interaction._user_id == event.author.id
-            or event.author.has_permission(Permissions.MANAGE_MESSAGES) == True
-        ):
-            await event.message.delete()
-        else:
-            await event.send("Not your interaction.", ephemeral=True)
+        # if event.custom_id == "extendedlistshow":
+        #     if event.channel.id not in nameday_cooldown:
+        #         today = date.today().strftime("%m-%d")
+        #         embed = Embed(
+        #             title="Visi šodienas vārdi",
+        #             description="> " + "\n> ".join(namedays_ext[today]),
+        #             color=Color.from_rgb(255, 13, 13),
+        #         )
+        #         await event.send(embed=embed)
+        #         nameday_cooldown.append(event.channel.id)
+        #         await asyncio.sleep(15)
+        #         nameday_cooldown.remove(event.channel.id)
+        #     else:
+        #         # ephemeral not gonna work, once again
+        #         await event.send(
+        #             "Looks like someone already pressed the button. No need to do it again.",
+        #             ephemeral=True,
+        #         )
+        case "delete":
+            if (
+                event.message.interaction._user_id == event.author.id
+                or event.author.has_permission(Permissions.MANAGE_MESSAGES)
+            ):
+                await event.message.delete()
+            else:
+                await event.send("Not your interaction.", ephemeral=True)
 
 @slash_command(name="ping", description="check the bots status")
 async def ping(ctx):
