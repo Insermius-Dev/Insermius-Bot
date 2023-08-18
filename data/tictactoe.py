@@ -5,9 +5,9 @@ import math
 import random
 from typing import List
 
-from naff import Extension
-from naff.models import (
-    ButtonStyles,
+from interactions import Extension
+from interactions.models import (
+    ButtonStyle,
     Button,
     ComponentContext,
     InteractionContext,
@@ -55,11 +55,11 @@ def render_board(board: list, disable=False) -> list:
     for i in range(3):
         for x in range(3):
             if board[i][x] == GameState.empty:
-                style = ButtonStyles.GREY
+                style = ButtonStyle.GREY
             elif board[i][x] == GameState.player:
-                style = ButtonStyles.BLURPLE
+                style = ButtonStyle.BLURPLE
             else:
-                style = ButtonStyles.RED
+                style = ButtonStyle.RED
             buttons.append(
                 Button(
                     style=style,

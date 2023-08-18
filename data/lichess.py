@@ -1,8 +1,22 @@
 import berserk as lichess
 from dotenv import load_dotenv
 import os
-from naff import *
+import interactions as inter
+from interactions import (
+    Extension,
+    slash_command,
+    OptionType,
+    slash_option,
+    Color,
+    Embed,
+    ActionRow,
+    Button,
+    ButtonStyle,
+    listen,
+)
 from datetime import *
+
+delete_btn = Button(style=ButtonStyle.RED, custom_id="delete", emoji="🗑️")
 
 load_dotenv()
 api_key = os.getenv("LICHESS_API")
@@ -17,7 +31,7 @@ class Lichess(Extension):
         name="username",
         description="Input a username to get stats",
         required=True,
-        opt_type=OptionTypes.STRING,
+        opt_type=OptionType.STRING,
     )
     async def lichess(self, ctx, username):
 
@@ -26,8 +40,8 @@ class Lichess(Extension):
         try:
             user = client.users.get_public_data(username)
             # userstatus = client.users.get_realtime_statuses(user)[0].get("online")
-        except:
-            await ctx.send("User not found")
+        except Exception as e:
+            await ctx.respnd(e)
             return
         if user["perfs"]["bullet"]["games"] < 10:
             user["perfs"]["bullet"]["rating"] = str(user["perfs"]["bullet"]["rating"]) + "?"
@@ -85,7 +99,7 @@ class Lichess(Extension):
         )
         embed.add_field(name="Patreon status", value=f"> {user['patron']}")
         # embed.add_field(name="Full profile", value=f"> {status}")
-        await ctx.send(embed=embed)
+        await ctx.send(embed=embed, components=[delete_btn])
 
 
 def setup(bot):
