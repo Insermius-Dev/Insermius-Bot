@@ -49,6 +49,7 @@ class Guild(Document):
     leave_message_enabled: bool
     welcome_message_color: str
     leave_message_color: str
+    nameday_command_enabled: bool
 
 password = os.getenv("MONGO_PASSWORD")
 username = os.getenv("MONGO_USERNAME")

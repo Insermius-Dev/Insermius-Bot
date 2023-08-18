@@ -81,68 +81,68 @@ class Extensionclass(Extension):
     #         await message.add_reaction("<:smash:1023135175237980231>")
     #         await message.add_reaction("<:pass:1023135160310448191>")
 
-    # @slash_command(name="vd", description="Get latvian namedays.")
-    # @slash_option(
-    #     name="name",
-    #     description="Input a name to get nameday date.",
-    #     required=False,
-    #     opt_type=OptionType.STRING,
-    # )
-    # async def nameday(self, ctx, name=None):
-    #     if name == None:
-    #         components = [
-    #             ActionRow(
-    #                 Button(
-    #                     label="Rādīt visus",
-    #                     style=ButtonStyle.RED,
-    #                     custom_id="extendedlistshow",
-    #                     emoji="🗓",
-    #                 )
-    #             ),
-    #         ]
-    #         today = date.today().strftime("%m-%d")
-    #         embed = Embed(
-    #             title="Šodien vārda dienu svin:",
-    #             description=", ".join(namedays[today]),
-    #             color=Color.from_rgb(255, 13, 13),
-    #         )
-    #         embed.set_thumbnail(
-    #             url="https://cdn.discordapp.com/attachments/930891009007710218/1006812016675135568/IMG_7631.jpg"
-    #         )
-    #         await ctx.send(embed=embed, components=components)
-    #     else:
-    #         nday = None
-    #         for k in namedays.keys():
-    #             v = namedays[k] + namedays_ext[k]
-    #             if name in v:
-    #                 nday = datetime.strptime("2000-" + k, "%Y-%m-%d").date()
-    #                 nday_text = format_date(date=nday, format="d. MMMM", locale="lv")
-    #                 if nday_text.endswith("is"):
-    #                     unedited_ndaytext = nday_text
-    #                     nday_text = nday_text[:-2] + "ī"
-    #                 else:
-    #                     unedited_ndaytext = nday_text
-    #                     nday_text = nday_text[:-1] + "ā"
+    @slash_command(name="vd", description="Get latvian namedays.")
+    @slash_option(
+        name="name",
+        description="Input a name to get nameday date.",
+        required=False,
+        opt_type=OptionType.STRING,
+    )
+    async def nameday(self, ctx, name=None):
+        if name == None:
+            components = [
+                ActionRow(
+                    Button(
+                        label="Rādīt visus",
+                        style=ButtonStyle.RED,
+                        custom_id="extendedlistshow",
+                        emoji="🗓",
+                    ), delete_btn
+                ),
+            ]
+            today = date.today().strftime("%m-%d")
+            embed = Embed(
+                title="Šodien vārda dienu svin:",
+                description=", ".join(namedays[today]),
+                color=Color.from_rgb(255, 13, 13),
+            )
+            embed.set_thumbnail(
+                url="https://cdn.discordapp.com/attachments/930891009007710218/1006812016675135568/IMG_7631.jpg"
+            )
+            await ctx.send(embed=embed, components=components)
+        else:
+            nday = None
+            for k in namedays.keys():
+                v = namedays[k] + namedays_ext[k]
+                if name in v:
+                    nday = datetime.strptime("2000-" + k, "%Y-%m-%d").date()
+                    nday_text = format_date(date=nday, format="d. MMMM", locale="lv")
+                    if nday_text.endswith("is"):
+                        unedited_ndaytext = nday_text
+                        nday_text = nday_text[:-2] + "ī"
+                    else:
+                        unedited_ndaytext = nday_text
+                        nday_text = nday_text[:-1] + "ā"
 
-    #                 embed = Embed(
-    #                     title=f"{unedited_ndaytext}",
-    #                     description=f"{name} vārda dienu svin {nday_text}",
-    #                     color=Color.from_rgb(255, 13, 13),
-    #                 )
-    #                 embed.set_thumbnail(
-    #                     url="https://cdn.discordapp.com/attachments/930891009007710218/1006812016675135568/IMG_7631.jpg"
-    #                 )
+                    embed = Embed(
+                        title=f"{unedited_ndaytext}",
+                        description=f"{name} vārda dienu svin {nday_text}",
+                        color=Color.from_rgb(255, 13, 13),
+                    )
+                    embed.set_thumbnail(
+                        url="https://cdn.discordapp.com/attachments/930891009007710218/1006812016675135568/IMG_7631.jpg"
+                    )
 
-    #         if nday is None:
-    #             embed = Embed(
-    #                 title="Error_",
-    #                 description=f"Kalendārā neatradu '{name}'",
-    #                 color=Color.from_rgb(255, 13, 13),
-    #             )
-    #             embed.set_thumbnail(
-    #                 url="https://cdn.discordapp.com/attachments/930891009007710218/1006812016675135568/IMG_7631.jpg"
-    #             )
-    #         await ctx.send(embed=embed)
+            if nday is None:
+                embed = Embed(
+                    title="Error_",
+                    description=f"Kalendārā neatradu '{name}'",
+                    color=Color.from_rgb(255, 13, 13),
+                )
+                embed.set_thumbnail(
+                    url="https://cdn.discordapp.com/attachments/930891009007710218/1006812016675135568/IMG_7631.jpg"
+                )
+            await ctx.send(embed=embed, components=[delete_btn])
 
     #         await dm.send(embed=embed)
     @slash_command(name="calculate", description="calculate some numbers")

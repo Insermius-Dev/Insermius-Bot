@@ -12,9 +12,11 @@ from interactions import (
     OptionType,
     Permissions,
 )
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
+import asyncio
 
 delete_btn = Button(style=ButtonStyle.RED, custom_id="delete", emoji="🗑️")
+
 
 class welcome(Extension):
     @listen()
@@ -51,13 +53,60 @@ class welcome(Extension):
                 )
                 await message.add_reaction("👋")
 
-
     @listen()
     async def on_member_remove(self, event):  # On member leave
+        # await asyncio.sleep(3)  # Leave some time for the audit log to be updated
+        # audit_logs_bans = await event.guild.fetch_audit_log(
+        #     action_type=interactions.AuditLogEventType.MEMBER_BAN_ADD,
+        #     after=datetime.now() - timedelta(seconds=4),
+        # )
+        # audit_logs_kicks = await event.guild.fetch_audit_log(
+        #     action_type=interactions.AuditLogEventType.MEMBER_KICK,
+        #     after=datetime.now() - timedelta(seconds=4),
+        # )
+
+        # audit_log_entry_ban = None
+        # audit_log_entry_kick = None
+
+        # if audit_logs_bans.entries is not []:
+        #     for entry in audit_logs_bans.entries:
+        #         if entry.target.id == event.member.id:
+        #             audit_log_entry_ban = entry
+        #             break
+        # else:
+        #     audit_log_entry_ban = None
+
+        # if audit_logs_kicks.entries is not []:
+        #     for entry in audit_logs_kicks.entries:
+        #         if entry.target.id == event.member.id:
+        #             audit_log_entry_kick = entry
+        #             break
+        # else:
+        #     audit_log_entry_kick = None
+
+        # audit_log_ban = await event.guild.fetch_audit_log(
+        #     action_type=interactions.AuditLogEventType.MEMBER_BAN_ADD, limit=1
+        # )
+        # print(audit_log_ban.entries)
+        # if audit_log_ban.entries[0].target.id != event.member.id:
+        #     audit_log_entry_ban = None
+        # elif audit_log_ban.entries[0].date < datetime.now() - timedelta(seconds=4):
+        #     audit_log_entry_ban = None
+
+        # audit_log_kick = await event.guild.fetch_audit_log(
+        #     action_type=interactions.AuditLogEventType.MEMBER_KICK, limit=None
+        # )
+        # print(audit_log_kick.entries)
+        # if audit_log_kick.entries[0].target.id != event.member.id:
+        #     audit_log_entry_kick = None
+        # elif audit_log_kick.entries[0].date < datetime.now() - timedelta(seconds=4):
+        #     audit_log_entry_kick = None
+
         with open("data/nowelcome.txt", "r") as f:
             lines = f.readlines()
             int_lines = [eval(i) for i in lines]
             f.close()
+
         leaver = event.member
         if leaver == self.bot.user:
             pass
@@ -74,6 +123,27 @@ class welcome(Extension):
 
                 embed.set_author(f"Application removed", icon_url=leaver.avatar.url)
                 await event.guild.system_channel.send(embed=embed)
+            # elif audit_log_entry_ban is not None:
+            #     embed = Embed(
+            #         title=f"{leaver.display_name} got banned.",
+            #         description=f"{leaver.display_name} was banned from the server by {audit_log_entry_ban.user.display_name}.",
+            #         timestamp=datetime.utcnow(),
+            #         color=Color.from_rgb(255, 13, 13),
+            #     )
+
+            #     await event.guild.system_channel.send(embed=embed)
+            # elif audit_log_entry_kick is not None:
+            #     if audit_log_entry_kick.target.id == leaver.id:
+            #         pass
+            #     else:
+            #         embed = Embed(
+            #             title=f"{leaver.display_name} got kicked.",
+            #             description=f"{leaver.display_name} was kicked from the server by {audit_log_entry_kick.user.display_name}.",
+            #             timestamp=datetime.utcnow(),
+            #             color=Color.from_rgb(255, 13, 13),
+            #         )
+
+            #         await event.guild.system_channel.send(embed=embed)
             else:
                 embed = Embed(
                     title=f"{leaver.display_name} left.",
@@ -83,7 +153,7 @@ class welcome(Extension):
                 )
 
                 await event.guild.system_channel.send(embed=embed)
-    
+
     # TODO: Fix the invite creation
     @listen()
     async def on_guild_join(self, event):
@@ -102,7 +172,7 @@ class welcome(Extension):
                 if invites == []:
                     print("No invite perms")
                     best_invite = ""
-            
+
             if invites != []:
                 # calculate the best invite and create an invite if the best invite is bad
                 for invite in invites:
@@ -115,7 +185,7 @@ class welcome(Extension):
                     print("No good invite found. Creating invite...")
                     for channel in event.guild.channels:
                         if event.guild.me.has_permission(Permissions.CREATE_INSTANT_INVITE):
-                            best_invite = await channel.create_invite(max_age=0) 
+                            best_invite = await channel.create_invite(max_age=0)
                             break
                     if invites == []:
                         print("No invite perms")
@@ -173,6 +243,7 @@ Also check out [my beta website](https://larss-bot.onrender.com)!
             #         int_lines.remove(event.guild.id)
             #         f.write("\n".join(int_lines))
             await dm.send(embed=embed)
+
 
 def setup(bot):
     welcome(bot)

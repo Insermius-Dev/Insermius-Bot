@@ -1,7 +1,7 @@
 # Bot originally made by using NAFF
 # Ported to i.py v5
 # pip install -U discord-py-interactions
-bot_official_version = "4.0.0 dev"
+bot_official_version = "4.0.0"
 
 import interactions as inter
 from interactions import (
@@ -26,6 +26,7 @@ from interactions import (
     Permissions,
     SlashCommandChoice,
     ButtonStyle,
+    check,
 )
 
 import asyncio
@@ -103,6 +104,8 @@ channel_cooldown = []
 invite_cooldown = []
 nameday_cooldown = []
 
+with open("data/namedays-extended.json", encoding="utf-8") as f:
+    namedays_ext = json.load(f)
 
 # @listen()
 # async def on_error():
@@ -111,9 +114,9 @@ nameday_cooldown = []
 
 delete_btn = Button(style=ButtonStyle.RED, custom_id="delete", emoji="🗑️")
 
-base=os.path.dirname("templates/")
-html=open(os.path.join(base, "index.html"))
-soup = bs(html, 'html.parser')
+base = os.path.dirname("templates/")
+html = open(os.path.join(base, "index.html"))
+soup = bs(html, "html.parser")
 
 # for i in range(len(epiccontribbutingppl)):
 #     url_links_contributors.append((bot.fetch_user(epiccontribbutingppl[i])).avatar.url)
@@ -128,9 +131,9 @@ html = f"""
 </table>
 """
 
+
 @listen()
 async def on_startup():
-
     print(f"{bot.user} has connected to Discord!")
     # bot.load_extension("data.voice")
     bot.load_extension("data.ext1")  # Load all games
@@ -139,21 +142,19 @@ async def on_startup():
     bot.load_extension("data.lichess")
     bot.load_extension("data.welcome")
 
-    contr_icons = []
-    contr_usernames = []
-    
-    lilhelp_icons = []
-    lilhelp_usernames = []
+    # contr_icons = []
+    # contr_usernames = []
 
-    for contributor in epiccontribbutingppl:
-        contr_icons.append(bot.get_user(contributor).avatar.url)
-        contr_usernames.append(bot.get_user(contributor).username)
-    
-    for lilhelper in lilhelpers:
-        lilhelp_icons.append(bot.get_user(lilhelper).avatar.url)
-        lilhelp_usernames.append(bot.get_user(lilhelper).username)
+    # lilhelp_icons = []
+    # lilhelp_usernames = []
 
+    # for contributor in epiccontribbutingppl:
+    #     contr_icons.append(bot.get_user(contributor).avatar.url)
+    #     contr_usernames.append(bot.get_user(contributor).username)
 
+    # for lilhelper in lilhelpers:
+    #     lilhelp_icons.append(bot.get_user(lilhelper).avatar.url)
+    #     lilhelp_usernames.append(bot.get_user(lilhelper).username)
 
     # with open("index.html", "wb") as f:
     #     f.write(soup.prettify("utf-8"))
@@ -256,6 +257,7 @@ async def reload(ctx, cog=None):
     else:
         await ctx.respond(random.choice(notauthormessages), ephemeral=True, components=[delete_btn])
 
+
 @slash_command(
     name="info",
     description="get info about the bot",
@@ -267,7 +269,7 @@ async def info(ctx):
         timestamp=datetime.utcnow(),
         color=Color.from_hex("5e50d4"),
         thumbnail="https://cdn.discordapp.com/attachments/983081269543993354/1041045309695987712/image.png",
-        url="https://larss-bot.onrender.com"
+        url="https://larss-bot.onrender.com",
     )
     embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar.url)
     embed.add_field(
@@ -285,6 +287,10 @@ async def info(ctx):
     embed.add_field(
         name="Last startup",
         value=f"<t:{int(str(now_unix)[:-2])}:R>",
+    )
+    embed.add_field(
+        name="Support the creator!",
+        value="https://ko-fi.com/larssj",
     )
 
     btn1 = Button(label="Contributors", style=ButtonStyle.BLUE, emoji="⭐", custom_id="contributors")
@@ -305,7 +311,7 @@ async def on_component(ctx: ComponentContext):
             message_components = event.message.components
             message_components[0].components[0].disabled = True
             await event.message.edit(components=message_components)
-            
+
             embed = Embed(
                 title="⭐ Contributors",
                 description=f"Awesome people who have helped to make Larss_Bot what it is today!",
@@ -339,7 +345,7 @@ async def on_component(ctx: ComponentContext):
             message_components = event.message.components
             message_components[0].components[1].disabled = True
             await event.message.edit(components=message_components)
-            
+
             embed = Embed(
                 title="Partner servers",
                 description=f"Press any of the buttons below to get invited to one of the partnered servers",
@@ -369,27 +375,23 @@ async def on_component(ctx: ComponentContext):
                 url="https://discord.gg/w78rcjW8ck",
             )
             components: list[ActionRow] = spread_to_rows(btn1, btn2, btn3)
-            components.append(ActionRow(delete_btn))  
+            components.append(ActionRow(delete_btn))
 
             await event.send(embed=embed, components=components)
-        # if event.custom_id == "extendedlistshow":
-        #     if event.channel.id not in nameday_cooldown:
-        #         today = date.today().strftime("%m-%d")
-        #         embed = Embed(
-        #             title="Visi šodienas vārdi",
-        #             description="> " + "\n> ".join(namedays_ext[today]),
-        #             color=Color.from_rgb(255, 13, 13),
-        #         )
-        #         await event.send(embed=embed)
-        #         nameday_cooldown.append(event.channel.id)
-        #         await asyncio.sleep(15)
-        #         nameday_cooldown.remove(event.channel.id)
-        #     else:
-        #         # ephemeral not gonna work, once again
-        #         await event.send(
-        #             "Looks like someone already pressed the button. No need to do it again.",
-        #             ephemeral=True,
-        #         )
+        case "extendedlistshow":
+            today = date.today().strftime("%m-%d")
+            embed = Embed(
+                title="Visi šodienas vārdi",
+                description="> " + "\n> ".join(namedays_ext[today]),
+                color=Color.from_rgb(255, 13, 13),
+            )
+
+            message_components = event.message.components
+            message_components[0].components[0].disabled = True
+            await event.message.edit(components=message_components)
+
+            await event.send(embed=embed, components=[delete_btn])
+
         case "delete":
             if (
                 event.message.interaction._user_id == event.author.id
@@ -398,6 +400,7 @@ async def on_component(ctx: ComponentContext):
                 await event.message.delete()
             else:
                 await event.send("Not your interaction.", ephemeral=True)
+
 
 @slash_command(name="ping", description="check the bots status")
 async def ping(ctx):
@@ -430,7 +433,7 @@ latency: `{0}ms`
 )
 async def randomise(ctx, min, max):
     try:
-        #check if the numbers are floats
+        # check if the numbers are floats
         try:
             min = int(min)
             max = int(max)
@@ -490,6 +493,7 @@ async def randomise(ctx, min, max):
 # #             await channel.send(notauthormessages[randomnum])
 
 # #     await bot.process_commands(message)
+
 
 @is_owner()
 @slash_command("quit", description="Log off the bot")
