@@ -18,13 +18,15 @@ delete_btn = Button(style=ButtonStyle.RED, custom_id="delete", emoji="🗑️")
 scope = "user-library-read", "user-follow-read"
 client_id = os.getenv("SPOTIFY_CLIENT_ID")
 client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
-redirect_url = os.getenv("SPOTIFY_REDIRECT_URL")
+# redirect_url = os.getenv("SPOTIFY_REDIRECT_URL")
+redirect_url = "http://localhost:8888/callback"
 
 sp = spotipy.Spotify(
     auth_manager=SpotifyOAuth(
         client_id=client_id, client_secret=client_secret, redirect_uri=redirect_url, scope=scope
     )
 )
+
 
 def get_sp_info(URI):
     if "playlist" in URI:
@@ -292,4 +294,4 @@ class spotify(Extension):
         # await message.add_reaction(spotify_emoji)
 
 def setup(bot):
-    bot.add_extension(spotify(bot))
+    spotify(bot)

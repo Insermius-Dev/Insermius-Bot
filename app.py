@@ -41,6 +41,8 @@ import time
 from asyncio import sleep as eep
 import pandas as pd
 from bs4 import BeautifulSoup as bs
+import spotipy
+from spotipy.oauth2 import SpotifyOAuth
 
 from dotenv import load_dotenv
 
@@ -48,7 +50,7 @@ load_dotenv()
 
 from Bot_website import start
 
-bot_intents: Intents = Intents.GUILD_PRESENCES | Intents.DEFAULT | Intents.GUILD_MEMBERS
+bot_intents: Intents = Intents.ALL
 
 bot = inter.Client(sync_interactions=True, intents=bot_intents, send_command_tracebacks=False)
 
