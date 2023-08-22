@@ -141,6 +141,7 @@ async def on_startup():
     # bot.load_extension("data.ghostgame")
     bot.load_extension("data.lichess")
     bot.load_extension("data.welcome")
+    bot.load_extension("data.spotify")
 
     # contr_icons = []
     # contr_usernames = []
@@ -229,6 +230,7 @@ async def on_startup():
         # SlashCommandChoice(name="GhostGame", value=3),
         SlashCommandChoice(name="Lichess", value=4),
         SlashCommandChoice(name="Ext1", value=5),
+        SlashCommandChoice(name="Spotify", value=6),
     ],
     required=False,
 )
@@ -247,6 +249,9 @@ async def reload(ctx, cog=None):
         elif cog == 5:
             bot.reload_extension("data.ext1")
             await ctx.respond("Reloaded `data.ext1`")
+        elif cog == 6:
+            bot.reload_extension("data.spotify")
+            await ctx.respond("Reloaded `data.spotify`")
         elif cog == None:
             bot.reload_extension("data.welcome")
             # bot.reload_extension("data.tictactoe")

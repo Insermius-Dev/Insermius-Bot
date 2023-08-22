@@ -28,38 +28,6 @@ spotify_emoji = "<:spotify:985229541482061854>"
 
 class Extensionclass(Extension):
 
-    @slash_command(
-        name="spotify",
-        description="Share what you're listening to!",
-    )
-    async def spotify(self, ctx):
-        listener = ctx.author
-
-        # Get the first activity that contains "Spotify". Return None, if none present.
-        spotify_activity = next((x for x in listener.activities if x.name == "Spotify"), None)
-
-
-        if spotify_activity is not None:
-            cover = f"https://i.scdn.co/image/{spotify_activity.assets.large_image.split(':')[1]}"
-            embed = Embed(
-                title=f"{listener.display_name}'s Spotify",
-                description="Listening to {}".format(spotify_activity.details),
-                color="#36b357",
-                thumbnail=cover,
-            )
-            embed.add_field(name="Artist", value=spotify_activity.state)
-            embed.add_field(name="Album", value=spotify_activity.assets.large_text)
-        else:
-            embed = Embed(
-                title=f"{listener.display_name}'s Spotify",
-                description="Currently not listening to anything",
-                color="#36b357",
-                timestamp=datetime.utcnow(),
-            )
-        embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar.url)
-        message = await ctx.send(embeds=embed, components=[delete_btn])
-        # await message.add_reaction(spotify_emoji)
-
     #     @slash_command(
     #         name="smashorpass",
     #         description="Smash or Pass",

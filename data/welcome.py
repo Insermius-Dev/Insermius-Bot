@@ -55,7 +55,7 @@ class welcome(Extension):
 
     @listen()
     async def on_member_remove(self, event):  # On member leave
-        # await asyncio.sleep(3)  # Leave some time for the audit log to be updated
+        await asyncio.sleep(3)  # Leave some time for the audit log to be updated
         # audit_logs_bans = await event.guild.fetch_audit_log(
         #     action_type=interactions.AuditLogEventType.MEMBER_BAN_ADD,
         #     after=datetime.now() - timedelta(seconds=4),
