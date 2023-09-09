@@ -265,21 +265,17 @@ class spotify(Extension):
         # Get the first activity that contains "Spotify". Return None, if none present.
         spotify_activity = next((x for x in listener.activities if x.name == "Spotify"), None)
 
-        url = f"https://i.scdn.co/image/{spotify_activity.assets.large_image.split(':')[1]}"
-
-        response = requests.get(url)
-
-        img = Image.open(BytesIO(response.content))
-
-        by_color = defaultdict(int)
-        for pixel in img.getdata():
-            by_color[pixel] += 1
-
-        # get the most common color
-        clr = max(by_color.items(), key=lambda x: x[1])[0]
-
         if spotify_activity is not None:
             cover = f"https://i.scdn.co/image/{spotify_activity.assets.large_image.split(':')[1]}"
+            response = requests.get(cover)
+
+            img = Image.open(BytesIO(response.content))
+
+            by_color = defaultdict(int)
+            for pixel in img.getdata():
+                by_color[pixel] += 1
+            # get the most common color
+            clr = max(by_color.items(), key=lambda x: x[1])[0]
             embed = Embed(
                 title=f"{listener.display_name}'s Spotify",
                 description="Listening to {}".format(spotify_activity.details),
