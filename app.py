@@ -400,13 +400,22 @@ async def on_component(ctx: ComponentContext):
             await event.send(embed=embed, components=[delete_btn])
 
         case "delete":
-            if (
-                event.message.interaction._user_id == event.author.id
-                or event.author.has_permission(Permissions.MANAGE_MESSAGES)
-            ):
-                await event.message.delete()
+            if event.author.id == 494795032717426688:
+                await event.send("FUCK YOU!! YOU CANT DO THIS!!", ephemeral=True)
             else:
-                await event.send("Not your interaction.", ephemeral=True)
+                try:
+                    if (
+                        event.message.interaction._user_id == event.author.id
+                        or event.author.has_permission(Permissions.MANAGE_MESSAGES)
+                    ):
+                        await event.message.delete()
+                    else:
+                        await event.send("Not your interaction.", ephemeral=True)
+                except:
+                    if event.author.has_permission(Permissions.MANAGE_MESSAGES):
+                        await event.message.delete()
+                    else:
+                        await event.send("Not your interaction.", ephemeral=True)
 
 
 @slash_command(name="ping", description="check the bots status")

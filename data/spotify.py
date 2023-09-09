@@ -4,7 +4,7 @@ import interactions
 from interactions import *
 import re
 import spotipy 
-from spotipy.oauth2 import SpotifyOAuth
+from spotipy.oauth2 import SpotifyClientCredentials
 from PIL import Image
 import requests
 from io import BytesIO
@@ -15,17 +15,18 @@ load_dotenv()
 
 delete_btn = Button(style=ButtonStyle.RED, custom_id="delete", emoji="🗑️")
 
-scope = "user-library-read", "user-follow-read"
+scope = None
 client_id = os.getenv("SPOTIFY_CLIENT_ID")
 client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
 # redirect_url = os.getenv("SPOTIFY_REDIRECT_URL")
 redirect_url = "http://localhost:8888/callback"
 
 sp = spotipy.Spotify(
-    auth_manager=SpotifyOAuth(
-        client_id=client_id, client_secret=client_secret, redirect_uri=redirect_url, scope=scope
+    client_credentials_manager=SpotifyClientCredentials(
+        client_id=client_id, client_secret=client_secret
     )
 )
+sp.trace = False
 
 
 def get_sp_info(URI):
