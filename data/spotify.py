@@ -3,7 +3,7 @@ import os
 import interactions
 from interactions import *
 import re
-import spotipy 
+import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from PIL import Image
 import requests
@@ -40,13 +40,16 @@ def get_sp_info(URI):
         contents = ""
         for track in sp.playlist_tracks(playlist_URI)["items"]:
             contents += "> " + track["track"]["name"] + "\n"
-            if track["track"]["name"] == sp.playlist_tracks(playlist_URI)["items"][19]["track"]["name"]:
+            if (
+                track["track"]["name"]
+                == sp.playlist_tracks(playlist_URI)["items"][19]["track"]["name"]
+            ):
                 contents += "> ..."
                 break
 
         response = requests.get(sp.playlist(playlist_URI)["images"][0]["url"])
         img = Image.open(BytesIO(response.content))
-        
+
         by_color = defaultdict(int)
         for pixel in img.getdata():
             by_color[pixel] += 1
@@ -65,7 +68,6 @@ def get_sp_info(URI):
         )
         embed.set_thumbnail(url=sp.playlist(playlist_URI)["images"][0]["url"])
         return embed
-
 
     elif "album" in URI:
         album_URI = URI.split("/")[-1].split("?")[0]
@@ -91,7 +93,7 @@ def get_sp_info(URI):
 
         response = requests.get(sp.album(album_URI)["images"][0]["url"])
         img = Image.open(BytesIO(response.content))
-        
+
         by_color = defaultdict(int)
         for pixel in img.getdata():
             by_color[pixel] += 1
@@ -101,7 +103,7 @@ def get_sp_info(URI):
 
         embed = Embed(
             title=sp.album(album_URI)["name"],
-            description=f'Album by {authors}.',
+            description=f"Album by {authors}.",
             color=Color.from_rgb(clr[0], clr[1], clr[2]),
         )
         embed.set_thumbnail(url=sp.album(album_URI)["images"][0]["url"])
@@ -117,7 +119,7 @@ def get_sp_info(URI):
             sp.track(song_URI)["name"]
         except:
             return 404
-        
+
         description = f'{sp.track(song_URI)["name"]} by '
         for artist in sp.track(song_URI)["artists"]:
             # if artist last in list dont add coma
@@ -128,7 +130,7 @@ def get_sp_info(URI):
 
         response = requests.get(sp.track(song_URI)["album"]["images"][0]["url"])
         img = Image.open(BytesIO(response.content))
-        
+
         by_color = defaultdict(int)
         for pixel in img.getdata():
             by_color[pixel] += 1
@@ -156,16 +158,18 @@ def get_sp_info(URI):
             top5 += "> " + sp.artist_top_tracks(artist_URI)["tracks"][i]["name"] + "\n"
             if i == 4:
                 break
-        
+
         # split the number to make it more readable
         monthly_listeners = str(sp.artist(artist_URI)["followers"]["total"])
         monthly_listeners = monthly_listeners[::-1]
-        monthly_listeners = ",".join([monthly_listeners[i:i+3] for i in range(0, len(monthly_listeners), 3)])
+        monthly_listeners = ",".join(
+            [monthly_listeners[i : i + 3] for i in range(0, len(monthly_listeners), 3)]
+        )
         monthly_listeners = monthly_listeners[::-1]
 
         response = requests.get(sp.artist(artist_URI)["images"][0]["url"])
         img = Image.open(BytesIO(response.content))
-        
+
         by_color = defaultdict(int)
         for pixel in img.getdata():
             by_color[pixel] += 1
@@ -175,7 +179,7 @@ def get_sp_info(URI):
 
         embed = Embed(
             title=sp.artist(artist_URI)["name"],
-            description=f'{monthly_listeners} monthly listeners.',
+            description=f"{monthly_listeners} monthly listeners.",
             color=Color.from_rgb(clr[0], clr[1], clr[2]),
         )
         embed.set_thumbnail(url=sp.artist(artist_URI)["images"][0]["url"])
@@ -200,14 +204,13 @@ def get_sp_info(URI):
 
         response = requests.get(sp.user(user_URI)["images"][0]["url"])
         img = Image.open(BytesIO(response.content))
-        
+
         by_color = defaultdict(int)
         for pixel in img.getdata():
             by_color[pixel] += 1
 
         # get the most common color
         clr = max(by_color.items(), key=lambda x: x[1])[0]
-
 
         embed = Embed(
             title=sp.user(user_URI)["display_name"],
@@ -217,14 +220,14 @@ def get_sp_info(URI):
         embed.set_thumbnail(url=sp.user(user_URI)["images"][0]["url"])
         embed.add_field(
             name="Public playlists",
-            value=f'{playlists} public playlists',
+            value=f"{playlists} public playlists",
         )
         return embed
-    
-class spotify(Extension): 
+
+
+class spotify(Extension):
     @listen()
     async def on_message_create(self, ctx):
-
         if ctx.message.author == self.bot.user:
             return
 
@@ -251,7 +254,7 @@ class spotify(Extension):
 
         if embeds != []:
             await ctx.message.reply(embeds=embeds, components=[delete_btn])
-    
+
     @slash_command(
         name="spotify",
         description="Share what you're listening to!",
@@ -264,8 +267,10 @@ class spotify(Extension):
 
         url = f"https://i.scdn.co/image/{spotify_activity.assets.large_image.split(':')[1]}"
 
-        img = Image.open(BytesIO(url.content))
-        
+        response = requests.get(url)
+
+        img = Image.open(BytesIO(response.content))
+
         by_color = defaultdict(int)
         for pixel in img.getdata():
             by_color[pixel] += 1
@@ -293,6 +298,7 @@ class spotify(Extension):
         embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar.url)
         message = await ctx.send(embeds=embed, components=[delete_btn])
         # await message.add_reaction(spotify_emoji)
+
 
 def setup(bot):
     spotify(bot)
