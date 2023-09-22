@@ -203,7 +203,7 @@ async def on_startup():
                 await bot.change_presence(
                     activity=inter.Activity(
                         type=inter.ActivityType.STREAMING,
-                        url="https://www.twitch.tv/dubiaroach",
+                        url="https://www.twitch.tv/Larss_j",
                         name="to {0} server".format(len(bot.guilds)),
                     )
                 )
@@ -212,7 +212,7 @@ async def on_startup():
                     activity=inter.Activity(
                         type=inter.ActivityType.STREAMING,
                         name="to {0} servers".format(len(bot.guilds)),
-                        url="https://www.twitch.tv/dubiaroach",
+                        url="https://www.twitch.tv/Larss_j",
                     )
                 )
             await asyncio.sleep(60)

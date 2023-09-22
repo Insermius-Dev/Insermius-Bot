@@ -41,7 +41,7 @@ class Lichess(Extension):
             user = client.users.get_public_data(username)
             # userstatus = client.users.get_realtime_statuses(user)[0].get("online")
         except Exception as e:
-            await ctx.respnd(e)
+            await ctx.send(f"```{e}```")
             return
         if user["perfs"]["bullet"]["games"] < 10:
             user["perfs"]["bullet"]["rating"] = str(user["perfs"]["bullet"]["rating"]) + "?"
@@ -97,7 +97,7 @@ class Lichess(Extension):
 > **Draws:** {user['count']['draw']}
 """,
         )
-        embed.add_field(name="Patreon status", value=f"> {user['patron']}")
+        embed.add_field(name="Patron status", value=f"> {user['patron']}")
         # embed.add_field(name="Full profile", value=f"> {status}")
         await ctx.send(embed=embed, components=[delete_btn])
 

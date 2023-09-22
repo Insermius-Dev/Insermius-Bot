@@ -255,6 +255,8 @@ class spotify(Extension):
                 else:
                     embeds.append(callback)
 
+        
+
         if embeds != []:
             await ctx.message.reply(embeds=embeds, components=[delete_btn])
 
