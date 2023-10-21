@@ -433,7 +433,7 @@ latency: `{0}ms`
 
 @slash_command(
     name="randomise",
-    description="randomise some numbers",
+    description="give a random value between two numbers",
 )
 @slash_option(
     name="min",
@@ -447,34 +447,18 @@ latency: `{0}ms`
     opt_type=OptionType.INTEGER,
     description="biggest possible number",
 )
-async def randomise(ctx, min, max):
-    try:
-        # check if the numbers are floats
-        try:
-            min = int(min)
-            max = int(max)
-        except:
-            await ctx.send("The numbers must be integers!", ephemeral=True)
-            return
-        rand = random.randint(min, max)
+async def randomise(ctx : InteractionContext, min, max):
+    if min < max : 
         embed = Embed(
-            title=rand,
+            title=str(random.randint(min, max)),
             description=f"> `{min}` - `{max}`",
             color=Color.from_hex("5e50d4"),
             timestamp=datetime.utcnow(),
-        )
-        embed.set_footer(
-            text=f"Requested by {ctx.author.display_name}", icon_url=ctx.author.avatar.url
+            footer=EmbedFooter(text=f"Requested by {ctx.author.display_name}", icon_url=ctx.author.avatar.url)
         )
         await ctx.send(embed=embed, components=[delete_btn])
-
-    except:
-        if min >= max:
-            await ctx.send("The first number must be smaller than the second one!", ephemeral=True)
-        if min == max:
-            await ctx.send("The numbers cant be the same!", ephemeral=True)
-        else:
-            await ctx.send("Something didnt go right. Try a different aproach!", ephemeral=True)
+    else :
+        await ctx.send("The first number must be smaller than the seconde one and can't be equal !", ephemeral=True)
 
 
 # @slash_command("outro", description="Exit a voice channel in style")
