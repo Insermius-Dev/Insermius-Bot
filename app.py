@@ -457,8 +457,10 @@ async def randomise(ctx : InteractionContext, min, max):
             footer=EmbedFooter(text=f"Requested by {ctx.author.display_name}", icon_url=ctx.author.avatar.url)
         )
         await ctx.send(embed=embed, components=[delete_btn])
-    else :
-        await ctx.send("The first number must be smaller than the seconde one and can't be equal !", ephemeral=True)
+    elif min > max:
+        await ctx.send("The maximum number must be bigger than the minimum!", ephemeral=True)
+    elif min == max:
+        await ctx.send("The max and min can't be the same number!", ephemeral=True)
 
 
 # @slash_command("outro", description="Exit a voice channel in style")
