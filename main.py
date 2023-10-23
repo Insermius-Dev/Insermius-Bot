@@ -205,12 +205,9 @@ async def on_startup():
 
 # #     await bot.process_commands(message)
 
-# secret_TOKEN = os.environ["TOKEN"]
-# try:
-#     bot.start(secret_token)
-# except Exception as e:
-#     os.system("kill 1")
-#     raise Exception(f"Failed to log in, reason: {e}")
-
-
-bot.start("MTEzMjk0MTc4NzM5MzE2MzMyNA.GpXnBZ.yEAQDBuX4eA7mm4hQ_9onkClRUdUPNXu_32zJk")
+secret_TOKEN = os.environ["TOKEN"]
+try:
+     bot.start(secret_token)
+except Exception as e:
+     os.system("kill 1")
+     raise Exception(f"Failed to log in, reason: {e}")
