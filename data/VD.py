@@ -15,18 +15,12 @@ from interactions import (
 from datetime import date, datetime
 from babel.dates import format_date
 from calculator import calculate
+from const import DELETE_BTN, NAMEDAYS, NAMEDAYS_EXT
 
-delete_btn = Button(style=ButtonStyle.RED, custom_id="delete", emoji="🗑️")
-
-with open("data/namedays.json", encoding="utf-8") as f:
-    namedays = json.load(f)
-
-with open("data/namedays-extended.json", encoding="utf-8") as f:
-    namedays_ext = json.load(f)
 
 spotify_emoji = "<:spotify:985229541482061854>"
 
-class Extensionclass(Extension):
+class VD(Extension):
 
     #     @slash_command(
     #         name="smashorpass",
@@ -65,13 +59,13 @@ class Extensionclass(Extension):
                         style=ButtonStyle.RED,
                         custom_id="extendedlistshow",
                         emoji="🗓",
-                    ), delete_btn
+                    ), DELETE_BTN
                 ),
             ]
             today = date.today().strftime("%m-%d")
             embed = Embed(
                 title="Šodien vārda dienu svin:",
-                description=", ".join(namedays[today]),
+                description=", ".join(NAMEDAYS[today]),
                 color=Color.from_rgb(255, 13, 13),
             )
             embed.set_thumbnail(
@@ -80,8 +74,8 @@ class Extensionclass(Extension):
             await ctx.send(embed=embed, components=components)
         else:
             nday = None
-            for k in namedays.keys():
-                v = namedays[k] + namedays_ext[k]
+            for k in NAMEDAYS.keys():
+                v = NAMEDAYS[k] + NAMEDAYS_EXT[k]
                 if name in v:
                     nday = datetime.strptime("2000-" + k, "%Y-%m-%d").date()
                     nday_text = format_date(date=nday, format="d. MMMM", locale="lv")
@@ -110,30 +104,9 @@ class Extensionclass(Extension):
                 embed.set_thumbnail(
                     url="https://cdn.discordapp.com/attachments/930891009007710218/1006812016675135568/IMG_7631.jpg"
                 )
-            await ctx.send(embed=embed, components=[delete_btn])
+            await ctx.send(embed=embed, components=[DELETE_BTN])
 
     #         await dm.send(embed=embed)
-    @slash_command(name="calculate", description="calculate some numbers")
-    @slash_option(
-        name="equation",
-        required=True,
-        opt_type=OptionType.STRING,
-        description="input your math equation",
-    )
-    async def calc(self, ctx, equation):
-        try:
-            answer = calculate(equation)
-            embed = Embed(
-                title="Calculator",
-                color=Color.from_rgb(52, 152, 219),
-                timestamp=datetime.utcnow(),
-            )
-            embed.add_field(name="Expression", value=f"`{equation}`")
-            embed.add_field(name="Result", value=f"{answer}")
-            await ctx.send(embed=embed, components=[delete_btn])
-        except Exception as e:
-            await ctx.send(f"Something went wrong... \n `{e}`", components=[delete_btn])
-
 
 def setup(bot):
-    Extensionclass(bot)
+    VD(bot)
