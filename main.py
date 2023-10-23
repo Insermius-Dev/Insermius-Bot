@@ -63,9 +63,9 @@ bot = inter.Client(sync_interactions=True, intents=bot_intents, send_command_tra
 # #     os.system("kill 1")
 
 
-# base = os.path.dirname("templates/")
-# html = open(os.path.join(base, "index.html"))
-# soup = bs(html, "html.parser")
+base = os.path.dirname("templates/")
+html = open(os.path.join(base, "index.html"))
+soup = bs(html, "html.parser")
 
 # for i in range(len(epiccontribbutingppl)):
 #     url_links_contributors.append((bot.fetch_user(epiccontribbutingppl[i])).avatar.url)
@@ -118,7 +118,7 @@ async def on_startup():
     # with open("index.html", "wb") as f:
     #     f.write(soup.prettify("utf-8"))
 
-    #start()
+    start()
 
     guild_list = bot.guilds
     guild_names = []
@@ -207,7 +207,7 @@ async def on_startup():
 
 secret_TOKEN = os.environ["TOKEN"]
 try:
-     bot.start(secret_token)
+     bot.start(secret_TOKEN)
 except Exception as e:
      os.system("kill 1")
      raise Exception(f"Failed to log in, reason: {e}")
