@@ -1,7 +1,6 @@
 # Bot originally made by using NAFF
 # Ported to i.py v5
 # pip install -U discord-py-interactions
-bot_official_version = "4.0.0"
 
 import interactions as inter
 from interactions import (
