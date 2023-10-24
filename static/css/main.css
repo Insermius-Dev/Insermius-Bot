@@ -94,3 +94,16 @@ img:hover {
 .main-text:hover {
     transform: scale(1.02);
 }
+
+.container {
+    overflow : hidden;
+}
+
+.contributors {
+    float : left;
+}
+
+.lilhelpers {
+    overflow : hidden;
+    padding-left: 3%;
+}
