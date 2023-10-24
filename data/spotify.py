@@ -10,10 +10,10 @@ import requests
 from io import BytesIO
 from collections import defaultdict
 from datetime import date, datetime
+from const import DELETE_BTN
 
 load_dotenv()
 
-delete_btn = Button(style=ButtonStyle.RED, custom_id="delete", emoji="🗑️")
 
 scope = None
 client_id = os.getenv("SPOTIFY_CLIENT_ID")
@@ -258,7 +258,7 @@ class spotify(Extension):
         
 
         if embeds != []:
-            await ctx.message.reply(embeds=embeds, components=[delete_btn])
+            await ctx.message.reply(embeds=embeds, components=[DELETE_BTN])
 
     @slash_command(
         name="spotify",
@@ -297,7 +297,7 @@ class spotify(Extension):
                 timestamp=datetime.utcnow(),
             )
         embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar.url)
-        message = await ctx.send(embeds=embed, components=[delete_btn])
+        message = await ctx.send(embeds=embed, components=[DELETE_BTN])
         # await message.add_reaction(spotify_emoji)
 
 

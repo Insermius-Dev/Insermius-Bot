@@ -12,11 +12,9 @@ from interactions import (
     OptionType,
     Permissions,
 )
-from datetime import date, datetime, timedelta
+from datetime import datetime
+from const import DELETE_BTN
 import asyncio
-
-delete_btn = Button(style=ButtonStyle.RED, custom_id="delete", emoji="🗑️")
-
 
 class welcome(Extension):
     @listen()
@@ -218,7 +216,7 @@ Also check out [my beta website](https://larss-bot.onrender.com)!
                 color=Color.from_hex("32a852"),
             )
             embed.set_footer(text="Enjoy!", icon_url=self.bot.owner.avatar.url)
-            await event.guild.system_channel.send(embed=embed, components=[delete_btn])
+            await event.guild.system_channel.send(embed=embed, components=[DELETE_BTN])
             # with open("data/nowelcome.txt", "w") as f:
             #     lines = f.readlines()
             #     lines.append(event.guild.id)
