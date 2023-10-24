@@ -22,27 +22,6 @@ spotify_emoji = "<:spotify:985229541482061854>"
 
 class VD(Extension):
 
-    #     @slash_command(
-    #         name="smashorpass",
-    #         description="Smash or Pass",
-    #         scopes=[829026541950206049, 905462820009828352],
-    #     )
-    #     @slash_option(
-    #         name="the_photo",
-    #         description="Input a link of the video/photo.",
-    #         required=True,
-    #         opt_type=OptionType.STRING,
-    #     )
-    #     async def smashorpass(self, ctx, spicyphoto):
-    #         message = await ctx.send(
-    #             f"""
-    # Smash or Pass?
-    # {spicyphoto}
-    # """
-    #         )
-    #         await message.add_reaction("<:smash:1023135175237980231>")
-    #         await message.add_reaction("<:pass:1023135160310448191>")
-
     @slash_command(name="vd", description="Get latvian namedays.")
     @slash_option(
         name="name",

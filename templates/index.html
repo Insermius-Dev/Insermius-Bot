@@ -20,6 +20,45 @@
     <p>This is a hobby project, it will (hopefully) remain free for use.</p>
     </div>
 
-</body>
+    <h2>Main developer</h2>
 
+    <div>
+        <ul>
+        <li style="background-image: linear-gradient(to right, #78fa54, #29e542);">
+            <div style="display: flex; align-items: center;">
+            <img src="{{ developer.avatar_url }}" alt="{{ developer.display_name }}'s avatar" style="height: 100px; width: 100px;" />
+            {{ developer.display_name }}
+            </div>
+        </li>
+        </ul>
+    </div>
+
+    <div class="contributors">
+        <h2>Contributors</h2>
+        <ul>
+            {% for user in contributors %}
+                <li style="background-image: linear-gradient(to right, #fdfb5e, #d0e024);">
+                    <div style="display: flex; align-items: center;">
+                    <img src="{{ user.avatar_url }}" alt="{{ user.display_name }}'s avatar" style="height: 100px; width: 100px;"/>
+                        {{ user.display_name }}
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="lilhelpers">
+        <h2>Lil Helpers</h2>
+        <ul>
+            {% for user in lilhelpers %}
+                <li style="background-image: linear-gradient(to right, #f4c75f, #d79523);">
+                    <div style="display: flex; align-items: center;">
+                    <img src="{{ user.avatar_url }}" alt="{{ user.display_name }}'s avatar" style="height: 100px; width: 100px;" />
+                        {{ user.display_name }}
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
 </html>

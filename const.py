@@ -2,7 +2,7 @@ from interactions import Button, ButtonStyle
 import json, os, time, datetime
 
 
-BOT_VERSION = "4.3.0"
+BOT_VERSION = "4.4.0"
 
 NOTAUTHORMESSAGE = [
     "Im not broken, you are!",
@@ -38,18 +38,9 @@ WATCHINGSTATUS = [
     "Anime"
 ]
 
-EPIC_CONTRIBUTING_PPL = [
-    324352543612469258,
-    975738227669499916,
-    400713431423909889,
-    717769897278570507,
-]
+EPIC_CONTRIBUTING_PPL = []
 
-LIL_HELPERS = [
-    954821934808449125,
-    830021857067532349,
-    488257154701197322,
-]
+LIL_HELPERS = []
 
 DELETE_BTN = Button(style=ButtonStyle.RED, custom_id="delete", emoji="🗑️")
 
