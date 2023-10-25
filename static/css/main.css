@@ -121,7 +121,7 @@ img:hover {
     position: relative;
     margin: 50px;
     margin-left: 7%;
-    margin-right: auto;
+    margin-right: 30%;
 }
 
 .mac-titlebar {
@@ -161,4 +161,11 @@ img:hover {
 
 .mac-content {
     padding: 10px;
+}
+
+iframe {
+    margin-right: 5%;
+    margin-top: -200px;
+    float:right;
+    overflow: visible;
 }
