@@ -15,13 +15,22 @@ from interactions import (
 from datetime import datetime
 from const import DELETE_BTN
 import asyncio
+from pathlib import Path
+import os
+
+current_path = os.path.abspath(os.curdir)
+# get "resources" folder
+resources_path = Path(current_path) / "resources"
+# get "nowelcome.txt" file
+nowelcome_path = resources_path / "nowelcome.txt"
+
 
 class welcome(Extension):
     @listen()
     async def on_member_add(self, event):  # When a user joins
         print("User joined")
         print(event.guild.id)
-        with open("../resources/nowelcome.txt", "r") as f:  # Get all joined users
+        with open(nowelcome_path, "r") as f:
             lines = f.readlines()
             int_lines = [eval(i) for i in lines]
             f.close
@@ -100,7 +109,7 @@ class welcome(Extension):
         # elif audit_log_kick.entries[0].date < datetime.now() - timedelta(seconds=4):
         #     audit_log_entry_kick = None
 
-        with open("../resources/nowelcome.txt", "r") as f:
+        with open(nowelcome_path, "r") as f:
             lines = f.readlines()
             int_lines = [eval(i) for i in lines]
             f.close()
