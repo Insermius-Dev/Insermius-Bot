@@ -2,11 +2,17 @@
 <html>
 
 <head>
-    <title>Larss_Bot</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <link rel="icon" href="https://cdn.discordapp.com/attachments/983081269543993354/1041045309695987712/image.png">
+    <title>Larss_Bot</title>
+    <meta property="og:title" content="Larss_Bot">
+    <meta property="og:description" content="The official webpage of the Larss_bot discord bot">
+    <meta property="og:image" content="https://raw.githubusercontent.com/LarssJakobsons/Larss_Bot/master/resources/bg.png">
+    <meta property="og:url" content="https://larss-bot.onrender.com/">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#375BDC">
+    <meta name="msapplication-TileColor" content="#375BDC">
 </head>
-
 
 <body>
     <h1>Larss_Bot <img src=https://cdn.discordapp.com/attachments/983081269543993354/1041045309695987712/image.png
@@ -14,52 +20,67 @@
     </h1>
     <li onclick="window.location.href = 'https://discord.gg/TReMEyBQsh'">Join the discord!</li>
     <li onclick="window.location.href = 'https://github.com/LarssJakobsons/Larss_Bot/'">Github Repository</li>
-    <li style="background-image: linear-gradient(to right, #e61484, #f04aa2);" onclick="window.location.href = 'https://ko-fi.com/larssj?=redirect'">Support me!</li>
-    <div class="main-text">
-    <p>This is the website for Larss_Bot a discord bot made by <a src="https://github.com/LarssJakobsons">@Larss_J</a>. </p>
-    <p>This is a hobby project, it will (hopefully) remain free for use.</p>
-    </div>
-
-    <h2>Main developer</h2>
-
-    <div>
-        <ul>
-        <li style="background-image: linear-gradient(to right, #78fa54, #29e542);">
-            <div style="display: flex; align-items: center;">
-            <img src="{{ developer.avatar_url }}" alt="{{ developer.display_name }}'s avatar" style="height: 100px; width: 100px;" />
-            {{ developer.display_name }}
+    <li style="background-image: linear-gradient(to right, #e61484, #f04aa2);"
+        onclick="window.location.href = 'https://ko-fi.com/larssj?=redirect'">Support me!</li>
+    <div class="mac-window">
+        <div class="mac-titlebar">
+            <div class="mac-buttons">
+                <div class="mac-button red"></div>
+                <div class="mac-button yellow"></div>
+                <div class="mac-button green"></div>
             </div>
-        </li>
+        </div>
+        <div class="mac-content">
+            <!-- Add your text and images here -->
+            <p>This is the official website for Larss_Bot discord bot.</p>
+            <p>This is a hobby project, it will (hopefully) remain free for use.</p>
+            <p>Suggestions and help on how to improve the bot (and this website) are always welcome :]</p>
+        </div>
+    </div>
+    <iframe src="https://canary.discord.com/widget?id=974354202430169139&theme=dark" width="20%" height="550"
+        allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
+    <div>
+        <h2>Main developer</h2>
+        <ul>
+            <li class="contributors_list" style="background-image: linear-gradient(to right, #78fa54, #29e542);">
+                <div style="display: flex; align-items: center;">
+                    <img src="{{ developer.avatar_url }}" alt="{{ developer.display_name }}'s avatar"
+                        style="height: 100px; width: 100px;" />
+                    {{ developer.display_name }}
+                </div>
+            </li>
         </ul>
     </div>
     <div class="containter">
-    <div class="contributors">
-        <h2>Contributors</h2>
-        <ul>
-            {% for user in contributors %}
-                <li style="background-image: linear-gradient(to right, #fdfb5e, #d0e024);">
-                    <div style="display: flex; align-items: center;">
-                    <img src="{{ user.avatar_url }}" alt="{{ user.display_name }}'s avatar" style="height: 100px; width: 100px;"/>
-                        {{ user.display_name }}
-                    </div>
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
-
-    <div class="lilhelpers">
-        <h2>Little helpers</h2>
-        <ul>
-            {% for user in lilhelpers %}
-                <li style="background-image: linear-gradient(to right, #f4c75f, #d79523);">
-                    <div style="display: flex; align-items: center;">
-                    <img src="{{ user.avatar_url }}" alt="{{ user.display_name }}'s avatar" style="height: 100px; width: 100px;" />
-                        {{ user.display_name }}
-                    </div>
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
+        <div class="contributors">
+            <h2>Contributors</h2>
+            <ul>
+                {% for user in contributors %}
+                    <li class="contributors_list" style="background-image: linear-gradient(to right, #fdfb5e, #d0e024);">
+                        <div style="display: flex; align-items: center;">
+                            <img src="{{ user.avatar_url }}" alt="{{ user.display_name }}'s avatar"
+                                style="height: 100px; width: 100px;" />
+                            {{ user.display_name }}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="lilhelpers">
+            <h2>Little helpers</h2>
+            <ul>
+                {% for user in lilhelpers %}
+                    <li class="contributors_list" style="background-image: linear-gradient(to right, #f4c75f, #d79523);">
+                        <div style="display: flex; align-items: center;">
+                            <img src="{{ user.avatar_url }}" alt="{{ user.display_name }}'s avatar"
+                                style="height: 100px; width: 100px;" />
+                            {{ user.display_name }}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 </body>
+
 </html>
