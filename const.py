@@ -2,7 +2,7 @@ from interactions import Button, ButtonStyle
 import json, os, time, datetime
 
 
-BOT_VERSION = "4.4.1"
+BOT_VERSION = "4.4.2"
 
 NOTAUTHORMESSAGE = [
     "Im not broken, you are!",

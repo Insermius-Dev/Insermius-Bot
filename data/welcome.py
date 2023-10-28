@@ -21,7 +21,7 @@ class welcome(Extension):
     async def on_member_add(self, event):  # When a user joins
         print("User joined")
         print(event.guild.id)
-        with open("data/nowelcome.txt", "r") as f:  # Get all joined users
+        with open("../resources/nowelcome.txt", "r") as f:  # Get all joined users
             lines = f.readlines()
             int_lines = [eval(i) for i in lines]
             f.close
@@ -100,7 +100,7 @@ class welcome(Extension):
         # elif audit_log_kick.entries[0].date < datetime.now() - timedelta(seconds=4):
         #     audit_log_entry_kick = None
 
-        with open("data/nowelcome.txt", "r") as f:
+        with open("../resources/nowelcome.txt", "r") as f:
             lines = f.readlines()
             int_lines = [eval(i) for i in lines]
             f.close()
