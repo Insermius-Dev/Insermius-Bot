@@ -74,7 +74,7 @@ async def on_startup():
     bot.load_extension("data.randomise")
     bot.load_extension("data.reload")
     bot.load_extension("data.calculate")
-    # bot.load_extension("data.spotify")
+    bot.load_extension("data.spotify")
     # bot.load_extension("data.tictactoe")
     # bot.load_extension("data.voice")
     # bot.load_extension("data.ghostgame")
