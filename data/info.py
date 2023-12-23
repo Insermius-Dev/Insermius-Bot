@@ -17,7 +17,7 @@ class Info(Extension):
             timestamp=datetime.utcnow(),
             color=Color.from_hex("5e50d4"),
             thumbnail="https://cdn.discordapp.com/attachments/983081269543993354/1041045309695987712/image.png",
-            url="https://larss-bot.onrender.com",
+            url="https://larssbot.onrender.com",
             footer=EmbedFooter(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar.url)
         )
         embed.add_field(
