@@ -4,7 +4,7 @@ from datetime import datetime
 from const import DELETE_BTN
 
 
-class Calculate(Extension) : 
+class Calculate(Extension):
 
     @slash_command(name="calculate", description="calculate some numbers")
     @slash_option(
@@ -13,14 +13,19 @@ class Calculate(Extension) :
         opt_type=OptionType.STRING,
         description="input your math equation",
     )
-    async def calc(self, ctx, equation):
+    async def calc(self, ctx, equation) -> None:
+        # using a library made by zevaryx
         try:
             answer = calculate(equation)
+
             embed = Embed(
                 title="Calculator",
                 color=Color.from_rgb(52, 152, 219),
-                timestamp=datetime.utcnow(),
-                footer=EmbedFooter(text=f"Requested by {ctx.author.display_name}", icon_url=ctx.author.avatar.url)
+                timestamp=datetime.now(datetime.UTC),
+                footer=EmbedFooter(
+                    text=f"Requested by {ctx.author.display_name}",
+                    icon_url=ctx.author.avatar.url,
+                ),
             )
             embed.add_field(name="Expression", value=f"`{equation}`")
             embed.add_field(name="Result", value=f"{answer}")
