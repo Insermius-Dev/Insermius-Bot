@@ -59,38 +59,38 @@ bot = inter.Client(sync_interactions=True, intents=bot_intents, send_command_tra
 # #     print("Caught an error")
 # #     os.system("kill 1")
 
+def load_extensions(bot, folder, folder_name="", exclude_files=[]):
+    extensions = [file.replace(".py", "") for file in os.listdir(folder) if file.endswith(".py") and file not in exclude_files]
+    for ext in extensions:
+        bot.load_extension(f"{folder_name}{ext}")
+        print(f"Loadded {ext}.py correctly")
 
 @listen()
 async def on_startup():
     print(f"{bot.user} has connected to Discord!")
-    bot.load_extension("data.VD")
-    bot.load_extension("data.lichess")
-    bot.load_extension("data.welcome")
-    bot.load_extension("data.clear")
-    bot.load_extension("data.compo_callback")
-    bot.load_extension("data.info")
-    bot.load_extension("data.ping")
-    # bot.load_extension("data.quit")
-    bot.load_extension("data.randomise")
-    bot.load_extension("data.reload")
-    bot.load_extension("data.calculate")
-    bot.load_extension("data.spotify")
-    # bot.load_extension("data.tictactoe")
-    # bot.load_extension("data.voice")
-    # bot.load_extension("data.ghostgame")
+    load_extensions(bot, "data", "data.", exclude_files=[
+        "quit.py",
+        "tictactoe.py",
+        "voice.py",
+        "spotify.py",
+        "configcmds.py"])
+    bot.del_unused_app_cmd = True
 
     lab_guild = 974354202430169139
     lab_contributor = 974586417932021760
     lab_lilhelper = 1041445249668624475
     # get all of the users with the roles
-    contributors = bot.get_guild(lab_guild).get_role(lab_contributor).members
-    lilhelpers = bot.get_guild(lab_guild).get_role(lab_lilhelper).members
-
-    for i in range(len(contributors)):
-        EPIC_CONTRIBUTING_PPL.append(contributors[i].id)
-
-    for i in range(len(lilhelpers)):
-        LIL_HELPERS.append(lilhelpers[i].id)
+    contributors = bot.get_guild(lab_guild)
+    if contributors != None : 
+        contributors.get_role(lab_contributor).members
+        for i in range(len(contributors)):
+            EPIC_CONTRIBUTING_PPL.append(contributors[i].id)
+    
+    lilhelpers = bot.get_guild(lab_guild)
+    if lilhelpers != None :
+        lilhelpers.get_role(lab_lilhelper).members
+        for i in range(len(lilhelpers)):
+            LIL_HELPERS.append(lilhelpers[i].id)
 
     dev = bot.get_user(737983831000350731)
 

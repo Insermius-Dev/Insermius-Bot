@@ -14,7 +14,7 @@ class Info(Extension):
         embed = Embed(
             title="Info",
             description="Info about the bot",
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(),
             color=Color.from_hex("5e50d4"),
             thumbnail="https://cdn.discordapp.com/attachments/983081269543993354/1041045309695987712/image.png",
             url="https://larssbot.onrender.com",

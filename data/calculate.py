@@ -19,7 +19,7 @@ class Calculate(Extension) :
             embed = Embed(
                 title="Calculator",
                 color=Color.from_rgb(52, 152, 219),
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(),
                 footer=EmbedFooter(text=f"Requested by {ctx.author.display_name}", icon_url=ctx.author.avatar.url)
             )
             embed.add_field(name="Expression", value=f"`{equation}`")

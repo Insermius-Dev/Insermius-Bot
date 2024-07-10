@@ -44,7 +44,7 @@ LIL_HELPERS = []
 
 DELETE_BTN = Button(style=ButtonStyle.RED, custom_id="delete", emoji="🗑️")
 
-NOW_UNIX = time.mktime(datetime.datetime.utcnow().timetuple())
+NOW_UNIX = time.mktime(datetime.datetime.now().timetuple())
 
 relative_path = "resources/namedays-extended.json"
 os.chdir(os.path.dirname(os.path.abspath(__file__)))

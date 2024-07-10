@@ -17,7 +17,7 @@ class callback(Extension) :
                 embed = Embed(
                     title="⭐ Contributors",
                     description=f"Awesome people who have helped to make Larss_Bot what it is today!",
-                    timestamp=datetime.utcnow(),
+                    timestamp=datetime.now(),
                     color=Color.from_hex("5e50d4"),
                     footer=EmbedFooter(text=f"Requested by {event.author.display_name}", icon_url=event.author.avatar.url)
                 )
@@ -48,7 +48,7 @@ class callback(Extension) :
                 embed = Embed(
                     title="Partner servers",
                     description=f"Press any of the buttons below to get invited to one of the partnered servers",
-                    timestamp=datetime.utcnow(),
+                    timestamp=datetime.now(),
                     color=Color.from_hex("5e50d4"),
                     footer=EmbedFooter(text=f"Requested by {event.author.display_name}", icon_url=event.author.avatar.url)
                 )
