@@ -13,7 +13,7 @@ class GhostGame(Extension):
             title="The Ghost Game 👻",
             description="There are three doors. Choose one by pressing one of the 3 buttons !",
             color=Color.from_hex("808080"),
-            footer="You are at door 0"
+            footer=EmbedFooter(f"You are at door 0 | {ctx.author.display_name}'s game", icon_url=ctx.author.avatar_url)
         )
         buttons = [
             ActionRow(
@@ -41,7 +41,6 @@ class GhostGame(Extension):
         """
         ctx : ComponentContext = ctx.ctx
         c_id = ctx.custom_id.split("_")
-        print(c_id)
         if (c_id[0].startswith("GhostGameCallback") and c_id[1] == f"{ctx.author_id}") :
             if randint(1,3) == 3 :
                 return await ctx.edit_origin(components=DELETE_BTN, embed=Embed(
@@ -60,7 +59,7 @@ class GhostGame(Extension):
                 title="The Ghost Game 👻",
                 description="There are three doors. Chose one !",
                 color=Color.from_hex("808080"),
-                footer=f"You are at door {c_id[2]}"
+                footer=EmbedFooter(f"You are at door {c_id[2]} | {ctx.author.display_name}'s game", icon_url=ctx.author.avatar_url)
             ))
         elif (c_id[0].startswith("GhostGameCallback") and c_id[1] != f"{ctx.author_id}") :
             return await ctx.send("Hey! It's not your game! If you want to play, just use the /ghostgame command", ephemeral=True)

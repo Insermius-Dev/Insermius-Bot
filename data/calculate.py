@@ -15,7 +15,6 @@ class Calculate(Extension) :
     )
     async def calc(self, ctx, equation):
         try:
-            answer = calculate(equation)
             embed = Embed(
                 title="Calculator",
                 color=Color.from_rgb(52, 152, 219),
@@ -23,7 +22,7 @@ class Calculate(Extension) :
                 footer=EmbedFooter(text=f"Requested by {ctx.author.display_name}", icon_url=ctx.author.avatar.url)
             )
             embed.add_field(name="Expression", value=f"`{equation}`")
-            embed.add_field(name="Result", value=f"{answer}")
+            embed.add_field(name="Result", value=f"{calculate(equation)}")
             await ctx.send(embed=embed, components=[DELETE_BTN])
         except Exception as e:
             await ctx.send(f"Something went wrong... \n `{e}`", components=[DELETE_BTN])

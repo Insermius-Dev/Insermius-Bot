@@ -21,7 +21,7 @@ class Randomise(Extension) :
         opt_type=OptionType.INTEGER,
         description="biggest possible number",
     )
-    async def randomise(self, ctx : InteractionContext, min, max):
+    async def randomise(self, ctx : InteractionContext, min : int, max: int ):
         if min < max : 
             embed = Embed(
                 title=str(random.randint(min, max)),
