@@ -72,7 +72,6 @@ async def on_startup():
         "quit.py",
         "tictactoe.py",
         "voice.py",
-        "spotify.py",
         "configcmds.py"])
     bot.del_unused_app_cmd = True
 
