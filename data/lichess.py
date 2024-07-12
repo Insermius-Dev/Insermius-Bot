@@ -73,7 +73,7 @@ class Lichess(Extension):
             title=f"{user['username']}'s Lichess Stats",
             thumbnail="https://cdn.discordapp.com/attachments/1054486043665125436/1059235301056331816/Lichess_Logo_2019.png",
             color=Color.from_hex("#FFFFFF"),
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(),
         )
         embed.set_footer(
             text=f"Requested by {ctx.author.display_name}", icon_url=ctx.author.avatar.url

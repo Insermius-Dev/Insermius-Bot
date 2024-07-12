@@ -50,7 +50,7 @@ class welcome(Extension):
                 embed = Embed(
                     title=f"Welcome {joiner.display_name}!",
                     description=f"Thanks for joining {joiner.guild.name}!",
-                    timestamp=datetime.utcnow(),
+                    timestamp=datetime.now(),
                     color=Color.from_rgb(88, 109, 245),
                 )
                 embed.set_thumbnail(url=joiner.avatar.url)
@@ -134,7 +134,7 @@ class welcome(Extension):
             #     embed = Embed(
             #         title=f"{leaver.display_name} got banned.",
             #         description=f"{leaver.display_name} was banned from the server by {audit_log_entry_ban.user.display_name}.",
-            #         timestamp=datetime.utcnow(),
+            #         timestamp=datetime.now(),
             #         color=Color.from_rgb(255, 13, 13),
             #     )
 
@@ -146,7 +146,7 @@ class welcome(Extension):
             #         embed = Embed(
             #             title=f"{leaver.display_name} got kicked.",
             #             description=f"{leaver.display_name} was kicked from the server by {audit_log_entry_kick.user.display_name}.",
-            #             timestamp=datetime.utcnow(),
+            #             timestamp=datetime.now(),
             #             color=Color.from_rgb(255, 13, 13),
             #         )
 
@@ -155,7 +155,7 @@ class welcome(Extension):
                 embed = Embed(
                     title=f"{leaver.display_name} left.",
                     description=f"Sorry to see you go {leaver.display_name}!",
-                    timestamp=datetime.utcnow(),
+                    timestamp=datetime.now(),
                     color=Color.from_rgb(255, 13, 13),
                 )
 
@@ -203,7 +203,7 @@ class welcome(Extension):
             embed = Embed(
                 title=event.guild.name,
                 description=event.guild.description,
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(),
                 color=Color.from_hex("5e50d4"),
                 thumbnail=event.guild.icon.url,
             )
@@ -221,7 +221,7 @@ If you have any suggestions or issues please report them in my [support server](
 Also check out [my beta website](https://larss-bot.onrender.com)! 
 
 ‼ Important note: This bot is still under constant development and may have bugs, issues and other misshappens like random downtime and others. ‼""",
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(),
                 color=Color.from_hex("32a852"),
             )
             embed.set_footer(text="Enjoy!", icon_url=self.bot.owner.avatar.url)
@@ -239,7 +239,7 @@ Also check out [my beta website](https://larss-bot.onrender.com)!
             embed = Embed(
                 title="Removed from " + event.guild.name,
                 description=str(event.guild.id),
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(),
                 color=Color.from_hex("b50a07"),
                 thumbnail=event.guild.icon.url,
             )

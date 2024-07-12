@@ -294,7 +294,7 @@ class spotify(Extension):
                 title=f"{listener.display_name}'s Spotify",
                 description="Currently not listening to anything",
                 color=0x808080,
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(),
             )
         embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar.url)
         message = await ctx.send(embeds=embed, components=[DELETE_BTN])

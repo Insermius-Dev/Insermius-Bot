@@ -10,7 +10,7 @@ class Ping(Extension) :
             title="Pong! :ping_pong:",
             description=f"Latency : {round(self.bot.latency * 1000, 2)}ms",
             color=Color.from_hex("5e50d4"),
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(),
             footer=EmbedFooter(text=f"Requested by {ctx.author.display_name}", icon_url=ctx.author.avatar.url)
         )
         message = await ctx.send(embed=embed, components=DELETE_BTN)

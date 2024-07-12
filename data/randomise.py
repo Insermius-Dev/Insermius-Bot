@@ -21,13 +21,13 @@ class Randomise(Extension) :
         opt_type=OptionType.INTEGER,
         description="biggest possible number",
     )
-    async def randomise(self, ctx : InteractionContext, min, max):
+    async def randomise(self, ctx : InteractionContext, min : int, max: int ):
         if min < max : 
             embed = Embed(
                 title=str(random.randint(min, max)),
                 description=f"> `{min}` - `{max}`",
                 color=Color.from_hex("5e50d4"),
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(),
                 footer=EmbedFooter(text=f"Requested by {ctx.author.display_name}", icon_url=ctx.author.avatar.url)
             )
             await ctx.send(embed=embed, components=[DELETE_BTN])
