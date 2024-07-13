@@ -1,0 +1,34 @@
+.description {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 400px;
+}
+
+.desc-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 50%;
+    min-width: 300px;
+    height: 200px;
+    gap: 10px;
+}
+
+.desc-text p {
+    font-size: 1.5em;
+    margin: 0;
+    text-align: left;
+    color: white;
+}
+
+.desc-text a {
+    color: #cffffb;
+    text-decoration: none;
+}
+
+.desc-text a:hover {
+    text-decoration: underline;
+}
+

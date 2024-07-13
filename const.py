@@ -38,9 +38,9 @@ WATCHINGSTATUS = [
     "Anime"
 ]
 
-EPIC_CONTRIBUTING_PPL = []
+CONTRIBUTORS = []
 
-LIL_HELPERS = []
+HELPERS = []
 
 DELETE_BTN = Button(style=ButtonStyle.RED, custom_id="delete", emoji="🗑️")
 

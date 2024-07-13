@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <link rel="icon" href="https://cdn.discordapp.com/attachments/983081269543993354/1041045309695987712/image.png">
-    <title>Larss_Bot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/title-screen.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/description.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/credits.css') }}">
+    <title>Insermius</title>
     <meta property="og:title" content="Larss_Bot">
     <meta property="og:description" content="The official webpage of the Larss_bot discord bot">
     <meta property="og:image" content="https://raw.githubusercontent.com/LarssJakobsons/Larss_Bot/master/resources/bg.png">
@@ -15,72 +17,45 @@
 </head>
 
 <body>
-    <h1>Larss_Bot <img src=https://cdn.discordapp.com/attachments/983081269543993354/1041045309695987712/image.png
-            align="right"></img>
-    </h1>
-    <li onclick="window.location.href = 'https://discord.gg/TReMEyBQsh'">Join the discord!</li>
-    <li onclick="window.location.href = 'https://github.com/LarssJakobsons/Larss_Bot/'">Github Repository</li>
-    <li style="background-image: linear-gradient(to right, #e61484, #f04aa2);"
-        onclick="window.location.href = 'https://ko-fi.com/larssj?=redirect'">Support me!</li>
-    <div class="mac-window">
-        <div class="mac-titlebar">
-            <div class="mac-buttons">
-                <div class="mac-button red"></div>
-                <div class="mac-button yellow"></div>
-                <div class="mac-button green"></div>
-            </div>
-        </div>
-        <div class="mac-content">
-            <!-- Add your text and images here -->
-            <p>This is the official website for Larss_Bot discord bot.</p>
-            <p>This is a hobby project, it will (hopefully) remain free for use.</p>
-            <p>Suggestions and help on how to improve the bot (and this website) are always welcome :]</p>
+    <script src="https://kit.fontawesome.com/bd75686a6c.js" crossorigin="anonymous"></script>
+    <div class="first-screen">
+        <h1 class="title">Insermius</h1><img class="star load-animation" src="{{ url_for('static', filename='img/star.svg') }}">
+    </div>
+    <div class="description">
+        <div class="desc-text">
+            <p>Hobby project bot, which will (hopefully) remain free for use.</p>
+            <p>Currently undergoing major development overhaul</p>
+            <p>Join the <a href="https://discord.gg/5nZVVedbqH">discord</a> <a href="https://discord.gg/5nZVVedbqH"><i class="fab fa-discord"></i></a> (pls)</p>
         </div>
     </div>
-    <iframe src="https://canary.discord.com/widget?id=974354202430169139&theme=dark" width="20%" height="550"
-        allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
-    <div>
-        <h2>Main developer</h2>
-        <ul>
-            <li class="contributors_list" style="background-image: linear-gradient(to right, #78fa54, #29e542);">
-                <div style="display: flex; align-items: center;">
-                    <img src="{{ developer.avatar_url }}" alt="{{ developer.display_name }}'s avatar"
-                        style="height: 100px; width: 100px;" />
-                    {{ developer.display_name }}
-                </div>
-            </li>
-        </ul>
-    </div>
-    <div class="containter">
-        <div class="contributors">
-            <h2>Contributors</h2>
-            <ul>
-                {% for user in contributors %}
-                    <li class="contributors_list" style="background-image: linear-gradient(to right, #fdfb5e, #d0e024);">
-                        <div style="display: flex; align-items: center;">
-                            <img src="{{ user.avatar_url }}" alt="{{ user.display_name }}'s avatar"
-                                style="height: 100px; width: 100px;" />
-                            {{ user.display_name }}
-                        </div>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-        <div class="lilhelpers">
-            <h2>Little helpers</h2>
-            <ul>
-                {% for user in lilhelpers %}
-                    <li class="contributors_list" style="background-image: linear-gradient(to right, #f4c75f, #d79523);">
-                        <div style="display: flex; align-items: center;">
-                            <img src="{{ user.avatar_url }}" alt="{{ user.display_name }}'s avatar"
-                                style="height: 100px; width: 100px;" />
-                            {{ user.display_name }}
-                        </div>
-                    </li>
-                {% endfor %}
-            </ul>
+    <div class="credits"><h2>Developer</h2>
+    <div class="container">
+        <div class="contributor" id="founder">
+            <img src="{{ developer.avatar_url }}" class="{{ developer.display_name }}">
+            <p>{{ developer.display_name }}</p>
         </div>
     </div>
+    <h2>Contributors</h2>
+    <div class="container">
+        {% for contributor in contributors %}
+        <div class="contributor" id="contributor">
+            <img src="{{ contributor.avatar_url }}" class="{{ contributor.display_name }}">
+            <p>{{ contributor.display_name }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    <h2>Helpers</h2>
+    <div class="container">
+    {% for helper in helpers %}
+        <div class="contributor" id="helper">
+            <img src="{{ helper.avatar_url }}" class="{{ helper.display_name }}">
+            <p>{{ helper.display_name }}</p>
+        </div>
+    {% endfor %}
+    </div>
+
+    </div>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 
 </html>

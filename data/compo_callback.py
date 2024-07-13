@@ -1,6 +1,6 @@
 from interactions import *
 from datetime import *
-from const import DELETE_BTN, EPIC_CONTRIBUTING_PPL, LIL_HELPERS, NAMEDAYS_EXT
+from const import DELETE_BTN, CONTRIBUTORS, HELPERS, NAMEDAYS_EXT
 
 
 class callback(Extension) :
@@ -22,7 +22,7 @@ class callback(Extension) :
                     footer=EmbedFooter(text=f"Requested by {event.author.display_name}", icon_url=event.author.avatar.url)
                 )
                 value = ""
-                for contributor in EPIC_CONTRIBUTING_PPL:
+                for contributor in CONTRIBUTORS:
                     value += f"> <@{contributor}> \n"
 
                 embed.add_field(
@@ -31,7 +31,7 @@ class callback(Extension) :
                 )
 
                 value = ""
-                for lilhelper in LIL_HELPERS:
+                for lilhelper in HELPERS:
                     value += f"> <@{lilhelper}> \n"
 
                 embed.add_field(

@@ -39,7 +39,7 @@ import json
 import time
 from asyncio import sleep as eep
 import pandas as pd
-from const import EPIC_CONTRIBUTING_PPL, LIL_HELPERS
+from const import CONTRIBUTORS, HELPERS
 
 from dotenv import load_dotenv
 
@@ -72,28 +72,30 @@ async def on_startup():
         "quit.py",
         "tictactoe.py",
         "voice.py",
-        "configcmds.py"])
+        "configcmds.py",
+    ])
     bot.del_unused_app_cmd = True
 
     lab_guild = 974354202430169139
     lab_contributor = 974586417932021760
     lab_lilhelper = 1041445249668624475
     # get all of the users with the roles
-    contributors = bot.get_guild(lab_guild)
-    if contributors != None : 
-        contributors.get_role(lab_contributor).members
-        for i in range(len(contributors)):
-            EPIC_CONTRIBUTING_PPL.append(contributors[i].id)
-    
-    lilhelpers = bot.get_guild(lab_guild)
-    if lilhelpers != None :
-        lilhelpers.get_role(lab_lilhelper).members
-        for i in range(len(lilhelpers)):
-            LIL_HELPERS.append(lilhelpers[i].id)
 
-    dev = bot.get_user(737983831000350731)
+    lab_guild = bot.get_guild(lab_guild)
+    if lab_guild != None :
+        contributors = lab_guild.get_role(lab_contributor).members
+        for user in contributors:
+            CONTRIBUTORS.append(user.id)
 
-    start(contributors, lilhelpers, dev)
+        helpers = lab_guild.get_role(lab_lilhelper).members
+        for user in helpers:
+            HELPERS.append(user.id)
+
+        dev = bot.get_user(737983831000350731)
+
+        start(contributors, helpers, dev)
+    else:
+        print("Failed to get the guild")
 
     guild_list = bot.guilds
     guild_names = []
@@ -132,7 +134,7 @@ async def on_startup():
                 await bot.change_presence(
                     activity=inter.Activity(
                         type=inter.ActivityType.STREAMING,
-                        url="https://www.twitch.tv/Larss_j",
+                        url="https://www.twitch.tv/pre1ude0",
                         name="to {0} server".format(len(bot.guilds)),
                     )
                 )
@@ -141,7 +143,7 @@ async def on_startup():
                     activity=inter.Activity(
                         type=inter.ActivityType.STREAMING,
                         name="to {0} servers".format(len(bot.guilds)),
-                        url="https://www.twitch.tv/Larss_j",
+                        url="https://www.twitch.tv/pre1ude0",
                     )
                 )
             await asyncio.sleep(60)
