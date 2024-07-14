@@ -2,18 +2,18 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: flex-start;
-    padding: 0 10% 0 20%;
+    align-items: center;
     margin-bottom: 30vh;
 }
 
 
 .container {
+    width: 700px;
     padding: 0 10px;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: left;
+    justify-content: center;
     align-items: center;
     gap: 10px;
 }
