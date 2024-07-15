@@ -15,19 +15,22 @@ from const import DELETE_BTN
 load_dotenv()
 
 
-scope = None
-client_id = os.getenv("SPOTIFY_CLIENT_ID")
-client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
-# redirect_url = os.getenv("SPOTIFY_REDIRECT_URL")
-redirect_url = "http://localhost:8888/callback"
+try:
+    scope = None
+    client_id = os.getenv("SPOTIFY_CLIENT_ID")
+    client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
+    # redirect_url = os.getenv("SPOTIFY_REDIRECT_URL")
+    redirect_url = "http://localhost:8888/callback"
 
-sp = spotipy.Spotify(
-    client_credentials_manager=SpotifyClientCredentials(
-        client_id=client_id, client_secret=client_secret
+    sp = spotipy.Spotify(
+        client_credentials_manager=SpotifyClientCredentials(
+            client_id=client_id, client_secret=client_secret
+        )
     )
-)
-sp.trace = False
-
+    sp.trace = False
+except:
+    print("Spotify credentials not found.")
+    sp = None
 
 def get_sp_info(URI):
     if "playlist" in URI:
@@ -226,79 +229,80 @@ def get_sp_info(URI):
 
 
 class spotify(Extension):
-    @listen()
-    async def on_message_create(self, ctx):
-        if ctx.message.author == self.bot.user:
-            return
+    if sp != None:
+        @listen()
+        async def on_message_create(self, ctx):
+            if ctx.message.author == self.bot.user:
+                return
 
-        regex = r"https:\/\/open\.spotify\.com\/(track|album|playlist|artist|user)\/[a-zA-Z0-9]+(\?si=[a-zA-Z0-9]+)?"
+            regex = r"https:\/\/open\.spotify\.com\/(track|album|playlist|artist|user)\/[a-zA-Z0-9]+(\?si=[a-zA-Z0-9]+)?"
 
-        matches = re.finditer(regex, ctx.message.content, re.MULTILINE)
+            matches = re.finditer(regex, ctx.message.content, re.MULTILINE)
 
-        embeds = []
+            embeds = []
 
-        # return all matches
-        for matchNum, match in enumerate(matches, start=1):
-            # initiate a typing state on the channel
-            await ctx.message.channel.trigger_typing()
-            callback = get_sp_info(match.group())
-            if callback == 404:
-                embed = Embed(
-                    title="Error",
-                    description="Invalid URL",
-                    color=0x808080,
-                )
-                embeds.append(embed)
-            else:
-                if callback in embeds:
-                    pass
+            # return all matches
+            for matchNum, match in enumerate(matches, start=1):
+                # initiate a typing state on the channel
+                await ctx.message.channel.trigger_typing()
+                callback = get_sp_info(match.group())
+                if callback == 404:
+                    embed = Embed(
+                        title="Error",
+                        description="Invalid URL",
+                        color=0x808080,
+                    )
+                    embeds.append(embed)
                 else:
-                    embeds.append(callback)
+                    if callback in embeds:
+                        pass
+                    else:
+                        embeds.append(callback)
 
-        
 
-        if embeds != []:
-            await ctx.message.reply(embeds=embeds, components=[DELETE_BTN])
 
-    @slash_command(
-        name="spotify",
-        description="Share what you're listening to!",
-    )
-    async def spotify(self, ctx):
-        listener = ctx.author
+            if embeds != []:
+                await ctx.message.reply(embeds=embeds, components=[DELETE_BTN])
 
-        # Get the first activity that contains "Spotify". Return None, if none present.
-        spotify_activity = next((x for x in listener.activities if x.name == "Spotify"), None)
+        @slash_command(
+            name="spotify",
+            description="Share what you're listening to!",
+        )
+        async def spotify(self, ctx):
+            listener = ctx.author
 
-        if spotify_activity is not None:
-            cover = f"https://i.scdn.co/image/{spotify_activity.assets.large_image.split(':')[1]}"
-            response = requests.get(cover)
+            # Get the first activity that contains "Spotify". Return None, if none present.
+            spotify_activity = next((x for x in listener.activities if x.name == "Spotify"), None)
 
-            img = Image.open(BytesIO(response.content))
+            if spotify_activity is not None:
+                cover = f"https://i.scdn.co/image/{spotify_activity.assets.large_image.split(':')[1]}"
+                response = requests.get(cover)
 
-            by_color = defaultdict(int)
-            for pixel in img.getdata():
-                by_color[pixel] += 1
-            # get the most common color
-            clr = max(by_color.items(), key=lambda x: x[1])[0]
-            embed = Embed(
-                title=f"{listener.display_name}'s Spotify",
-                description="Listening to {}".format(spotify_activity.details),
-                color=Color.from_rgb(clr[0], clr[1], clr[2]),
-                thumbnail=cover,
-            )
-            embed.add_field(name="Artist", value=spotify_activity.state)
-            embed.add_field(name="Album", value=spotify_activity.assets.large_text)
-        else:
-            embed = Embed(
-                title=f"{listener.display_name}'s Spotify",
-                description="Currently not listening to anything",
-                color=0x808080,
-                timestamp=datetime.now(),
-            )
-        embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar.url)
-        message = await ctx.send(embeds=embed, components=[DELETE_BTN])
-        # await message.add_reaction(spotify_emoji)
+                img = Image.open(BytesIO(response.content))
+
+                by_color = defaultdict(int)
+                for pixel in img.getdata():
+                    by_color[pixel] += 1
+                # get the most common color
+                clr = max(by_color.items(), key=lambda x: x[1])[0]
+                embed = Embed(
+                    title=f"{listener.display_name}'s Spotify",
+                    description="Listening to {}".format(spotify_activity.details),
+                    color=Color.from_rgb(clr[0], clr[1], clr[2]),
+                    thumbnail=cover,
+                )
+                embed.add_field(name="Artist", value=spotify_activity.state)
+                embed.add_field(name="Album", value=spotify_activity.assets.large_text)
+            else:
+                embed = Embed(
+                    title=f"{listener.display_name}'s Spotify",
+                    description="Currently not listening to anything",
+                    color=0x808080,
+                    timestamp=datetime.now(),
+                )
+            embed.set_footer(text="Requested by " + str(ctx.author), icon_url=ctx.author.avatar.url)
+            message = await ctx.send(embeds=embed, components=[DELETE_BTN])
+            # await message.add_reaction(spotify_emoji)
 
 
 def setup(bot):

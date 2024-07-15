@@ -1,0 +1,22 @@
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.dot {
+    opacity: 0;
+    position: absolute;
+    z-index: 0;
+    aspect-ratio: 1 / 1 !important;
+    border-radius: 50% !important;
+    background-color: white;
+}
+
+.fade-in-stars .dot {
+    animation: fadeIn forwards;
+}
