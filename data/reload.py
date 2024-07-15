@@ -1,111 +1,45 @@
 from interactions import *
 import random, os
-from const import DELETE_BTN, NOTAUTHORMESSAGE
+from const import EXCLUDED_EXTS, DEV_ROLE
+
+async def isDev(ctx : BaseContext) :
+    return ctx.author.has_role(DEV_ROLE)
 
 class Reload(Extension): 
 
+    def reload_exts(self, bot : Client, folder : str, excluded_files : list[str] = None) :
+        cogs = [files.replace(".py", "") for files in os.listdir(folder) if files.endswith("py") and files not in excluded_files]
+        for _ in cogs : 
+            bot.reload_extension(f"{folder}.{_}")
+            print(f"{_} reloaded")
 
     @slash_command(
         name="reload",
-        description="Reloads a cog",
+        description="Command to reload extensions",
+        scopes=[974354202430169139]
     )
     @slash_option(
-        name="cog",
-        description="The cog to reload",
-        opt_type=OptionType.INTEGER,
-        choices=[
-            SlashCommandChoice(name="Welcome", value=1),
-            # SlashCommandChoice(name="TicTacToe", value=2),
-            # SlashCommandChoice(name="GhostGame", value=3),
-            SlashCommandChoice(name="Lichess", value=4),
-            SlashCommandChoice(name="VD", value=5),
-            SlashCommandChoice(name="Spotify", value=6),
-            SlashCommandChoice(name="Randomise", value=7),
-            SlashCommandChoice(name="Ping", value=8),
-            SlashCommandChoice(name="Info", value=9),
-            SlashCommandChoice(name="Calculate", value=10),
-            SlashCommandChoice(name="Welcome", value=11),
-            SlashCommandChoice(name="Quit", value=12),
-            SlashCommandChoice(name="Clear", value=13),
-            SlashCommandChoice(name="Component Callback", value=14),
-            SlashCommandChoice(name="Reload", value=15)
-        ],
-        required=False,
+        name="extension",
+        description="Select a cog to reload",
+        required=False, 
+        autocomplete=True,
+        opt_type=OptionType.STRING
     )
-    async def reload(self, ctx, cog=None):
-        if self.bot.owner.id == ctx.author.id:
-            match (cog):
-                case 1 :
-                    self.bot.reload_extension("data.welcome")
-                    await ctx.respond("Reloaded cog `Welcome`")
-                case 2 :
-                    self.bot.reload_extension("data.tictactoe")
-                    await ctx.respond("Reloaded cog `tictactoe`")
-                case 3 :
-                    self.bot.reload_extension("data.ghostgame")
-                    await ctx.respond("Reloaded cog `ghostgame`")
-                case 4 :
-                    self.bot.reload_extension("data.lichess")
-                    await ctx.respond("Reloaded cog `lichess`")
-                case 5 :
-                    self.bot.reload_extension("data.VD")
-                    await ctx.respond("Reloaded cog `VD`")
-                case 6 :
-                    self.bot.reload_extension("data.spotify")
-                    await ctx.respond("Reloaded cog `spotify`")
-                case 7 :
-                    self.bot.reload_extension("data.randomise")
-                    await ctx.respond("Reloaded cog `randomise`")
-                case 8 :
-                    self.bot.reload_extension("data.ping")
-                    await ctx.respond("Reloaded cog `ping`")
-                case 9 :
-                    self.bot.reload_extension("data.info")
-                    await ctx.respond("Reloaded cog `info`")
-                case 10 :
-                    self.bot.reload_extension("data.calculate")
-                    await ctx.respond("Reloaded cog `calculate`")
-                case 11 :
-                    self.bot.reload_extension("data.welcome")
-                    await ctx.respond("Reloaded cog `welcome`")
-                case 12 :
-                    self.bot.reload_extension("data.quit")
-                    await ctx.respond("Reloaded cog `quit`")
-                case 13 :
-                    self.bot.reload_extension("data.clear")
-                    await ctx.respond("Reloaded cog `clear`")
-                case 14 :
-                    self.bot.reload_extension("data.compo_callback")
-                    await ctx.respond("Reloaded cog `compo_callback`")
-                case 15 :
-                    self.bot.reload_extension("data.reload")
-                    await ctx.respond("Reloaded cog `reload`")
-                case None : 
-                    self.bot.reload_extension("data.info")
-                    print("Reloaded cog info")
-                    self.bot.reload_extension("data.ping")
-                    print("Reloaded cog ping")
-                    #self.bot.reload_extension("data.spotify")
-                    #print("Reloaded cog spotify")
-                    self.bot.reload_extension("data.lichess")
-                    print("Reloaded cog lichess")
-                    self.bot.reload_extension("data.welcome")
-                    print("Reloaded cog welcome")
-                    self.bot.reload_extension("data.randomise")
-                    print("Reloaded cog randomise")
-                    self.bot.reload_extension("data.quit")
-                    print("Reloaded cog quit")
-                    self.bot.reload_extension("data.VD")
-                    print("Reloaded cog VD")
-                    self.bot.reload_extension("data.clear")
-                    print("Reloaded cog clear")
-                    self.bot.reload_extension("data.compo_callback")
-                    print("Reloaded cog compo_callback")
-                    self.bot.reload_extension("data.calculate")
-                    print("Reloaded cog calculate")
-                    await ctx.respond("Reloaded all cogs !")
-        else:
-            await ctx.respond(random.choice(NOTAUTHORMESSAGE), ephemeral=True, components=[DELETE_BTN])
+    @check(isDev)
+    async def reload(self, ctx : SlashContext, extension : str = None):
+        if not extension :
+            self.reload_exts(self.bot, "data", EXCLUDED_EXTS)
+            await ctx.send("Reloaded all extensions !")
+        else :
+            self.bot.reload_extension(f"data.{extension}")
+            print(f"Correctly reloaded {extension}")
+            await ctx.send(f"Reloaded {extension} correctly !")
+
+    @reload.autocomplete("extension")
+    async def autocomplete(self, ctx : AutocompleteContext) : 
+        string_input = ctx.input_text
+        ext = [ext for ext in os.listdir("./data") if ext.startswith(string_input) and ext.endswith(".py") and ext not in EXCLUDED_EXTS] 
+        await ctx.send(choices=[{"name": ext, "value": ext.replace(".py", "")} for ext in ext])
 
 def setup(bot):
     Reload(bot)

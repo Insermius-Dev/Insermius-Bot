@@ -2,6 +2,7 @@
 # Ported to i.py v5
 # pip install -U discord-py-interactions
 
+from const import EXCLUDED_EXTS
 import interactions as inter
 from interactions import (
     Client,
@@ -68,12 +69,7 @@ def load_extensions(bot, folder, folder_name="", exclude_files=[]):
 @listen()
 async def on_startup():
     print(f"{bot.user} has connected to Discord!")
-    load_extensions(bot, "data", "data.", exclude_files=[
-        "quit.py",
-        "tictactoe.py",
-        "voice.py",
-        "configcmds.py",
-    ])
+    load_extensions(bot, "data", "data.", exclude_files=EXCLUDED_EXTS)
     bot.del_unused_app_cmd = True
 
     lab_guild = 974354202430169139

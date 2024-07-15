@@ -42,6 +42,15 @@ CONTRIBUTORS = []
 
 HELPERS = []
 
+DEV_ROLE = 1166447671326810122
+
+EXCLUDED_EXTS = [
+        "quit.py",
+        "tictactoe.py",
+        "voice.py",
+        "configcmds.py",
+        "spotify.py"]
+    
 DELETE_BTN = Button(style=ButtonStyle.RED, custom_id="delete", emoji="🗑️")
 
 NOW_UNIX = time.mktime(datetime.datetime.now().timetuple())
