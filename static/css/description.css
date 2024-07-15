@@ -1,22 +1,33 @@
 .description {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    flex-direction: row;
+    justify-content: space-evenly;
     align-items: center;
-    height: 400px;
+    min-height: 400px;
 }
 
 .desc-text {
+    position:relative;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    width: 50%;
-    min-width: 300px;
+    justify-content: center;
+    align-items: center;
+    width: 60%;
+    min-width: 500px;
     height: 200px;
     gap: 10px;
 }
 
+.desc-connections {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
 .desc-text p {
+    width: 80%;
     font-size: 1.5em;
     margin: 0;
     text-align: left;
@@ -32,3 +43,61 @@
     text-decoration: underline;
 }
 
+.desc-connections {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 30px 0 10px 20px;
+}
+
+.desc-connections a {
+    width: 300px;
+    position: relative;
+    height: 55px;
+    color: white;
+    text-decoration: none;
+}
+
+.desc-connections .hidden-text {
+    opacity: 0;
+    transition: all 0.5s;
+    position: absolute;
+    bottom: 10px;
+    z-index: 1;
+}
+
+.desc-connections .visible-text {
+    margin-left: 20px;
+    font-size: 1.2em;
+    transition: transform 0.5s;
+    z-index: 2;
+}
+
+.visible-text i {
+    margin-left: 5px;
+}
+
+.desc-connections a:hover {
+    .hidden-text {
+        opacity: 1;
+        bottom: 0;
+    }
+    #git {
+        color: #f1502f;
+        text-decoration: underline #f1502f;
+    }
+    #disc {
+        color: #7289da;
+        text-decoration: underline #7289da;
+    }
+    #kofi {
+        color: #ff5e5e;
+        text-decoration: underline #ff5e5e;
+    }
+    .visible-text {
+        transform: translateY(-5px);
+    }
+}
