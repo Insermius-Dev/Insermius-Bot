@@ -2,6 +2,7 @@
 # Ported to i.py v5
 # pip install -U discord-py-interactions
 
+from const import EXCLUDED_EXTS
 import interactions as inter
 from interactions import (
     Client,
@@ -39,7 +40,7 @@ import json
 import time
 from asyncio import sleep as eep
 import pandas as pd
-from const import CONTRIBUTORS, HELPERS
+from const import EPIC_CONTRIBUTING_PPL, LIL_HELPERS
 
 from dotenv import load_dotenv
 
@@ -68,34 +69,27 @@ def load_extensions(bot, folder, folder_name="", exclude_files=[]):
 @listen()
 async def on_startup():
     print(f"{bot.user} has connected to Discord!")
-    load_extensions(bot, "data", "data.", exclude_files=[
-        "quit.py",
-        "tictactoe.py",
-        "voice.py",
-        "configcmds.py",
-    ])
+    load_extensions(bot, "data", "data.", exclude_files=EXCLUDED_EXTS)
     bot.del_unused_app_cmd = True
 
     lab_guild = 974354202430169139
     lab_contributor = 974586417932021760
     lab_lilhelper = 1041445249668624475
     # get all of the users with the roles
+    contributors = bot.get_guild(lab_guild)
+    if contributors != None : 
+        for member in contributors.get_role(lab_contributor).members:
+            EPIC_CONTRIBUTING_PPL.append(member.id)
+    
+    lilhelpers = bot.get_guild(lab_guild)
+    if lilhelpers != None :
+        lilhelpers.get_role(lab_lilhelper).members
+        for i in lilhelpers.get_role(lab_lilhelper).members :
+            LIL_HELPERS.append(i.id)
 
-    lab_guild = bot.get_guild(lab_guild)
-    if lab_guild != None :
-        contributors = lab_guild.get_role(lab_contributor).members
-        for user in contributors:
-            CONTRIBUTORS.append(user.id)
+    dev = bot.get_user(737983831000350731)
 
-        helpers = lab_guild.get_role(lab_lilhelper).members
-        for user in helpers:
-            HELPERS.append(user.id)
-
-        dev = bot.get_user(737983831000350731)
-
-        start(contributors, helpers, dev)
-    else:
-        print("Failed to get the guild")
+    start(contributors, lilhelpers, dev)
 
     guild_list = bot.guilds
     guild_names = []
@@ -134,7 +128,7 @@ async def on_startup():
                 await bot.change_presence(
                     activity=inter.Activity(
                         type=inter.ActivityType.STREAMING,
-                        url="https://www.twitch.tv/pre1ude0",
+                        url="https://www.twitch.tv/Larss_j",
                         name="to {0} server".format(len(bot.guilds)),
                     )
                 )
@@ -143,7 +137,7 @@ async def on_startup():
                     activity=inter.Activity(
                         type=inter.ActivityType.STREAMING,
                         name="to {0} servers".format(len(bot.guilds)),
-                        url="https://www.twitch.tv/pre1ude0",
+                        url="https://www.twitch.tv/Larss_j",
                     )
                 )
             await asyncio.sleep(60)
