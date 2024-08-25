@@ -6,6 +6,18 @@
     min-height: 400px;
 }
 
+@media screen and (max-width: 800px) {
+    .description {
+        flex-direction: column;
+    }
+
+    .desc-text {
+        width: 80%;
+        min-width: 300px;
+        height: 300px;
+    }
+}
+
 .desc-text {
     position:relative;
     display: flex;
@@ -16,6 +28,14 @@
     min-width: 500px;
     height: 200px;
     gap: 10px;
+}
+
+@media screen and (max-width: 800px) {
+    .desc-text {
+        width: 80%;
+        min-width: 300px;
+        height: 300px;
+    }
 }
 
 .desc-connections {
@@ -56,12 +76,14 @@
 .desc-connections a {
     width: 300px;
     position: relative;
-    height: 55px;
+    height: 50px;
     color: white;
     text-decoration: none;
 }
 
 .desc-connections .hidden-text {
+    font-size: 11pt;
+    color: white;
     opacity: 0;
     transition: all 0.5s;
     position: absolute;
@@ -72,7 +94,7 @@
 .desc-connections .visible-text {
     margin-left: 20px;
     font-size: 1.2em;
-    transition: transform 0.5s;
+    transition: transform 0.5s, color 0.2s;
     z-index: 2;
 }
 
@@ -80,10 +102,11 @@
     margin-left: 5px;
 }
 
-.desc-connections a:hover {
+.desc-connections a:hover, .desc-connections a:active {
     .hidden-text {
-        opacity: 1;
+        opacity: .5;
         bottom: 0;
+        color: white;
     }
     #git {
         color: #f1502f;
@@ -99,5 +122,17 @@
     }
     .visible-text {
         transform: translateY(-5px);
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .desc-connections .hidden-text {
+        opacity: .5; !important;
+        bottom: 0; !important;
+        color: white; !important;
+    }
+
+    .desc-connections .visible-text {
+        transform: translateY(-5px); !important;
     }
 }

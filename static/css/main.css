@@ -6,6 +6,8 @@ body {
     padding: 0;
 
     overflow-x: hidden;
+
+    padding-bottom: 30vh;
 }
 
 .frame-right {
